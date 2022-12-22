@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alto xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://www.loc.gov/standards/alto/ns-v4#"
+      xsi:schemaLocation="http://www.loc.gov/standards/alto/ns-v4# http://www.loc.gov/standards/alto/v4/alto-4-2.xsd">
+  <Description>
+    <MeasurementUnit>pixel</MeasurementUnit>
+    <sourceImageInformation>
+      <fileName>17630_columbia.apis.p255.f.0.600.jpg</fileName>
+      
+    </sourceImageInformation>
+  </Description>
+  
+  <Tags>
+    <OtherTag ID="BT1" LABEL="Title" DESCRIPTION="block type Title"/><OtherTag ID="BT2" LABEL="Main" DESCRIPTION="block type Main"/><OtherTag ID="BT3" LABEL="Commentary" DESCRIPTION="block type Commentary"/><OtherTag ID="BT4" LABEL="Illustration" DESCRIPTION="block type Illustration"/><OtherTag ID="BT964" LABEL="Odd Column" DESCRIPTION="block type Odd Column"/><OtherTag ID="BT965" LABEL="Even Column" DESCRIPTION="block type Even Column"/><OtherTag ID="BT971" LABEL="Marginalia" DESCRIPTION="block type Marginalia"/>
+    <OtherTag ID="LT2" LABEL="Numbering" DESCRIPTION="line type Numbering"/><OtherTag ID="LT420" LABEL="Interlinear" DESCRIPTION="line type Interlinear"/>
+  </Tags>
+  
+  <Layout>
+    <Page WIDTH="3000"
+          HEIGHT="3837"
+          PHYSICAL_IMG_NR="24"
+          ID="eSc_dummypage_">
+      <PrintSpace HPOS="0"
+                  VPOS="0"
+                  WIDTH="3000"
+                  HEIGHT="3837">
+        
+        <TextBlock HPOS="122.0"
+                   VPOS="1479.0"
+                   WIDTH="1429.0"
+                   HEIGHT="1041.0"
+                   ID="eSc_textblock_90d5119e"
+                   TAGREFS="BT2">
+          <Shape><Polygon POINTS="285 1479 122 2520 1541 2438 1551 1479"/></Shape>
+          
+          
+          <TextLine ID="eSc_line_cd7999ff"
+                    
+                    BASELINE="254 1668 1617 1700" 
+                    HPOS="252.0"
+                    VPOS="1599.0"
+                    WIDTH="1366.0"
+                    HEIGHT="152.0">
+            <Shape><Polygon POINTS="255 1599 1618 1631 1615 1751 252 1719"/></Shape>
+	    <String CONTENT="ΕΤΟΥΣΤΕΤΑΡΤΟΥΑΝΤΩΝ̣Ι̣Ν̣Ο̣Υ̣"
+                    HPOS="252.0"
+                    VPOS="1599.0"
+                    WIDTH="1366.0"
+                    HEIGHT="152.0"></String>
+          </TextLine>
+
+          
+          
+          <TextLine ID="eSc_line_c2d5fee6"
+                    
+                    BASELINE="247 1801 1506 1882" 
+                    HPOS="243.0"
+                    VPOS="1733.0"
+                    WIDTH="1267.0"
+                    HEIGHT="199.0">
+            <Shape><Polygon POINTS="251 1733 1510 1814 1502 1932 243 1851"/></Shape>
+	    <String CONTENT="ΚΑΙΣΑΡΟΣΤΟΥΚΥΡΙΟΥΕΦΕΙΠ"
+                    HPOS="243.0"
+                    VPOS="1733.0"
+                    WIDTH="1267.0"
+                    HEIGHT="199.0"></String>
+          </TextLine>
+
+          
+          
+          <TextLine ID="eSc_line_198746b5"
+                    
+                    BASELINE="240 1915 1528 2012" 
+                    HPOS="236.0"
+                    VPOS="1847.0"
+                    WIDTH="1297.0"
+                    HEIGHT="215.0">
+            <Shape><Polygon POINTS="245 1847 1533 1944 1524 2062 236 1965"/></Shape>
+	    <String CONTENT="ΚΗΔΙΕΓΡΑΑΡΤΕΜΠΡΑΚΤΑΡΓ"
+                    HPOS="236.0"
+                    VPOS="1847.0"
+                    WIDTH="1297.0"
+                    HEIGHT="215.0"></String>
+          </TextLine>
+
+          
+          
+          <TextLine ID="eSc_line_16b0a62c"
+                    
+                    BASELINE="196 2049 1374 2146" 
+                    HPOS="191.0"
+                    VPOS="1981.0"
+                    WIDTH="1188.0"
+                    HEIGHT="215.0">
+            <Shape><Polygon POINTS="201 1981 1379 2078 1369 2196 191 2099"/></Shape>
+	    <String CONTENT="ΜΕ̣Μ̣ΦΑΜΜΩΝΙΟΣ"
+                    HPOS="191.0"
+                    VPOS="1981.0"
+                    WIDTH="1188.0"
+                    HEIGHT="215.0"></String>
+          </TextLine>
+
+          
+          
+          <TextLine ID="eSc_line_47c8f62e"
+                    
+                    BASELINE="210 2181 1512 2240" 
+                    HPOS="207.0"
+                    VPOS="2113.0"
+                    WIDTH="1308.0"
+                    HEIGHT="177.0">
+            <Shape><Polygon POINTS="213 2113 1515 2172 1509 2290 207 2231"/></Shape>
+	    <String CONTENT="ΑΚΟΥΣΙΛΑΟΥΩΡΟΥΛΑ[-]"
+                    HPOS="207.0"
+                    VPOS="2113.0"
+                    WIDTH="1308.0"
+                    HEIGHT="177.0"></String>
+          </TextLine>
+
+          
+          
+          <TextLine ID="eSc_line_5aca1738"
+                    
+                    BASELINE="206 2270 1520 2304" 
+                    HPOS="204.0"
+                    VPOS="2201.0"
+                    WIDTH="1317.0"
+                    HEIGHT="154.0">
+            <Shape><Polygon POINTS="207 2201 1521 2235 1518 2355 204 2321"/></Shape>
+	    <String CONTENT="ΙΔΙΤΟΥΑΥΤΟΥΕΤΟΥΣΡΥΠ(ΔΡΑΧΜΑΣ)ΟΚΤΩ"
+                    HPOS="204.0"
+                    VPOS="2201.0"
+                    WIDTH="1317.0"
+                    HEIGHT="154.0"></String>
+          </TextLine>
+
+          
+          
+          <TextLine ID="eSc_line_8898760d"
+                    
+                    BASELINE="180 2398 656 2391" 
+                    HPOS="178.0"
+                    VPOS="2322.0"
+                    WIDTH="478.0"
+                    HEIGHT="127.0">
+            <Shape><Polygon POINTS="178 2329 654 2322 656 2442 180 2449"/></Shape>
+	    <String CONTENT="(ΓΙΝΟΝΤΑΙ)(ΔΡΑΧΜΑΙ)Η"
+                    HPOS="178.0"
+                    VPOS="2322.0"
+                    WIDTH="478.0"
+                    HEIGHT="127.0"></String>
+          </TextLine>
+
+          
+        </TextBlock>
+        
+
+        
+      </PrintSpace>
+    </Page>
+  </Layout>
+</alto>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alto xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://www.loc.gov/standards/alto/ns-v4#"
+      xsi:schemaLocation="http://www.loc.gov/standards/alto/ns-v4# http://www.loc.gov/standards/alto/v4/alto-4-2.xsd">
+  <Description>
+    <MeasurementUnit>pixel</MeasurementUnit>
+    <sourceImageInformation>
+      <fileName>38395_columbia.apis.p1922.f.0.600.jpg</fileName>
+      
+    </sourceImageInformation>
+  </Description>
+  
+  <Tags>
+    <OtherTag ID="BT1" LABEL="Title" DESCRIPTION="block type Title"/><OtherTag ID="BT2" LABEL="Main" DESCRIPTION="block type Main"/><OtherTag ID="BT3" LABEL="Commentary" DESCRIPTION="block type Commentary"/><OtherTag ID="BT4" LABEL="Illustration" DESCRIPTION="block type Illustration"/><OtherTag ID="BT964" LABEL="Odd Column" DESCRIPTION="block type Odd Column"/><OtherTag ID="BT965" LABEL="Even Column" DESCRIPTION="block type Even Column"/><OtherTag ID="BT971" LABEL="Marginalia" DESCRIPTION="block type Marginalia"/>
+    <OtherTag ID="LT2" LABEL="Numbering" DESCRIPTION="line type Numbering"/><OtherTag ID="LT420" LABEL="Interlinear" DESCRIPTION="line type Interlinear"/>
+  </Tags>
+  
+  <Layout>
+    <Page WIDTH="3000"
+          HEIGHT="2196"
+          PHYSICAL_IMG_NR="1"
+          ID="eSc_dummypage_">
+      <PrintSpace HPOS="0"
+                  VPOS="0"
+                  WIDTH="3000"
+                  HEIGHT="2196">
+        
+        <TextBlock HPOS="110.0"
+                   VPOS="700.0"
+                   WIDTH="2787.0"
+                   HEIGHT="1186.0"
+                   ID="eSc_textblock_310f28fe"
+                   TAGREFS="BT2">
+          <Shape><Polygon POINTS="110 817 110 1886 2897 1886 2821 700"/></Shape>
+          
+          
+          <TextLine ID="eSc_line_afe72913"
+                    
+                    BASELINE="135 888 2811 822" 
+                    HPOS="132.0"
+                    VPOS="738.0"
+                    WIDTH="2680.0"
+                    HEIGHT="212.0">
+            <Shape><Polygon POINTS="132 804 2808 738 2812 884 136 950"/></Shape>
+	    <String CONTENT="ΚΑΤΑΛΑΒΩΝΤΗΝΑΛΕΞΑΝΔΡΕΩΝΕΓΝΩΝΤΟΝΕΥΛΑΒΕΠΙΣΚΟΠΟΝΑΠΟΠΛΕΥΣΑΙ"
+                    HPOS="132.0"
+                    VPOS="738.0"
+                    WIDTH="2680.0"
+                    HEIGHT="212.0"></String>
+          </TextLine>
+
+          
+          
+          <TextLine ID="eSc_line_87ab8d79"
+                    
+                    BASELINE="109 1062 2858 935" 
+                    HPOS="105.0"
+                    VPOS="851.0"
+                    WIDTH="2755.0"
+                    HEIGHT="273.0">
+            <Shape><Polygon POINTS="105 978 2854 851 2860 997 111 1124"/></Shape>
+	    <String CONTENT="ΕΠΙΤΟΠΗΛΟΥΣΙΟΝΣΥΝΗΘΩΣΤΥΝΥΝΕΥΔΟΚΙΜΟΥΣΑΗΣΗΜΕΓΑΛΟΠΡΕΕΙΔΥΙΑ"
+                    HPOS="105.0"
+                    VPOS="851.0"
+                    WIDTH="2755.0"
+                    HEIGHT="273.0"></String>
+          </TextLine>
+
+          
+          
+          <TextLine ID="eSc_line_1ae97dc9"
+                    
+                    BASELINE="129 1221 2827 1082" 
+                    HPOS="124.0"
+                    VPOS="998.0"
+                    WIDTH="2706.0"
+                    HEIGHT="285.0">
+            <Shape><Polygon POINTS="124 1137 2822 998 2830 1144 132 1283"/></Shape>
+	    <String CONTENT="ΤΗΝΔΥΝΑΜΙΝΤΟΥΠΡΟΣΤΑΓΜΑΤΟΣΚΕΛΕΥΣΗΤΟΥΤΟΝΥΠΟΜΝΗΣΘΗΝΑΙΜΕΤΑΤΩΝ"
+                    HPOS="124.0"
+                    VPOS="998.0"
+                    WIDTH="2706.0"
+                    HEIGHT="285.0"></String>
+          </TextLine>
+
+          
+          
+          <TextLine ID="eSc_line_6fc55096"
+                    
+                    BASELINE="115 1361 2845 1235" 
+                    HPOS="111.0"
+                    VPOS="1151.0"
+                    WIDTH="2736.0"
+                    HEIGHT="272.0">
+            <Shape><Polygon POINTS="111 1277 2841 1151 2847 1297 117 1423"/></Shape>
+	    <String CONTENT="ΑΛΛΩΝΠΡΟΣΤΩ----ΡΕ-Α-ΤΟΜΕ-Α̣Π̣Ο̣Θ̣ΗΒ̣ΑΙΔΟΣ̣"
+                    HPOS="111.0"
+                    VPOS="1151.0"
+                    WIDTH="2736.0"
+                    HEIGHT="272.0"></String>
+          </TextLine>
+
+          
+          
+          <TextLine ID="eSc_line_f383b142"
+                    
+                    BASELINE="122 1528 2798 1428" 
+                    HPOS="118.0"
+                    VPOS="1344.0"
+                    WIDTH="2682.0"
+                    HEIGHT="246.0">
+            <Shape><Polygon POINTS="118 1444 2794 1344 2800 1490 124 1590"/></Shape>
+	    <String CONTENT="ΕΤΥΜΟΝΕΙΝΑΚΑΓΩΣΥΝΗΘΩΣΕΥΧΑΡΙΣΤΗΣΩΤΗΣΗΜΕΓΑΛΟΠΡΕΠΙΑ"
+                    HPOS="118.0"
+                    VPOS="1344.0"
+                    WIDTH="2682.0"
+                    HEIGHT="246.0"></String>
+          </TextLine>
+
+          
+          
+          <TextLine ID="eSc_line_67b17559"
+                    
+                    BASELINE="142 1721 2871 1621" 
+                    HPOS="138.0"
+                    VPOS="1537.0"
+                    WIDTH="2735.0"
+                    HEIGHT="246.0">
+            <Shape><Polygon POINTS="138 1637 2867 1537 2873 1683 144 1783"/></Shape>
+	    <String CONTENT="ΚΑΙΟΙΚΑΘΟΣΙΩΜΕΝΟΙΑΝΔΡΕΣΣΥΝΗΘΩΣΚΑΙΑΥΤΟΙΚΗΡΥΞΩΣΙΝ[Τ]ΟΣΟΝ"
+                    HPOS="138.0"
+                    VPOS="1537.0"
+                    WIDTH="2735.0"
+                    HEIGHT="246.0"></String>
+          </TextLine>
+
+          
+          
+          <TextLine ID="eSc_line_46463451"
+                    
+                    BASELINE="150 1850 649 1828" 
+                    HPOS="146.0"
+                    VPOS="1744.0"
+                    WIDTH="505.0"
+                    HEIGHT="168.0">
+            <Shape><Polygon POINTS="146 1766 645 1744 651 1890 152 1912"/></Shape>
+	    <String CONTENT="ΜΕΓΕΘΟΣ"
+                    HPOS="146.0"
+                    VPOS="1744.0"
+                    WIDTH="505.0"
+                    HEIGHT="168.0"></String>
+          </TextLine>
+
+          
+        </TextBlock>
+        
+
+        
+      </PrintSpace>
+    </Page>
+  </Layout>
+</alto>

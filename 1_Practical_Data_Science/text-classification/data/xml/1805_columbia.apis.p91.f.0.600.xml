@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alto xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://www.loc.gov/standards/alto/ns-v4#"
+      xsi:schemaLocation="http://www.loc.gov/standards/alto/ns-v4# http://www.loc.gov/standards/alto/v4/alto-4-2.xsd">
+  <Description>
+    <MeasurementUnit>pixel</MeasurementUnit>
+    <sourceImageInformation>
+      <fileName>1805_columbia.apis.p91.f.0.600.jpg</fileName>
+      
+    </sourceImageInformation>
+  </Description>
+  
+  <Tags>
+    <OtherTag ID="BT1" LABEL="Title" DESCRIPTION="block type Title"/><OtherTag ID="BT2" LABEL="Main" DESCRIPTION="block type Main"/><OtherTag ID="BT3" LABEL="Commentary" DESCRIPTION="block type Commentary"/><OtherTag ID="BT4" LABEL="Illustration" DESCRIPTION="block type Illustration"/><OtherTag ID="BT964" LABEL="Odd Column" DESCRIPTION="block type Odd Column"/><OtherTag ID="BT965" LABEL="Even Column" DESCRIPTION="block type Even Column"/><OtherTag ID="BT971" LABEL="Marginalia" DESCRIPTION="block type Marginalia"/>
+    <OtherTag ID="LT2" LABEL="Numbering" DESCRIPTION="line type Numbering"/><OtherTag ID="LT420" LABEL="Interlinear" DESCRIPTION="line type Interlinear"/>
+  </Tags>
+  
+  <Layout>
+    <Page WIDTH="3000"
+          HEIGHT="3228"
+          PHYSICAL_IMG_NR="72"
+          ID="eSc_dummypage_">
+      <PrintSpace HPOS="0"
+                  VPOS="0"
+                  WIDTH="3000"
+                  HEIGHT="3228">
+        
+        <TextBlock HPOS="1244.0"
+                   VPOS="1205.0"
+                   WIDTH="1620.0"
+                   HEIGHT="721.0"
+                   ID="eSc_textblock_99402021"
+                   TAGREFS="BT2">
+          <Shape><Polygon POINTS="1244 1205 1244 1926 2864 1926 2864 1205"/></Shape>
+          
+          
+          <TextLine ID="eSc_line_95b4ff85"
+                    
+                    BASELINE="1375 1469 2724 1309" 
+                    HPOS="1368.0"
+                    VPOS="1253.0"
+                    WIDTH="1360.0"
+                    HEIGHT="257.0">
+            <Shape><Polygon POINTS="1368 1413 2717 1253 2728 1350 1379 1510"/></Shape>
+	    <String CONTENT=""
+                    HPOS="1368.0"
+                    VPOS="1253.0"
+                    WIDTH="1360.0"
+                    HEIGHT="257.0"></String>
+          </TextLine>
+
+          
+          
+          <TextLine ID="eSc_line_4b2bc456"
+                    
+                    BASELINE="1497 1565 2775 1420" 
+                    HPOS="1490.0"
+                    VPOS="1364.0"
+                    WIDTH="1289.0"
+                    HEIGHT="242.0">
+            <Shape><Polygon POINTS="1490 1509 2768 1364 2779 1461 1501 1606"/></Shape>
+	    <String CONTENT=""
+                    HPOS="1490.0"
+                    VPOS="1364.0"
+                    WIDTH="1289.0"
+                    HEIGHT="242.0"></String>
+          </TextLine>
+
+          
+          
+          <TextLine ID="eSc_line_041638ae"
+                    
+                    BASELINE="1401 1678 2567 1579" 
+                    HPOS="1396.0"
+                    VPOS="1523.0"
+                    WIDTH="1174.0"
+                    HEIGHT="196.0">
+            <Shape><Polygon POINTS="1396 1622 2562 1523 2570 1620 1404 1719"/></Shape>
+	    <String CONTENT=""
+                    HPOS="1396.0"
+                    VPOS="1523.0"
+                    WIDTH="1174.0"
+                    HEIGHT="196.0"></String>
+          </TextLine>
+
+          
+          
+          <TextLine ID="eSc_line_303ae086"
+                    
+                    BASELINE="1410 1711 1816 1753 2736 1678" 
+                    HPOS="1405.0"
+                    VPOS="1622.0"
+                    WIDTH="1334.0"
+                    HEIGHT="172.0">
+            <Shape><Polygon POINTS="1415 1655 1821 1697 2731 1622 2739 1719 1811 1794 1405 1752"/></Shape>
+	    <String CONTENT=""
+                    HPOS="1405.0"
+                    VPOS="1622.0"
+                    WIDTH="1334.0"
+                    HEIGHT="172.0"></String>
+          </TextLine>
+
+          
+        </TextBlock>
+        
+
+        
+      </PrintSpace>
+    </Page>
+  </Layout>
+</alto>

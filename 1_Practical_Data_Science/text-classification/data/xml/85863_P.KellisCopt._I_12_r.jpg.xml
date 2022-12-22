@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<alto xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://www.loc.gov/standards/alto/ns-v4#"
+      xsi:schemaLocation="http://www.loc.gov/standards/alto/ns-v4# http://www.loc.gov/standards/alto/v4/alto-4-2.xsd">
+  <Description>
+    <MeasurementUnit>pixel</MeasurementUnit>
+    <sourceImageInformation>
+      <fileName>85863_P.KellisCopt._I_12_r.jpg.jpg</fileName>
+      
+    </sourceImageInformation>
+  </Description>
+  
+  <Tags>
+    <OtherTag ID="BT1" LABEL="Title" DESCRIPTION="block type Title"/><OtherTag ID="BT2" LABEL="Main" DESCRIPTION="block type Main"/><OtherTag ID="BT3" LABEL="Commentary" DESCRIPTION="block type Commentary"/><OtherTag ID="BT4" LABEL="Illustration" DESCRIPTION="block type Illustration"/><OtherTag ID="BT964" LABEL="Odd Column" DESCRIPTION="block type Odd Column"/><OtherTag ID="BT965" LABEL="Even Column" DESCRIPTION="block type Even Column"/><OtherTag ID="BT971" LABEL="Marginalia" DESCRIPTION="block type Marginalia"/>
+    <OtherTag ID="LT2" LABEL="Numbering" DESCRIPTION="line type Numbering"/><OtherTag ID="LT420" LABEL="Interlinear" DESCRIPTION="line type Interlinear"/>
+  </Tags>
+  
+  <Layout>
+    <Page WIDTH="2104"
+          HEIGHT="2060"
+          PHYSICAL_IMG_NR="89"
+          ID="eSc_dummypage_">
+      <PrintSpace HPOS="0"
+                  VPOS="0"
+                  WIDTH="2104"
+                  HEIGHT="2060">
+        
+
+        
+        <TextBlock ID="eSc_dummyblock_">
+          
+          
+          <TextLine ID="eSc_line_0afc6a7e"
+                    
+                    BASELINE="467 969 609 983 881 987" 
+                    HPOS="465"
+                    VPOS="825"
+                    WIDTH="417"
+                    HEIGHT="239">
+            <Shape><Polygon POINTS="467 969 465 1004 580 1007 606 1024 652 1057 654 1057 656 1057 657 1057 693 1052 709 1062 711 1062 712 1062 798 1064 800 1064 802 1064 803 1064 815 1054 822 1050 833 1057 838 1062 839 1062 841 1062 843 1064 877 1064 881 987 882 834 767 825 766 825 764 825 762 825 747 836 745 836 738 836 673 827 671 827 625 837 601 842 571 839 529 832 527 832 470 839 467 969"/></Shape>
+	    <String CONTENT=""
+                    HPOS="465"
+                    VPOS="825"
+                    WIDTH="417"
+                    HEIGHT="239"></String>
+          </TextLine>
+
+          
+        </TextBlock>
+        
+      </PrintSpace>
+    </Page>
+  </Layout>
+</alto>
