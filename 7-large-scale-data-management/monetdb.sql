@@ -104,7 +104,7 @@ SELECT * FROM zillow WHERE filter_type_of_listing(title) = 'house';
 
 -- TASK 11
 SELECT 
-    bedrooms, AVG(sqft) * 1.0 / AVG(price) AS AvPricePerSqFt
+    bedrooms, AVG(price) * 1.0 / AVG(sqft) AS AvPricePerSqFt
 FROM
     zillow
 WHERE
