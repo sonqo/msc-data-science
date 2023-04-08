@@ -1,3 +1,4 @@
+-- LOADER FUNCTION
 CREATE LOADER zillow_loader() LANGUAGE PYTHON {
 
     import pandas as pd
@@ -40,8 +41,10 @@ CREATE LOADER zillow_loader() LANGUAGE PYTHON {
     _emit.emit(fin)
 };
 
+-- LOADING DATA
 CREATE TABLE zillow FROM LOADER zillow_loader();
 
+-- TASK 4
 CREATE FUNCTION filter_type_of_listing(strings STRING) RETURNS STRING LANGUAGE PYTHON {
     
     def type_of_listing_mapper(string):
@@ -67,6 +70,7 @@ CREATE FUNCTION filter_type_of_listing(strings STRING) RETURNS STRING LANGUAGE P
 };
 SELECT *, filter_type_of_listing(title) AS type_of_listing FROM zillow;
 
+-- TASK 5
 CREATE FUNCTION filter_type_of_offer(strings STRING) RETURNS STRING LANGUAGE PYTHON {
     
     def type_of_offer_mapper(string):
@@ -86,20 +90,29 @@ CREATE FUNCTION filter_type_of_offer(strings STRING) RETURNS STRING LANGUAGE PYT
 };
 SELECT *, filter_type_of_offer(title) AS type_of_offer FROM zillow;
 
-SELECT * FROM zillow WHERE filter_type_of_offer(title) == 'sale';
+-- TASK 6
+SELECT * FROM zillow WHERE filter_type_of_offer(title) = 'sale';
 
+-- TASK 8
 SELECT * FROM zillow WHERE bedrooms < 10;
 
+-- TASK 9
 SELECT * FROM zillow WHERE price BETWEEN 100000 AND 20000000;
 
+-- TASK 10
 SELECT * FROM zillow WHERE filter_type_of_listing(title) = 'house';
 
+-- TASK 11
 SELECT 
-    * 
+    bedrooms, AVG(sqft) * 1.0 / AVG(price) AS AvPricePerSqFt
 FROM
     zillow
 WHERE
-    bedrooms < 10;
-    AND price BETWEEN 100000 AND 20000000;
-    AND filter_type_of_offer(title) == 'sale';
-    AND filter_type_of_listing(title) = 'house';
+    bedrooms < 10
+    AND price BETWEEN 100000 AND 20000000
+    AND filter_type_of_offer(title) = 'sale'
+    AND filter_type_of_listing(title) = 'house'
+GROUP BY
+    bedrooms
+ORDER BY
+    bedrooms;
