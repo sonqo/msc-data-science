@@ -2,4 +2,4 @@
 **/.idea
 5-text-analytics/rnn/*.gz
 5-text-analytics/rnn/*.bin
-7-large-sclae-data-management/*.csv
+7-large-scale-data-management/zillow.csv
