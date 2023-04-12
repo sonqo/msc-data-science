@@ -44,6 +44,9 @@ CREATE LOADER zillow_loader() LANGUAGE PYTHON {
 -- LOADING DATA
 CREATE TABLE zillow FROM LOADER zillow_loader();
 
+-- TASKS 1, 2, 3, 7
+SELECT * FROM zillow;
+
 -- TASK 4
 CREATE FUNCTION filter_type_of_listing(strings STRING) RETURNS STRING LANGUAGE PYTHON {
     
