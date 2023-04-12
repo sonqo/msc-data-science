@@ -1,18 +1,18 @@
-# Initializations
+# initializations
 import findspark
 findspark.init()
 
-# Imports
+# imports
 from pyspark.sql import SparkSession
 from pyspark.sql.types import IntegerType, StringType
 from pyspark.sql.functions import col, split, udf, avg
 
-# App initialization and reading
+# app initialization and reading
 spark = SparkSession.builder.appName('zillow').getOrCreate()
 
 df = spark.read.option('header', True).csv('./zillow.csv')
 
-# Definition of UDFs
+# definition of UDFs
 def clean_bedrooms(string):
     return int(
         string.replace(' bds', '').replace('None', '-1')
@@ -97,7 +97,7 @@ df = df.withColumn('price', price_udf(col('price')))
 # rename provider column
 df = df.withColumnRenamed('real estate provider', 'provider')
 
-# select needed columns
+# tasks 1, 2, 3, 7
 print('\nTASKS 01, 02, 03, 07')
 df = df[['title', 'address', 'city', 'state', 'postal_code', 'bedrooms', 'bathrooms', 'sqft', 'price', 'provider', 'url']]
 df.show()
@@ -135,13 +135,11 @@ filtered_df = df.filter(
     (df.type_listing == 'house') & # and house∏
     (df.price >= 100000) & (df.price <= 20000000) # and price between 10.000 and 20.000.000
 )
-
-print('TASK 11')
 fin = filtered_df.groupBy('bedrooms').agg(
     avg('price').alias('avg_price'),
     avg('sqft').alias('avg_sqft'),
 )
-
+print('TASK 11')
 fin = fin.withColumn(
     'avg_price_per_sqft', col('avg_price') / col('avg_sqft')
     ).drop(
