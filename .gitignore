@@ -1,5 +1,11 @@
 **/.ipynb_checkpoints
 **/.idea
+
 5-text-analytics/rnn/*.gz
 5-text-analytics/rnn/*.bin
+
 7-large-scale-data-management/zillow.csv
+
+8-data-visualization/*.RData
+8-data-visualization/.Rhistory
+8-data-visualization/*.Rproj
