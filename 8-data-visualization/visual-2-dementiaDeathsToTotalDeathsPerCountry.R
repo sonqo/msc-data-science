@@ -1,4 +1,5 @@
 library(ggplot2)
+library(gridExtra)
 
 # calculate dementia deaths to total deaths ratio
 total_deaths_per_country$dementia_death_ratio <- 
@@ -27,8 +28,10 @@ p2 <-
       label = paste0(dementia_death_ratio, " %")
     )
   ) +
+  theme_bw() + 
   scale_x_continuous(labels = scales::label_comma(scale = 1)) +
   scale_fill_manual(name = "geo_name", values=c("blue","grey60")) +
   labs(title = "Dementia Deaths to Total Deaths Ratio in European Countries [2011-2022]\n", x = "Dementia Death Ratio [%]", y = "") +
   theme(plot.title = element_text(hjust = 0.5))
-p2
+
+grid.arrange(p1, p2, ncol=2)

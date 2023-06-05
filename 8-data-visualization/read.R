@@ -6,6 +6,7 @@ deaths = read_excel('deaths.xlsx') # ( demo_magec )
 dementia_deaths = read_excel('dementia_deaths.xlsx') # ( hlth_cd_aro )
 geos = read_excel('geos.xlsx', col_names=c('country_codes'))
 expenditure = read_excel('healthcare_expenditure.xlsx') # ( hlth_sha11 )
+population = read_excel('population.xlsx') # ( t_demo_pop )
 
 # slit country codes and standardize
 geos[c('geo_code', 'geo_name')] <- str_split_fixed(geos$country_codes, ']', 2)

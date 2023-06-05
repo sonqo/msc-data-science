@@ -1,5 +1,5 @@
-library(ggplot2)
 library(forcats)
+library(ggplot2)
 
 # calculate total dementia deaths per country
 total_deaths_per_country <-
@@ -34,8 +34,8 @@ p1 <-
       label = paste0(dementia_deaths, " deaths")
     )
   ) +
+  theme_bw() + 
   scale_x_continuous(labels = scales::label_comma(scale = 1)) +
   scale_fill_manual(name = "geo_name", values=c("blue","grey60")) +
   labs(title = "Total Dementia Deaths in European Countries [2011-2022]\n", x = "Dementia Deaths", y = "") +
   theme(plot.title = element_text(hjust = 0.5))
-p1
