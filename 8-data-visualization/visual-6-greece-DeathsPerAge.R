@@ -15,11 +15,12 @@ greece_deaths_age <-
   greece_deaths_age %>%
   filter(geo_code == 'EL') %>%
   group_by(geo_code, year, age) %>%
-  summarise(deaths = sum(deaths), dementia_deaths = sum(dementia_deaths))
+  summarise(deaths = sum(deaths), dementia_deaths = sum(dementia_deaths))  %>%
+  inner_join(population, by = c('geo_code' = 'geo_code', 'year' = 'year'))
 
 greece_deaths_age$dementia_death_ratio <- greece_deaths_age$dementia_deaths * 100 / greece_deaths_age$deaths
 
-p7 <-
+p6 <-
   ggplot(greece_deaths_age) +
   geom_smooth(
     aes(x=year, y=dementia_deaths, colour=age), size=0.75, method = "loess", se = FALSE
@@ -30,7 +31,7 @@ p7 <-
   theme_bw() +
   theme(plot.title = element_text(hjust = 0.5))
 
-p8 <-
+p7 <-
   ggplot(greece_deaths_age) +
   geom_smooth(
     aes(x=year, y=dementia_death_ratio, colour=age), size=0.75, method = "loess", se = FALSE
@@ -41,4 +42,4 @@ p8 <-
   theme_bw() +
   theme(plot.title = element_text(hjust = 0.5))
 
-grid.arrange(p5, p7, p6, p8, nrow=2, ncol=2, top=text_grob("Dementia Deaths and Dementia Death Ratios in Greece", size=14))
+grid.arrange(p4, p6, p5, p7, nrow=2, ncol=2, top=text_grob("Dementia Deaths and Dementia Death Ratios in Greece", size=14))

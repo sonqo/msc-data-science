@@ -13,7 +13,7 @@ greece_deaths_sex$dementia_death_ratio <- greece_deaths_sex$dementia_deaths * 10
 greece_deaths_sex$sex[greece_deaths_sex$sex == 'M'] <- 'male'
 greece_deaths_sex$sex[greece_deaths_sex$sex == 'F'] <- 'female'
 
-p5 <-
+p4 <-
   ggplot(greece_deaths_sex) +
   geom_smooth(
     aes(x=year, y=dementia_deaths, colour=sex), size=0.75, method = "loess", se = FALSE
@@ -24,7 +24,7 @@ p5 <-
   theme_bw() +
   theme(plot.title = element_text(hjust = 0.5))
 
-p6 <-
+p5 <-
   ggplot(greece_deaths_sex) +
   geom_smooth(
     aes(x=year, y=dementia_death_ratio, colour=sex), size=0.75, method = "loess", se = FALSE

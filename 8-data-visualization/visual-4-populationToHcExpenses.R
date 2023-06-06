@@ -21,7 +21,7 @@ population_hc_expenditure_2019 <-
   inner_join(expenses_2019, by='geo_code') %>%
   inner_join(population_2019, by='geo_code') 
 
-p4 <- 
+p3 <- 
   ggplot(
     population_hc_expenditure_2019, 
     aes(x = log(population), y = euro)
@@ -47,10 +47,10 @@ p4 <-
   ) +
   scale_alpha_discrete(range=c(0.75,1)) +
   scale_shape_manual(values = c(16, 13)) + 
-  scale_color_manual(name = "geo_name", values=c("blue", "grey50")) +
+  scale_color_manual(name = "geo_name", values=c("blue", "grey65")) +
   scale_size_continuous(name="Size of sales", range=c(4, 14)) + 
   scale_y_continuous(labels = scales::label_comma(scale = 1), n.breaks = 5) +
-  labs(title = "Population to Healthcare Expenses for European Counties [2019]\n", x = "Population [log scale]", y = "Euro (€)") +
+  labs(title = "Population to Healthcare Expenses for European Counties [2019]\n", x = "Population [log scale]", y = "Money Spent (€)") +
   guides(
     color = FALSE,
     alpha = FALSE, 
@@ -59,4 +59,4 @@ p4 <-
   ) +
   theme_bw() +
   theme(plot.title = element_text(hjust = 0.5), legend.key.size = unit(1, 'line'))
-p4
+p3

@@ -10,22 +10,19 @@ library(tidyverse)
 # SOURCE : http://stavrakoudis.econ.uoi.gr/r-eurostat/drawing-maps-of-europe.html
 
 # get Europe country polygons
-SHP_0 <- get_eurostat_geospatial(resolution = 10, nuts_level = 0, year = 2021)
-
-# discard any countries not present in our dataset
 SHP_EU <- 
-  SHP_0 %>% 
+  get_eurostat_geospatial(resolution = 10, nuts_level = 0, year = 2021) %>% 
   select(geo = NUTS_ID, geometry) %>% 
   arrange(geo) %>% 
   st_as_sf()
 
-DATA_SHP_EU <-
+SHP_EU_DATA <-
   total_deaths_per_country %>%
   select(geo_code, dementia_deaths) %>% 
   inner_join(SHP_EU, by = c('geo_code' = 'geo')) %>% 
   st_as_sf()
 
-DATA_SHP_EU %>% 
+SHP_EU_DATA %>% 
   ggplot(aes(fill = dementia_deaths)) + 
   scale_fill_gradient(name = "", labels = scales::label_comma(scale = 1), low = "#B589D6", high = "#552586", na.value = 'white') +
   theme_bw() + 
