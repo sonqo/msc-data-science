@@ -6,9 +6,9 @@ library(tidyverse)
 greece_deaths_age <- df
 greece_deaths_age$age <-
   ifelse(
-    greece_deaths_age$age == '75-90 years' | greece_deaths_age$age == 'Older than 90 years',
-    "Older than 75 years",
-    "Younger than 75 years"
+    greece_deaths_age$age == '60-75 years' | greece_deaths_age$age == '75-90 years' | greece_deaths_age$age == 'Older than 90 years',
+    "Older than 60 years",
+    "Younger than 60 years"
   )
 
 greece_deaths_age <-
