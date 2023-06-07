@@ -15,13 +15,13 @@ greece_population_death_trend <-
 
 p8 <-
   ggplot(greece_population_death_trend) +
-  geom_line(
-    aes(x=year, y=metric_values, color=metric_flag), size=0.75
+  geom_smooth(
+    aes(x=year, y=metric_values, color=metric_flag), size=0.75, method = "loess", se = FALSE
   ) +
   theme_bw() +
   scale_color_manual(values=c("red1","palegreen3")) +
   scale_x_continuous(breaks = 2011:2020, labels = unique(greece_population_death_trend$year)) +
-  labs(title = "Greece's Population and Death Trends", x = '', y = 'Population[millions]  |  Deaths [10 thousands]', color='Trend') +
+  labs(title = "Greece's Population and Death Trends\n", x = '', y = 'Population[millions]  |  Deaths [10 thousands]', color='Trend') +
   theme(plot.title = element_text(hjust = 0.5), legend.position = "none")
 
 europe_population_death_trend <- 
@@ -41,13 +41,13 @@ europe_population_death_trend <-
 
 p9 <-
   ggplot(europe_population_death_trend) +
-  geom_line(
-    aes(x=year, y=metric_values, color=metric_flag), size=0.75
+  geom_smooth(
+    aes(x=year, y=metric_values, color=metric_flag), size=0.75, method = "loess", se = FALSE
   ) +
   theme_bw() +
   scale_color_manual(values=c("red1","palegreen3")) +
   scale_x_continuous(breaks = 2011:2021, labels = unique(europe_population_death_trend$year)) +
-  labs(title = "Europe's Population and Death Trends", x = '', y = '', color='Trend') +
+  labs(title = "Europe's Population and Death Trends\n", x = '', y = '', color='Trend') +
   theme(plot.title = element_text(hjust = 0.5))
 
 grid.arrange(p8, p9, ncol=2)
