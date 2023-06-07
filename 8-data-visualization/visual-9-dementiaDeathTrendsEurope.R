@@ -1,5 +1,6 @@
 library(ggplot2)
 library(gridExtra)
+library(tidyverse)
 
 key_countries_dementia_trend <- 
   df %>%
