@@ -4,7 +4,7 @@ CREATE MASTER KEY ENCRYPTION BY PASSWORD='bl0bstoragE_pas5word';
 -- BOND ISSUES BLOB
 CREATE DATABASE SCOPED CREDENTIAL [https://findbstorageacc.blob.core.windows.net/bondissues]
 WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
-SECRET = 'sp=r&st=2023-07-16T08:36:42Z&se=2023-07-16T16:36:42Z&spr=https&sv=2022-11-02&sr=c&sig=78XDbj%2Bnhhmp1w%2BeVNCAbmQv%2FZhSzK%2FjXitBOXR%2B0%2BE%3D'
+SECRET = 'sp=r&st=2023-07-26T20:46:43Z&se=2023-07-27T04:46:43Z&spr=https&sv=2022-11-02&sr=c&sig=b1xchhioxFpY%2FlZysvpyHZsLpFrWzDztk%2Bp33OP2rmc%3D'
 CREATE EXTERNAL DATA SOURCE dataset_bondissues
 WITH 
 (
@@ -28,7 +28,7 @@ WITH
 -- BOND RATINGS BLOB
 CREATE DATABASE SCOPED CREDENTIAL [https://findbstorageacc.blob.core.windows.net/bondratings]
 WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
-SECRET = 'sp=r&st=2023-07-16T08:42:55Z&se=2023-07-16T16:42:55Z&spr=https&sv=2022-11-02&sr=c&sig=RAoO0TTqc8qyp%2BANFg25ZSvki6FPSileHGRHrdAeYW0%3D'
+SECRET = 'sp=r&st=2023-07-26T20:46:59Z&se=2023-07-27T04:46:59Z&spr=https&sv=2022-11-02&sr=c&sig=Vu46tRrph7de6cXvYlwSX%2Ft2%2BDz%2FJX1rWZpiwPTVI3U%3D'
 CREATE EXTERNAL DATA SOURCE dataset_bondratings
 WITH 
 (
