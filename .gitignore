@@ -1,5 +1,6 @@
 **/.ipynb_checkpoints
 **/.idea
+**/.DS_Store
 
 5-text-analytics/rnn/*.gz
 5-text-analytics/rnn/*.bin
