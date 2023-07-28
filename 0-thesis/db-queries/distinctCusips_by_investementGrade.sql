@@ -33,7 +33,7 @@ FROM (
 				A.CusipId
 		) A
 		LEFT JOIN 
-			BondRatings D ON A.CusipId = D.CompleteCusip AND D.RatingDate <= A.FirstTradeExecutionDate
+			BondRatings D ON A.CusipId = D.CompleteCusip AND D.RatingDate <= A.FirstTradeExecutionDate AND RatingCategory IS NOT NULL
 		GROUP BY
 			A.CusipId
 	) B
