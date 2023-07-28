@@ -1,4 +1,4 @@
-SELECT
+SELECT 
 	InvestmentGrade,
 	COUNT(DISTINCT CusipId) AS DistinctCusips
 FROM (
@@ -14,7 +14,7 @@ FROM (
 			A.CusipId,
 			MIN(D.RatingCategory) AS RatingCategory
 		FROM (
-			SELECT 
+			SELECT
 				A.CusipId,
 				MIN(A.TrdExctnDt) AS FirstTradeExecutionDate
 			FROM 
@@ -33,7 +33,7 @@ FROM (
 				A.CusipId
 		) A
 		LEFT JOIN 
-			BondRatings D ON A.CusipId = D.CompleteCusip
+			BondRatings D ON A.CusipId = D.CompleteCusip AND D.RatingDate <= A.FirstTradeExecutionDate
 		GROUP BY
 			A.CusipId
 	) B
