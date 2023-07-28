@@ -22,7 +22,7 @@ FROM (
 		AND C.IndustryGroup <> 4
 		AND C.CountryDomicile = 'USA'
 		AND C.IndustryCode NOT IN (40, 41, 42, 43, 44, 45)
-		AND A.TrdExctnDt >= '2002-01-1' AND A.TrdExctnDt < '2004-01-01'
+		AND A.TrdExctnDt >= '2002-01-1' AND A.TrdExctnDt < '2023-01-01'
 	GROUP BY
 		A.CusipId,
 		A.TrdExctnDt,

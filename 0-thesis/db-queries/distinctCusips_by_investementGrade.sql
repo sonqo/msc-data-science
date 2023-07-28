@@ -33,7 +33,7 @@ FROM (
 				A.CusipId
 		) A
 		LEFT JOIN 
-			BondRatings D ON A.CusipId = D.CompleteCusip AND D.RatingDate BETWEEN DATEADD(MONTH, -12, A.FirstTradeExecutionDate) AND A.FirstTradeExecutionDate
+			BondRatings D ON A.CusipId = D.CompleteCusip
 		GROUP BY
 			A.CusipId
 	) B
