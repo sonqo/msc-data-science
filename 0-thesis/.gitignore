@@ -1,2 +1,4 @@
 /data
 *.pickle
+
+.env
