@@ -1,7 +1,7 @@
 BULK INSERT  
 	[dbo].[CrspcSecuritiesDaily]
 FROM 
-	'crspc/securities11.csv'
+	'crspc/securities02.csv'
 WITH (
 	DATA_SOURCE = 'dataset_crspc',
 	FIRSTROW = 2,
