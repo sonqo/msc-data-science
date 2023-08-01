@@ -1,0 +1,66 @@
+SELECT
+    *
+FROM (
+    SELECT
+        A.TrdExctnDt,
+        -- A.CusipId,
+        -- A.RptdPr,
+        -- B.Coupon,
+        -- B.InterestFrequency,
+        -- CASE
+        --     WHEN B.FirstInterestDate IS NULL THEN B.OfferingDate
+        --     ELSE B.FirstInterestDate
+        -- END AS FirstInterestDate,
+        -- B.LastInterestDate,
+        -- B.Maturity,
+        CASE
+            WHEN A.TrdExctnDt = EOMONTH(A.TrdExctnDt) THEN 1
+            WHEN A.TrdExctnDt BETWEEN DATEADD(DAY, -5, EOMONTH(TrdExctnDt)) AND EOMONTH(A.TrdExctnDt) THEN 2
+            ELSE 0
+        END AS TradeDateInd
+    FROM 
+        Trace A
+    INNER JOIN
+        BondIssues B ON B.CompleteCusip = A.CusipId
+    INNER JOIN 
+		BondIssuers C ON B.IssuerId = C.IssuerId
+	WHERE
+		A.CntraMpId = 'C' 
+		AND C.IndustryGroup <> 4
+		AND C.CountryDomicile = 'USA'
+		AND C.IndustryCode NOT IN (40, 41, 42, 43, 44, 45)
+		AND A.TrdExctnDt >= '2002-01-1' AND A.TrdExctnDt < '2004-01-01'
+) A
+WHERE
+    TradeDateInd <> 0
+GROUP BY
+    CusipId,
+
+
+
+
+
+
+SELECT
+    CusipId,
+    MAX(TrdExctnDt),
+    TradeDateInd
+FROM(
+    SELECT
+        TrdExctnDt,
+        CusipId,
+        CASE
+            WHEN TrdExctnDt = EOMONTH(TrdExctnDt) THEN 1
+            WHEN TrdExctnDt BETWEEN DATEADD(DAY, -5, EOMONTH(TrdExctnDt)) AND EOMONTH(TrdExctnDt) THEN 2
+            ELSE 0
+        END AS TradeDateInd
+    FROM 
+        Trace A
+) A
+WHERE 
+    TradeDateInd <> 0
+GROUP BY
+    CusipId,
+    MONTH(TrdExctnDt),
+    YEAR(TrdExctnDt),
+    TradeDateInd

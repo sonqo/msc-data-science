@@ -4,7 +4,7 @@ CREATE MASTER KEY ENCRYPTION BY PASSWORD='bl0bstoragE_pas5word';
 -- BOND ISSUES BLOB
 CREATE DATABASE SCOPED CREDENTIAL [https://findbstorageaccount.blob.core.windows.net/bondissues]
 WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
-SECRET = 'sp=r&st=2023-07-26T20:46:43Z&se=2023-07-27T04:46:43Z&spr=https&sv=2022-11-02&sr=c&sig=b1xchhioxFpY%2FlZysvpyHZsLpFrWzDztk%2Bp33OP2rmc%3D'
+SECRET = 'sp=r&st=2023-08-01T10:32:26Z&se=2023-08-01T18:32:26Z&spr=https&sv=2022-11-02&sr=c&sig=finkVWqt1dVgXcgP8K8FsjUITtMSkjmvx4I8BCiVREM%3D'
 CREATE EXTERNAL DATA SOURCE dataset_bondissues
 WITH 
 (

@@ -1,12 +1,12 @@
 BULK INSERT  
-	[dbo].[CrspcSecuritiesDaily]
+	[dbo].[BondIssues]
 FROM 
-	'crspc/securities02.csv'
+	'bondissues/bond_issues_v3.csv'
 WITH (
-	DATA_SOURCE = 'dataset_crspc',
+	DATA_SOURCE = 'dataset_bondissues',
 	FIRSTROW = 2,
 	FIELDTERMINATOR = ',',
-	ROWTERMINATOR = '\n',
+	ROWTERMINATOR = '0x0a',
 	BATCHSIZE=250000,
 	TABLOCK 
 )
