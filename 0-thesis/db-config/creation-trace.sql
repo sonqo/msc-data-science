@@ -46,3 +46,21 @@ CREATE TABLE [dbo].[Trace](
 GO
 
 CREATE CLUSTERED INDEX TraceDate ON findb.dbo.Trace (TrdExctnDt);
+
+ALTER TABLE
+	Trace
+ADD TrdExctnDtInd AS (
+	CASE
+		WHEN TrdExctnDt = EOMONTH(TrdExctnDt) THEN 1
+        WHEN TrdExctnDt BETWEEN DATEADD(DAY, -5, EOMONTH(TrdExctnDt)) AND EOMONTH(TrdExctnDt) THEN 2
+        ELSE 0 
+	END
+)
+
+ALTER TABLE
+	Trace
+ADD TrdExctnMn AS MONTH(TrdExctnDt)
+
+ALTER TABLE
+	Trace
+ADD TrdExctnYr AS YEAR(TrdExctnDt)
