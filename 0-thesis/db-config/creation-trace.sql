@@ -51,8 +51,7 @@ ALTER TABLE
 	Trace
 ADD TrdExctnDtInd AS (
 	CASE
-		WHEN TrdExctnDt = EOMONTH(TrdExctnDt) THEN 1
-        WHEN TrdExctnDt BETWEEN DATEADD(DAY, -5, EOMONTH(TrdExctnDt)) AND EOMONTH(TrdExctnDt) THEN 2
+        WHEN TrdExctnDt BETWEEN DATEADD(DAY, -5, EOMONTH(TrdExctnDt)) AND EOMONTH(TrdExctnDt) THEN 1
         ELSE 0 
 	END
 )

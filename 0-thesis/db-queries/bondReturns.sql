@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS BondReturns;
+
 SELECT
 	LtTrdExctnDt,
 	CusipId,
