@@ -1,12 +1,12 @@
 BULK INSERT  
-	[dbo].[BondIssues]
+	[dbo].[BondRatings]
 FROM 
-	'bondissues/bond_issues_v3.csv'
+	'bondratings/bond_ratings.csv'
 WITH (
-	DATA_SOURCE = 'dataset_bondissues',
+	DATA_SOURCE = 'dataset_bondratings',
 	FIRSTROW = 2,
 	FIELDTERMINATOR = ',',
-	ROWTERMINATOR = '0x0a',
+	ROWTERMINATOR = '\n',
 	BATCHSIZE=250000,
 	TABLOCK 
 )

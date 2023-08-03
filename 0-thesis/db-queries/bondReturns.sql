@@ -16,7 +16,13 @@ SELECT
 		(LAG(RptdPr) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) + LAG(AccruedInterest) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt)) -- -(LagPrice + LagAccInt)
 	) / ( 
 		LAG(RptdPr) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) + LAG(AccruedInterest) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) -- / (LagPrice + LagAccInt)
-	) AS R
+	) AS R,
+	( 
+		(RptdPr + AccruedInterest + Coupon * 1.0 / InterestFrequency ) - -- Price + AccInt + Coupon
+		(LAG(RptdPr) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) + LAG(AccruedInterest) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt)) -- -(LagPrice + LagAccInt)
+	) / ( 
+		LAG(RptdPr) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) + LAG(AccruedInterest) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) -- / (LagPrice + LagAccInt)
+	) AS R_new
 INTO
 	BondReturns
 FROM (
@@ -53,14 +59,17 @@ FROM (
 				), 
 				0
 			)
-		) / InterestFrequency / 360 / InterestFrequency AS AccruedInterest
+		) / InterestFrequency / (360 / InterestFrequency) AS AccruedInterest
 	FROM (
 		SELECT
 			A.LtTrdExctnDt,
 			A.CusipId,
 			AVG(B.RptdPr) AS RptdPr,
 			MAX(C.Coupon) AS Coupon,
-			MAX(C.InterestFrequency) AS InterestFrequency,
+			CASE
+				WHEN MAX(C.InterestFrequency) IS NOT NULL AND MAX(C.InterestFrequency) <> 0 THEN MAX(C.InterestFrequency)
+				ELSE 2
+			END AS InterestFrequency,
 			CASE
 				WHEN MAX(C.FirstInterestDate) IS NOT NULL THEN MAX(C.FirstInterestDate)
 				ELSE MAX(C.OfferingDate)
@@ -79,7 +88,6 @@ FROM (
 				A.CntraMpId = 'C' 
 				AND TrdExctnDtInd <> 0
 				AND C.IndustryGroup <> 4
-				AND InterestFrequency <> 0
 				AND C.CountryDomicile = 'USA'
 				AND C.IndustryCode NOT IN (40, 41, 42, 43, 44, 45)
 				AND A.TrdExctnDt >= '2002-01-1' AND A.TrdExctnDt < '2023-01-01'
@@ -97,4 +105,5 @@ FROM (
 			A.LtTrdExctnDt,
 			A.CusipId
 	) B
-) C
+) 
+C
