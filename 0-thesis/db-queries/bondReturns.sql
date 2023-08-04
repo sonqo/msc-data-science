@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS BondReturns;
+-- DROP TABLE IF EXISTS BondReturns;
 
 SELECT
 	LtTrdExctnDt,
@@ -7,24 +7,28 @@ SELECT
 	LAG(RptdPr) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) AS LagRptdPr,
 	Coupon,
 	InterestFrequency,
+	LatestInterestDate,
+	NextInterestDate,
+	LAG(NextInterestDate) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) AS LagInterestDate,
+	(
+		DATEDIFF(
+		MONTH,
+		LAG(NextInterestDate) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt),
+		LtTrdExctnDt
+	) + 12/InterestFrequency ) / (12/InterestFrequency) AS CouponsPaid,
 	T,
 	D,
-	AccruedInterest,
-	LAG(AccruedInterest) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) AS LagAccruedInterest,
-	( 
-		(RptdPr + AccruedInterest + Coupon ) - -- Price + AccInt + Coupon
-		(LAG(RptdPr) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) + LAG(AccruedInterest) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt)) -- -(LagPrice + LagAccInt)
-	) / ( 
-		LAG(RptdPr) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) + LAG(AccruedInterest) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) -- / (LagPrice + LagAccInt)
-	) AS R,
-	( 
-		(RptdPr + AccruedInterest + Coupon * 1.0 / InterestFrequency ) - -- Price + AccInt + Coupon
-		(LAG(RptdPr) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) + LAG(AccruedInterest) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt)) -- -(LagPrice + LagAccInt)
-	) / ( 
-		LAG(RptdPr) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) + LAG(AccruedInterest) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) -- / (LagPrice + LagAccInt)
-	) AS R_new
-INTO
-	BondReturns
+	AccruedInterest
+
+	-- LAG(AccruedInterest) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) AS LagAccruedInterest,
+	-- ( 
+	-- 	(RptdPr + AccruedInterest + Coupon * 1.0 / InterestFrequency ) - -- Price + AccInt + Coupon
+	-- 	(LAG(RptdPr) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) + LAG(AccruedInterest) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt)) -- -(LagPrice + LagAccInt)
+	-- ) / ( 
+	-- 	LAG(RptdPr) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) + LAG(AccruedInterest) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) -- / (LagPrice + LagAccInt)
+	-- ) AS R
+-- INTO
+	-- BondReturns
 FROM (
 	SELECT
 		LtTrdExctnDt,
@@ -34,6 +38,23 @@ FROM (
 		InterestFrequency,
 		360 / InterestFrequency AS T,
 		FirstInterestDate,
+		DATEADD( 
+			MONTH,
+			-- CouponsPaid * MonthsInPeriod
+			( ABS ( dbo.YearFact(LtTrdExctnDt, FirstInterestDate, 0 ) ) ) / ( 360 / InterestFrequency ) * (360 / InterestFrequency / 30),
+			FirstInterestDate
+		) AS LatestInterestDate,
+		DATEADD( 
+			MONTH,
+			-- CouponsPaid * MonthsInPeriod
+			360 / InterestFrequency / 30,
+			DATEADD( 
+				MONTH,
+				-- CouponsPaid * MonthsInPeriod
+				( ABS ( dbo.YearFact(LtTrdExctnDt, FirstInterestDate, 0 ) ) ) / ( 360 / InterestFrequency ) * (360 / InterestFrequency / 30),
+				FirstInterestDate
+			)
+		) AS NextInterestDate,
 		ABS ( 
 			dbo.YearFact ( 
 				LtTrdExctnDt,
@@ -47,7 +68,7 @@ FROM (
 				0
 			)
 		) AS D,
-		Coupon * ABS ( 
+		Coupon * 1.0 / InterestFrequency * ABS ( 
 			dbo.YearFact ( 
 				LtTrdExctnDt,
 				-- LatestInterestDate
@@ -59,7 +80,7 @@ FROM (
 				), 
 				0
 			)
-		) / InterestFrequency / (360 / InterestFrequency) AS AccruedInterest
+		) / 360 AS AccruedInterest
 	FROM (
 		SELECT
 			A.LtTrdExctnDt,
@@ -75,7 +96,7 @@ FROM (
 				ELSE MAX(C.OfferingDate)
 			END AS FirstInterestDate
 		FROM (
-			SELECT
+			SELECT top 100
 				CusipId,
 				MAX(TrdExctnDt) AS LtTrdExctnDt
 			FROM 
@@ -89,13 +110,15 @@ FROM (
 				AND TrdExctnDtInd <> 0
 				AND C.IndustryGroup <> 4
 				AND C.CountryDomicile = 'USA'
+				AND B.Maturity >= A.TrdExctnDt
+				AND B.Maturity > B.OfferingDate
 				AND C.IndustryCode NOT IN (40, 41, 42, 43, 44, 45)
-				AND A.TrdExctnDt >= '2002-01-1' AND A.TrdExctnDt < '2023-01-01'
+				AND A.TrdExctnDt >= '2002-01-1' AND A.TrdExctnDt < '2006-01-01'
 			GROUP BY
 				CusipId,
 				TrdExctnMn,
 				TrdExctnYr,
-				TrdExctnDtInd
+				TrdExctnDtInd order by CusipId, LtTrdExctnDt
 		) A
 		INNER JOIN 
 			Trace B ON A.CusipId = B.CusipId AND A.LtTrdExctnDt = B.TrdExctnDt
@@ -105,5 +128,4 @@ FROM (
 			A.LtTrdExctnDt,
 			A.CusipId
 	) B
-) 
-C
+) C
