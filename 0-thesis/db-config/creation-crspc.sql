@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS [dbo].[CrspcSecuritiesDaily]
 
 CREATE TABLE [dbo].[CrspcSecuritiesDaily](
 	[GvKey] [nvarchar](10) NULL,
-	[IId] [int] NULL,
+	[IId] [nvarchar](10) NOT NULL,
 	[DataDate] [date] NOT NULL,
 	[Tic] [nvarchar](10) NULL,
 	[Cusip] [nvarchar](10) NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE [dbo].[CrspcSecuritiesDaily](
 	[PrcOd] [numeric](18, 5) NULL,
 	[PrcStd] [numeric](18, 5) NULL,
 	[Exchg] [int] NULL,
-	[Exchange] [nvarchar](15) NULL,
+	[Exchange] [nvarchar](50) NULL,
 	[Sic] [decimal] NULL,
 	[Industry] [nvarchar](15) NULL,
 	[Naics] [decimal] NULL,
@@ -25,13 +25,13 @@ CREATE TABLE [dbo].[CrspcSecuritiesDaily](
 	[Divd] [decimal] NULL,
 	[DivdPayDateInd] [nvarchar](1) NULL,
 	[Divsp] [decimal] NULL,
-	[DivdPayDate] [date] NULL,
 	[DivspPayDate] [date] NULL,
 	[AnncDate] [date] NULL,
 	[IpoDate] [date] NULL,
 	CONSTRAINT [PK_CrspcSecuritiesDaily] PRIMARY KEY CLUSTERED (
 		[DataDate] ASC,
-		[Cusip] ASC
+		[Cusip] ASC,
+		[IId] ASC
 	) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
