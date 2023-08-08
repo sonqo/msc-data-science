@@ -1,12 +1,14 @@
+SELECT DISTINCT YEAR(TrdExctnDt) FROM Trace ORDER BY YEAR(TrdExctnDt)
+
 BULK INSERT  
-	[dbo].[BondReturns]
+	[dbo].[Trace]
 FROM 
-	'bondreturns/bond_returns.csv'
+	'trace/trace_enhanced-2002.csv'
 WITH (
-	DATA_SOURCE = 'dataset_bondreturns',
+	DATA_SOURCE = 'dataset_trace',
 	FIRSTROW = 2,
 	FIELDTERMINATOR = ',',
-	ROWTERMINATOR = '0x0a', -- 0x0a for Unix systems
+	ROWTERMINATOR = '0x0a',
 	BATCHSIZE=250000,
 	TABLOCK 
 )

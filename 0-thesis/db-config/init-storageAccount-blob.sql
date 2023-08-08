@@ -1,18 +1,6 @@
 -- MASTER KEY
 CREATE MASTER KEY ENCRYPTION BY PASSWORD='bl0bstoragE_pas5word';
 
--- BOND ISSUES BLOB
-CREATE DATABASE SCOPED CREDENTIAL [https://findstacc.blob.core.windows.net/bondissues]
-WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
-SECRET = 'sp=r&st=2023-08-08T16:22:20Z&se=2023-08-09T00:22:20Z&spr=https&sv=2022-11-02&sr=c&sig=jFnlVPH6BIuK%2BUbvs49wSZT05dkxtpOys%2BK9%2FvGa2TU%3D'
-CREATE EXTERNAL DATA SOURCE dataset_bondissues
-WITH 
-(
-    TYPE = BLOB_STORAGE,
-    LOCATION = 'https://findstacc.blob.core.windows.net',
-    CREDENTIAL = [https://findstacc.blob.core.windows.net/bondissues]
-)
-
 -- BOND ISSUERS BLOB
 CREATE DATABASE SCOPED CREDENTIAL [https://findstacc.blob.core.windows.net/bondissuers]
 WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
@@ -23,6 +11,18 @@ WITH
     TYPE = BLOB_STORAGE,
     LOCATION = 'https://findstacc.blob.core.windows.net',
     CREDENTIAL = [https://findstacc.blob.core.windows.net/bondissuers]
+)
+
+-- BOND ISSUES BLOB
+CREATE DATABASE SCOPED CREDENTIAL [https://findstacc.blob.core.windows.net/bondissues]
+WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
+SECRET = 'sp=r&st=2023-08-08T16:22:20Z&se=2023-08-09T00:22:20Z&spr=https&sv=2022-11-02&sr=c&sig=jFnlVPH6BIuK%2BUbvs49wSZT05dkxtpOys%2BK9%2FvGa2TU%3D'
+CREATE EXTERNAL DATA SOURCE dataset_bondissues
+WITH 
+(
+    TYPE = BLOB_STORAGE,
+    LOCATION = 'https://findstacc.blob.core.windows.net',
+    CREDENTIAL = [https://findstacc.blob.core.windows.net/bondissues]
 )
 
 -- BOND RATINGS BLOB
@@ -49,18 +49,6 @@ WITH
     CREDENTIAL = [https://findstacc.blob.core.windows.net/bondreturns]
 )
 
--- TRACE BLOB
-CREATE DATABASE SCOPED CREDENTIAL [https://findstacc.blob.core.windows.net/trace]
-WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
-SECRET = 'sp=r&st=2023-08-07T04:51:19Z&se=2023-08-07T12:51:19Z&spr=https&sv=2022-11-02&sr=c&sig=upMsRUO58IpOyZCXd7G0E4T3J%2FP6EVcLj9NasCbCPPI%3D'
-CREATE EXTERNAL DATA SOURCE dataset_trace
-WITH 
-(
-    TYPE = BLOB_STORAGE,
-    LOCATION = 'https://findstacc.blob.core.windows.net',
-    CREDENTIAL = [https://findstacc.blob.core.windows.net/trace]
-)
-
 -- CRSPC BLOB
 CREATE DATABASE SCOPED CREDENTIAL [https://findstacc.blob.core.windows.net/crspc]
 WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
@@ -71,4 +59,16 @@ WITH
     TYPE = BLOB_STORAGE,
     LOCATION = 'https://findstacc.blob.core.windows.net',
     CREDENTIAL = [https://findstacc.blob.core.windows.net/crspc]
+)
+
+-- TRACE BLOB
+CREATE DATABASE SCOPED CREDENTIAL [https://findstacc.blob.core.windows.net/trace]
+WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
+SECRET = 'sp=r&st=2023-08-08T20:19:26Z&se=2023-08-09T04:19:26Z&spr=https&sv=2022-11-02&sr=c&sig=Y85VVDSyqSjczmiHhra6kRzv6QzSDmlpqbVPU0OJuz4%3D'
+CREATE EXTERNAL DATA SOURCE dataset_trace
+WITH 
+(
+    TYPE = BLOB_STORAGE,
+    LOCATION = 'https://findstacc.blob.core.windows.net',
+    CREDENTIAL = [https://findstacc.blob.core.windows.net/trace]
 )

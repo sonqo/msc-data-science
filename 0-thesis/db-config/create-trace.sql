@@ -41,7 +41,7 @@ CREATE TABLE [dbo].[Trace](
 	[PrTrdDt] [date] NULL,
 	[FirstTradeCtrlDate] [date] NULL,
 	[FirstTradeCtrlNum] [decimal] NULL,
-	[Agency] [nvarchar](1) NULL
+	[Agency] [nvarchar](5) NULL
 ) ON [PRIMARY]
 GO
 
