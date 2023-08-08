@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS TraceBond_filtered;
+DROP TABLE IF EXISTS [dbo].[TraceBond_filtered];
 
 SELECT
 	A.CusipId,
@@ -8,6 +8,8 @@ SELECT
 	A.EntrdVolQt,
 	A.RptdPr,
 	A.RptSideCd,
+	A.BuyCmsnRt,
+	A.SellCmsnRt,
 	B.InterestFrequency,
 	B.Coupon,
 	B.OfferingDate,
@@ -20,7 +22,7 @@ SELECT
 	C.IndustryCode,
 	C.IndustryGroup
 INTO
-	TraceBond_filtered
+	[dbo].[TraceBond_filtered]
 FROM 
 	Trace A
 INNER JOIN
@@ -28,10 +30,10 @@ INNER JOIN
 INNER JOIN 
 	BondIssuers C ON B.IssuerId = C.IssuerId
 WHERE
-	A.CntraMpId = 'C' 
-	AND A.TrdExctnDtInd <> 0
-	AND C.IndustryGroup <> 4
-	AND C.CountryDomicile = 'USA'
+	A.CntraMpId = 'C' -- customer
+	AND A.TrdExctnDtInd <> 0 -- last trade of the month (if in last 5-days)
+	AND C.IndustryGroup <> 4 -- governemt
+	AND C.CountryDomicile = 'USA' 
 	AND A.TrdExctnDt <= B.Maturity
 	AND B.OfferingDate < B.Maturity
 	AND C.IndustryCode NOT IN (40, 41, 42, 43, 44, 45)

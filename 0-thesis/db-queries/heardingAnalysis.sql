@@ -13,7 +13,7 @@ SELECT
     MktRf, Smb, Hml, Rmw, Cma, Rf, Rm, 
     ABS(Rm) AS AbsoluteRm,
     POWER(Rm, 2) AS SquaredRm, 
-    Sum / Count AS Measure,
+    Sum / Count AS Csad,
     CASE 
         WHEN Rm <= @LeftTail THEN 1
         ELSE 0
@@ -26,14 +26,14 @@ FROM (
     SELECT
         DataDate, 
         MktRf, Smb, Hml, Rmw, Cma, Rf, Rm,
-        ABS(SUM(DReturn) - Rm) AS Sum,
+        ABS(SUM(DailyReturns) - Rm) AS Sum,
         COUNT(DISTINCT Cusip) AS Count
     FROM (
         SELECT
             A.Cusip,
             A.DataDate,
             B.*,
-            LOG(PrcCd, EXP(1)) - LOG(LAG(A.PrcCd) OVER (PARTITION BY A.Cusip ORDER BY A.DataDate), EXP(1)) AS DReturn
+            (PrcCd / LAG(A.PrcCd)  OVER (PARTITION BY A.Cusip ORDER BY A.DataDate)) - 1 AS DailyReturns
         FROM
             [dbo].[CrspcSecuritiesDaily] A
         INNER JOIN

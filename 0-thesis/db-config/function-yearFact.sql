@@ -1,5 +1,5 @@
 -- AS FOUND AT SQLSUNDAY.COM : Calculating 30/360 day count convention
-CREATE FUNCTION dbo.YearFact (
+CREATE FUNCTION [dbo].[YearFact] (
     @startDate date,
     @endDate date,
     @european bit = 0 -- 0 = US NASD, 1 = European
@@ -8,7 +8,7 @@ RETURNS int -- The number of 30/360 days
 WITH SCHEMABINDING
 AS
 BEGIN
-    --- Split year, month and day into separate variables:
+    -- Split year, month and day into separate variables:
     DECLARE 
 		@y1 smallint = DATEPART(yy, @startDate), 
 		@y2 smallint = DATEPART(yy, @endDate),

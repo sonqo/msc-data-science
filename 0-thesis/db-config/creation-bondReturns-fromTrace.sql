@@ -1,21 +1,24 @@
- DROP TABLE IF EXISTS BondReturns;
+DROP TABLE IF EXISTS [dbo].[BondReturns];
 
 SELECT
 	*,
 	 ( 
-	 	(1000* RptdPr + AccruedInterest + Coupon * CouponsPaid * 1.0 / InterestFrequency ) -
-	 	( 1000 * LAG(RptdPr) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) + LAG(AccruedInterest) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) )
+	 	( RptdPr + AccruedInterest + Coupon * CouponsPaid * 1.0 / InterestFrequency ) -
+	 	( LAG(RptdPr) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) + LAG(AccruedInterest) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) )
 	 ) / ( 
-	 	1000 * LAG(RptdPr) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) + LAG(AccruedInterest) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt)
+		LAG(RptdPr) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) + LAG(AccruedInterest) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt)
 	 ) AS R
 INTO
-	BondReturns
+	[dbo].[BondReturns]
 FROM (
 	-- CALCULATE ACCRUED INTEREST
 	SELECT
 		CusipId,
 		LtTrdExctnDt,
 		RptdPr,
+		RptSideCd,
+		BuyCmsnRt,
+		SellCmsnRt,
 		Coupon,
 		InterestFrequency,
 		FirstInterestDate,
@@ -31,6 +34,9 @@ FROM (
 			CusipId,
 			LtTrdExctnDt,
 			RptdPr,
+			RptSideCd,
+			BuyCmsnRt,
+			SellCmsnRt,
 			Coupon,
 			InterestFrequency,
 			FirstInterestDate,
@@ -68,6 +74,9 @@ FROM (
 				CusipId,
 				LtTrdExctnDt,
 				RptdPr,
+				RptSideCd,
+				BuyCmsnRt,
+				SellCmsnRt,
 				Coupon,
 				InterestFrequency,
 				FirstInterestDate,
@@ -99,6 +108,9 @@ FROM (
 					A.CusipId,
 					A.LtTrdExctnDt,
 					AVG(B.RptdPr) AS RptdPr,
+					MAX(B.RptSideCd) AS RptSideCd,
+					MAX(B.BuyCmsnRt) AS BuyCmsnRt,
+					MAX(B.SellCmsnRt) AS SellCmsnRt,
 					MAX(B.Coupon) AS Coupon,
 					CASE
 						WHEN MAX(B.InterestFrequency) IS NOT NULL AND MAX(B.InterestFrequency) <> 0 THEN MAX(B.InterestFrequency)
