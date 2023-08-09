@@ -1,11 +1,11 @@
 DECLARE @LeftTail FLOAT
 SET @LeftTail = (
-	SELECT DISTINCT PERCENTILE_CONT(0.05) WITHIN GROUP(ORDER BY Rm) OVER () FROM [dbo].[CrspcFactors]
+	SELECT DISTINCT PERCENTILE_CONT(0.05) WITHIN GROUP(ORDER BY Rm) OVER () FROM CrspcFactors
 )
 
 DECLARE @RightTail FLOAT
 SET @RightTail = (
-	SELECT DISTINCT PERCENTILE_CONT(0.95) WITHIN GROUP(ORDER BY Rm) OVER () FROM [dbo].[CrspcFactors]
+	SELECT DISTINCT PERCENTILE_CONT(0.95) WITHIN GROUP(ORDER BY Rm) OVER () FROM CrspcFactors
 )
 
 SELECT
@@ -35,9 +35,9 @@ FROM (
             B.*,
             (PrcCd / LAG(A.PrcCd)  OVER (PARTITION BY A.Cusip ORDER BY A.DataDate)) - 1 AS DailyReturns
         FROM
-            [dbo].[CrspcSecuritiesDaily] A
+            CrspcSecuritiesDaily A
         INNER JOIN
-            [dbo].[CrspcFactors] B ON A.DataDate = B.Date
+            CrspcFactors B ON A.DataDate = B.Date
         WHERE
 			PrcCd <> 0
             AND B.Date >= '2002-01-1' AND B.Date < '2022-01-01'
@@ -53,7 +53,7 @@ ORDER BY
 SELECT
 	COUNT(DISTINCT Cusip)
 FROM
-	[dbo].[CrspcSecuritiesDaily]
+	CrspcSecuritiesDaily
 WHERE
 	DataDate >= '2002-01-1' AND DataDate < '2022-01-01'
 
@@ -62,7 +62,7 @@ SELECT
 	Exchange,
 	COUNT(DISTINCT Cusip)
 FROM
-	[dbo].[CrspcSecuritiesDaily]
+	CrspcSecuritiesDaily
 WHERE
 	DataDate >= '2002-01-1' AND DataDate < '2022-01-01'
 GROUP BY
@@ -73,7 +73,7 @@ SELECT
 	Industry,
 	COUNT(DISTINCT Cusip)
 FROM
-	[dbo].[CrspcSecuritiesDaily]
+	CrspcSecuritiesDaily
 WHERE
 	DataDate >= '2002-01-1' AND DataDate < '2022-01-01'
 GROUP BY
