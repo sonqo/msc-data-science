@@ -27,13 +27,13 @@ FROM (
         DataDate, 
         MktRf, Smb, Hml, Rmw, Cma, Rf, Rm,
         ABS(SUM(DailyReturns) - Rm) AS Sum,
-        COUNT(DISTINCT Cusip) AS Count
+        COUNT(DISTINCT LPermNo) AS Count
     FROM (
         SELECT
-            A.Cusip,
+            A.LPermNo,
             A.DataDate,
             B.*,
-            (PrcCd / LAG(A.PrcCd)  OVER (PARTITION BY A.Cusip ORDER BY A.DataDate)) - 1 AS DailyReturns
+            (PrcCd / LAG(A.PrcCd)  OVER (PARTITION BY A.LPermNo ORDER BY A.DataDate)) - 1 AS DailyReturns
         FROM
             CrspcSecuritiesDaily A
         INNER JOIN
@@ -51,7 +51,7 @@ ORDER BY
 
 -- DISTINCT CUSIPS IN DATASET
 SELECT
-	COUNT(DISTINCT Cusip)
+	COUNT(DISTINCT LPermNo)
 FROM
 	CrspcSecuritiesDaily
 WHERE
@@ -60,7 +60,7 @@ WHERE
 -- DISTINCT CUSIPS BY EXCHANGE
 SELECT
 	Exchange,
-	COUNT(DISTINCT Cusip)
+	COUNT(DISTINCT LPermNo)
 FROM
 	CrspcSecuritiesDaily
 WHERE
@@ -71,7 +71,7 @@ GROUP BY
 -- DISTINCT CUSIPS BY INDUSTRY
 SELECT
 	Industry,
-	COUNT(DISTINCT Cusip)
+	COUNT(DISTINCT LPermNo)
 FROM
 	CrspcSecuritiesDaily
 WHERE
