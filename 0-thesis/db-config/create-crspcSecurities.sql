@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS [dbo].[CrspcSecuritiesDaily]
 
 CREATE TABLE [dbo].[CrspcSecuritiesDaily](
 	[GvKey] [nvarchar](10) NULL,
+	[LPermNo] [nvarchar](10) NOT NULL,
 	[IId] [nvarchar](10) NOT NULL,
 	[DataDate] [date] NOT NULL,
 	[Tic] [nvarchar](10) NULL,
@@ -30,7 +31,7 @@ CREATE TABLE [dbo].[CrspcSecuritiesDaily](
 	[IpoDate] [date] NULL,
 	CONSTRAINT [PK_CrspcSecuritiesDaily] PRIMARY KEY CLUSTERED (
 		[DataDate] ASC,
-		[Cusip] ASC,
+		[LPermNo] ASC,
 		[IId] ASC
 	) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
