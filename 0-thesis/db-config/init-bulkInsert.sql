@@ -1,5 +1,3 @@
-SELECT DISTINCT YEAR(TrdExctnDt) FROM Trace ORDER BY YEAR(TrdExctnDt)
-
 BULK INSERT  
 	[dbo].[Trace]
 FROM 
