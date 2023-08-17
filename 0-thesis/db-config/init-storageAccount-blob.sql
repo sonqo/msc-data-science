@@ -28,7 +28,7 @@ WITH
 -- BOND RATINGS BLOB
 CREATE DATABASE SCOPED CREDENTIAL [https://findbstore.blob.core.windows.net/bond-ratings]
 WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
-SECRET = 'sp=r&st=2023-08-16T22:37:31Z&se=2023-08-17T06:37:31Z&spr=https&sv=2022-11-02&sr=c&sig=WnUodot04pIWMoFY0UonZbRN4eq6icvlBSbkbAluXw8%3D'
+SECRET = 'sp=r&st=2023-08-17T11:46:21Z&se=2023-08-17T19:46:21Z&spr=https&sv=2022-11-02&sr=c&sig=o823ZiSdw04lAJb8X%2BrlO5dgnPVhvMfyttLI3IzdkAU%3D'
 CREATE EXTERNAL DATA SOURCE dataset_bond_ratings
 WITH 
 (
@@ -52,7 +52,7 @@ WITH
 -- CRSPC BLOB
 CREATE DATABASE SCOPED CREDENTIAL [https://findbstore.blob.core.windows.net/crspc]
 WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
-SECRET = 'sp=r&st=2023-08-16T11:50:09Z&se=2023-08-16T19:50:09Z&spr=https&sv=2022-11-02&sr=c&sig=orUhlAsNPz0waIJAonK%2BqIEwrijDzKkcGNrbz8VDZYo%3D'
+SECRET = 'sp=r&st=2023-08-17T20:48:10Z&se=2023-08-18T04:48:10Z&spr=https&sv=2022-11-02&sr=c&sig=%2FaMg4CCMgtK5uGjc0NYgQcjAaSzrbi28WQN2fYlFj2o%3D'
 CREATE EXTERNAL DATA SOURCE dataset_crspc
 WITH 
 (

@@ -45,7 +45,7 @@ CREATE TABLE [dbo].[Trace](
 ) ON [PRIMARY]
 GO
 
-CREATE CLUSTERED INDEX [TraceDate] ON [dbo].[Trace] ([TrdExctnDt]);
+-- INITIALIZE AFTER POPULATING TABLE
 
 ALTER TABLE
 	[dbo].[Trace]

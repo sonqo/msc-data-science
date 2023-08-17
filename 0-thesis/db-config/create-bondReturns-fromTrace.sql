@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS [dbo].[BondReturns];
+DROP TABLE IF EXISTS [dbo].[BondReturns_v2];
 
 SELECT
 	*,
@@ -9,7 +9,7 @@ SELECT
 		LAG(RptdPr) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) + LAG(AccruedInterest) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt)
 	 ) AS R
 INTO
-	[dbo].[BondReturns]
+	[dbo].[BondReturns_v2]
 FROM (
 	-- CALCULATE ACCRUED INTEREST
 	SELECT
@@ -126,14 +126,14 @@ FROM (
 						CusipId,
 						MAX(TrdExctnDt) AS LtTrdExctnDt
 					FROM 
-						TraceBond_filtered
+						Trace_withRatings_filtered
 					GROUP BY
 						CusipId,
 						TrdExctnMn,
 						TrdExctnYr 
 				) A
 				INNER JOIN 
-					TraceBond_filtered B ON A.CusipId = B.CusipId AND A.LtTrdExctnDt = B.TrdExctnDt
+					Trace_withRatings_filtered B ON A.CusipId = B.CusipId AND A.LtTrdExctnDt = B.TrdExctnDt
 				GROUP BY
 					A.LtTrdExctnDt,
 					A.CusipId
