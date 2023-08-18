@@ -38,7 +38,6 @@ FROM (
 			GROUP BY
 				Date
 		) B ON A.Date = B.Date
-		
 	) A
 	GROUP BY
 		Date,
