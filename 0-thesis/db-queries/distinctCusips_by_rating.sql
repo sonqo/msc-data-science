@@ -1,38 +1,15 @@
 SELECT
     TrdExctnDt,
-    MinimumRating,
+    RatingNum,
     COUNT(DISTINCT CusipId) AS DistinctCusips
-FROM (
-    SELECT
-        A.CusipId,
-        A.TrdExctnDt,
-        MIN(B.RatingCategory) AS MinimumRating
-    FROM (
-        SELECT
-            A.CusipId, 
-            A.TrdExctnDt, 
-            MAX(B.RatingDate) AS MaxRatingDate
-        FROM 
-            TraceBond_filtered A
-        LEFT JOIN 
-            BondRatings B ON A.CusipId = B.CompleteCusip 
-			AND B.RatingDate <= A.TrdExctnDt 
-			AND B.RatingCategory IS NOT NULL
-        WHERE
-            A.TrdExctnDt >= '2002-01-1' AND A.TrdExctnDt < '2023-01-01'
-        GROUP BY
-            A.CusipId,
-            A.TrdExctnDt
-    ) A
-    INNER JOIN 
-        BondRatings B ON B.CompleteCusip = A.CusipId AND RatingDate = MaxRatingDate
-    GROUP BY
-        A.CusipId,
-        A.TrdExctnDt
-) B
+FROM 
+    Trace_withRatings_filtered A
+WHERE
+    A.TrdExctnDt >= '2002-01-1' AND A.TrdExctnDt < '2023-01-01'
+	AND RatingNum <> 0
 GROUP BY
     TrdExctnDt,
-    MinimumRating
+    RatingNum
 ORDER BY
     TrdExctnDt,
-    MinimumRating
+    RatingNum

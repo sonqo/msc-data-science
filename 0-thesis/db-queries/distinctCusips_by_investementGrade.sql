@@ -1,38 +1,20 @@
-SELECT 
-	InvestmentGrade,
-	COUNT(DISTINCT CusipId) AS DistinctCusips
+SELECT
+    InvestmentGrade,
+    COUNT(DISTINCT CusipId) AS DistinctCusips
 FROM (
-	SELECT
-		CusipId,
-		CASE
-			WHEN RatingCategory < 11 THEN 'Y'
-			WHEN RatingCategory < 25 THEN 'N'
-			ELSE 'NR'
-		END AS InvestmentGrade
-	FROM (
-		SELECT
-			A.CusipId,
-			MIN(B.RatingCategory) AS RatingCategory
-		FROM (
-			SELECT
-				CusipId,
-				MIN(TrdExctnDt) AS FirstTradeExecutionDate
-			FROM 
-				TraceBond_filtered
-			WHERE
-				TrdExctnDt >= '2002-01-1' AND TrdExctnDt < '2023-01-01'
-			GROUP BY
-				CusipId
-		) A
-		LEFT JOIN 
-			BondRatings B ON A.CusipId = B.CompleteCusip 
-			AND B.RatingDate <= A.FirstTradeExecutionDate 
-			AND B.RatingCategory IS NOT NULL
-		GROUP BY
-			A.CusipId
-	) B
-) C
+    SELECT
+        CusipId,
+        CASE
+            WHEN RatingNum = 0 THEN 'NR'
+            WHEN RatingNum < 11 THEN 'Y'
+            ELSE 'N'
+        END AS InvestmentGrade
+    FROM 
+        Trace_withRatings_filtered
+    WHERE
+        TrdExctnDt >= '2002-01-1' AND TrdExctnDt < '2023-01-01'
+) A
 GROUP BY
-	InvestmentGrade
+    InvestmentGrade
 ORDER BY
-	InvestmentGrade
+    InvestmentGrade

@@ -1,12 +1,13 @@
 SELECT 
-	TrdExctnDt,
-	COUNT(DISTINCT CusipId) AS DistinctCusips,
-	SUM(EntrdVolQt) AS TotalVolume
+    TrdExctnDt,
+    COUNT(DISTINCT CusipId) AS DistinctCusips,
+    SUM(EntrdVolQt) AS TotalVolume
 FROM
-	TraceBond_filtered
+    Trace_withRatings_filtered
 WHERE
-	TrdExctnDt >= '2002-01-1' AND TrdExctnDt < '2023-01-01'
+    TrdExctnDt >= '2002-01-1' AND TrdExctnDt < '2023-01-01'
+	AND RatingNum <> 0
 GROUP BY
-	TrdExctnDt
+    TrdExctnDt
 ORDER BY
-	TrdExctnDt
+    TrdExctnDt
