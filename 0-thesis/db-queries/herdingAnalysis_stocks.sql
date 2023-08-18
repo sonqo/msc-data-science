@@ -1,16 +1,16 @@
 DECLARE @LeftTail FLOAT
 SET @LeftTail = (
-	SELECT DISTINCT PERCENTILE_CONT(0.05) WITHIN GROUP(ORDER BY Rm) OVER () FROM CrspcFactors
+	SELECT DISTINCT PERCENTILE_CONT(0.05) WITHIN GROUP(ORDER BY Rm) OVER () FROM MarketFactors
 )
 
 DECLARE @RightTail FLOAT
 SET @RightTail = (
-	SELECT DISTINCT PERCENTILE_CONT(0.95) WITHIN GROUP(ORDER BY Rm) OVER () FROM CrspcFactors
+	SELECT DISTINCT PERCENTILE_CONT(0.95) WITHIN GROUP(ORDER BY Rm) OVER () FROM MarketFactors
 )
 
 SELECT
     Datadate,
-    MktRf, Smb, Hml, Rmw, Cma, Rf, Rm, 
+    MktRf, Smb, Hml, Rmw, Cma, Rf, Mom, Rm, 
     ABS(Rm) AS AbsoluteRm,
     POWER(Rm, 2) AS SquaredRm, 
     Sum / Count AS Csad,
@@ -25,7 +25,7 @@ SELECT
 FROM (
     SELECT
         DataDate, 
-        MktRf, Smb, Hml, Rmw, Cma, Rf, Rm,
+        MktRf, Smb, Hml, Rmw, Cma, Rf, Mom, Rm,
         ABS(SUM(DailyReturns) - Rm) AS Sum,
         COUNT(DISTINCT LPermNo) AS Count
     FROM (
@@ -37,14 +37,14 @@ FROM (
         FROM
             CrspcSecuritiesDaily A
         INNER JOIN
-            CrspcFactors B ON A.DataDate = B.Date
+            MarketFactors B ON A.DataDate = B.Date
         WHERE
 			PrcCd <> 0
             AND B.Date >= '2002-01-1' AND B.Date < '2022-01-01'
     ) A
     GROUP BY
         DataDate,
-        MktRf, Smb, Hml, Rmw, Cma, Rf, Rm
+        MktRf, Smb, Hml, Rmw, Cma, Rf, Mom, Rm
 ) B
 ORDER BY
 	DataDate
