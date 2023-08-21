@@ -64,7 +64,7 @@ WITH
 -- TRACE BLOB
 CREATE DATABASE SCOPED CREDENTIAL [https://findbstore.blob.core.windows.net/trace]
 WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
-SECRET = 'sp=r&st=2023-08-16T12:14:19Z&se=2023-08-16T20:14:19Z&spr=https&sv=2022-11-02&sr=c&sig=TsTRP0ihafQZEh9v6F05tuBAx1RB0XzjURgfGwWLxs8%3D'
+SECRET = 'sp=r&st=2023-08-21T15:37:06Z&se=2023-08-21T23:37:06Z&spr=https&sv=2022-11-02&sr=c&sig=BeI6O38K4LMeXoOxbW6eeoAp4Klsgcwp3mGqGqeyBps%3D'
 CREATE EXTERNAL DATA SOURCE dataset_trace
 WITH 
 (
