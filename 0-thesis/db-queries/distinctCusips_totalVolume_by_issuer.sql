@@ -4,7 +4,7 @@ SELECT
     COUNT(DISTINCT CusipId) AS DistinctCusips,
     SUM(EntrdVolQt) AS TotalVolume
 FROM 
-    Trace_withRatings_filtered
+    Trace_filtered_withRatings
 WHERE
     TrdExctnDt >= '{}-01-1' AND TrdExctnDt < '{}-01-01'
 	AND RatingNum <> 0
