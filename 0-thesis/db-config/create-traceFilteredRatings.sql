@@ -11,18 +11,30 @@ INTO
 	[dbo].[Trace_filtered_withRatings]
 FROM
 	Trace_filtered_withoutRatings A
+-- join with BondReturns
 INNER JOIN (
-	-- get minimum rating for current TradeExecutionDate and latest RatingDate
+	-- get minimum rating for current TradeExecutionDate and LatestRatingDate
 	SELECT
-		A.Cusip,
+		B.CusipId,
 		B.TrdExctnDt,
-		A.RatingNum
+		CASE
+			WHEN A.RatingNum IS NULL THEN 0
+			ELSE A.RatingNum
+		END AS RatingNum
 	FROM (
 		-- get latest RatingDate according to current TradeExecutionDate
 		SELECT
 			A.CusipId,
 			A.TrdExctnDt,
-			MAX(Date) AS LatestRatingDate
+			CASE
+				WHEN MAX(
+					CASE
+						WHEN B.Date IS NULL THEN '2542-01-01'
+						ELSE B.Date
+					END
+				) = '2542-01-01' THEN NULL
+				ELSE MAX(B.Date)
+			END AS LatestRatingDate
 		FROM
 			Trace_filtered_withoutRatings A
 		LEFT JOIN
@@ -32,22 +44,21 @@ INNER JOIN (
 			A.TrdExctnDt
 	) B
 	LEFT JOIN 
-		BondReturns a ON A.Cusip = B.CusipId AND A.Date = B.LatestRatingDate
-) B ON A.CusipId = B.Cusip AND A.TrdExctnDt = B.TrdExctnDt
+		BondReturns A ON A.Cusip = B.CusipId AND A.Date = B.LatestRatingDate
+) B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.TrdExctnDt
+-- join with BondRatings
 INNER JOIN (
-    -- get minimum rating for current TradeExecutionDate and latest RatingDate
+    -- get minimum rating for current TradeExecutionDate and LatestRatingDate
 	SELECT
+		B.CusipId,
 		B.TrdExctnDt,
-		A.CompleteCusip,
 		MIN(
 			CASE
 				WHEN A.RatingCategory IS NULL THEN 0
 				ELSE A.RatingCategory
 			END
 		) AS RatingNum
-	FROM
-		BondRatings A
-	INNER JOIN (
+	FROM (
 		-- get latest RatingDate according to current TradeExecutionDate
 		SELECT
 			A.CusipId,
@@ -68,8 +79,10 @@ INNER JOIN (
 		GROUP BY
 			A.CusipId,
 			A.TrdExctnDt
-	) B ON A.CompleteCusip = B.CusipId AND (A.RatingDate = B.LatestRatingDate OR B.LatestRatingDate IS NULL)
+	) B 
+	LEFT JOIN 
+		BondRatings A ON A.CompleteCusip = B.CusipId AND (A.RatingDate = B.LatestRatingDate OR B.LatestRatingDate IS NULL)
 	GROUP BY
-		B.TrdExctnDt,
-		A.CompleteCusip
-) C ON A.CusipId = C.CompleteCusip AND A.TrdExctnDt = C.TrdExctnDt
+		B.CusipId,
+		B.TrdExctnDt
+) C ON A.CusipId = C.CusipId AND A.TrdExctnDt = C.TrdExctnDt
