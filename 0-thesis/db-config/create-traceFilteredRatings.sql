@@ -3,9 +3,8 @@ DROP TABLE IF EXISTS [dbo].[Trace_filtered_withRatings];
 SELECT
 	A.*,
 	CASE
-        WHEN B.RatingNum IS NOT NULL THEN B.RatingNum
-        WHEN C.RatingNum <> 0 THEN C.RatingNum
-        ELSE 0
+        WHEN B.RatingNum <> 0 THEN B.RatingNum
+        ELSE C.RatingNum
     END AS RatingNum
 INTO
 	[dbo].[Trace_filtered_withRatings]
@@ -86,3 +85,26 @@ INNER JOIN (
 		B.CusipId,
 		B.TrdExctnDt
 ) C ON A.CusipId = C.CusipId AND A.TrdExctnDt = C.TrdExctnDt
+
+-- ADD PRINCIPAL AMOUNT COLUMN
+
+ALTER TABLE
+	[dbo].[Trace_filtered_withRatings]
+ADD
+	PrincipalAmt INT
+
+UPDATE
+	[dbo].[Trace_filtered_withRatings]
+SET
+	PrincipalAmt = B.PrincipalAmt
+FROM
+	[dbo].[Trace_filtered_withRatings] A
+INNER JOIN (
+	SELECT 
+		Cusip,
+		MAX(PrincipalAmt) AS PrincipalAmt
+	FROM
+		BondReturns
+	GROUP BY
+		Cusip
+) B ON A.CusipId = B.Cusip

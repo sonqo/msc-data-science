@@ -1,25 +1,23 @@
-DROP TABLE IF EXISTS [dbo].[BondReturns_v2];
+--DROP TABLE IF EXISTS [dbo].[BondReturns_v2];
 
-SELECT
+SELECT TOP 100
 	*,
 	 ( 
-	 	( RptdPr + AccruedInterest + Coupon * CouponsPaid * 1.0 / InterestFrequency ) -
-	 	( LAG(RptdPr) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) + LAG(AccruedInterest) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) )
+	 	( RptdPr * PrincipalAmt / 100 + AccruedInterest + Coupon * CouponsPaid * 1.0 / InterestFrequency ) -
+	 	( LAG(RptdPr) OVER (PARTITION BY CusipId ORDER BY TrdExctnDt) * PrincipalAmt / 100 + LAG(AccruedInterest) OVER (PARTITION BY CusipId ORDER BY TrdExctnDt) )
 	 ) / ( 
-		LAG(RptdPr) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) + LAG(AccruedInterest) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt)
+		LAG(RptdPr) OVER (PARTITION BY CusipId ORDER BY TrdExctnDt) * PrincipalAmt / 100 + LAG(AccruedInterest) OVER (PARTITION BY CusipId ORDER BY TrdExctnDt)
 	 ) AS R
-INTO
-	[dbo].[BondReturns_v2]
+--INTO
+--	[dbo].[BondReturns_v2]
 FROM (
 	-- CALCULATE ACCRUED INTEREST
 	SELECT
 		CusipId,
-		LtTrdExctnDt,
+		TrdExctnDt,
 		RptdPr,
-		RptSideCd,
-		BuyCmsnRt,
-		SellCmsnRt,
 		Coupon,
+		PrincipalAmt,
 		InterestFrequency,
 		FirstInterestDate,
 		NextInterestDate,
@@ -27,119 +25,118 @@ FROM (
 		T,
 		D,
 		CouponsPaid,
-		Coupon * 1.0 * D / InterestFrequency / 360 AS AccruedInterest
+		CouponsPaid * ( Coupon * D / InterestFrequency / 360 ) AS AccruedInterest
 	FROM (
 		-- CALCULATE T, D, COUPONS PAID FROM LAG TRADE
 		SELECT
 			CusipId,
-			LtTrdExctnDt,
+			TrdExctnDt,
 			RptdPr,
-			RptSideCd,
-			BuyCmsnRt,
-			SellCmsnRt,
 			Coupon,
+			PrincipalAmt,
 			InterestFrequency,
 			FirstInterestDate,
 			NextInterestDate,
 			LatestInterestDate,
-			360 / InterestFrequency AS T,
 			CASE
-				WHEN LatestInterestDate IS NULL THEN 0
+				WHEN InterestFrequency = 0 THEN NULL
+				ELSE 360 / InterestFrequency 
+			END AS T,
+			CASE
+				WHEN InterestFrequency = 0 THEN NULL
 				ELSE
-					ABS ( 
-						dbo.YearFact ( 
-							LtTrdExctnDt,
-							DATEADD( 
-								MONTH,
-								( ABS ( dbo.YearFact(LtTrdExctnDt, FirstInterestDate, 0 ) ) ) / ( 360 / InterestFrequency ) * (360 / InterestFrequency / 30),
-								FirstInterestDate
-							), 
-							0
-						)
-					) 
+					CASE
+						WHEN LatestInterestDate IS NULL THEN 0
+						ELSE
+							ABS ( 
+								dbo.YearFact ( 
+									TrdExctnDt,
+									DATEADD( 
+										MONTH,
+										( ABS ( dbo.YearFact(TrdExctnDt, FirstInterestDate, 0 ) ) ) / ( 360 / InterestFrequency ) * (360 / InterestFrequency / 30),
+										FirstInterestDate
+									), 
+									0
+								)
+							) 
+					END 
 			END AS D,
 			CASE
-				WHEN LAG(NextInterestDate) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt) IS NULL THEN 0
-				ELSE (
-					DATEDIFF(
-						MONTH, 
-						LAG(NextInterestDate) OVER (PARTITION BY CusipId ORDER BY LtTrdExctnDt), 
-						LtTrdExctnDt
-					) + 12/InterestFrequency 
-				) / (12/InterestFrequency) 
+				WHEN InterestFrequency = 0 THEN NULL
+				ELSE
+					CASE
+						WHEN LAG(NextInterestDate) OVER (PARTITION BY CusipId ORDER BY TrdExctnDt) IS NULL THEN 0
+						ELSE (
+							DATEDIFF(
+								MONTH, 
+								LAG(NextInterestDate) OVER (PARTITION BY CusipId ORDER BY TrdExctnDt), 
+								TrdExctnDt
+							) + 12/InterestFrequency 
+						) / (12/InterestFrequency) 
+					END 
 			END AS CouponsPaid
 		FROM (
 			-- CALCULATE NEXT INTEREST DATE, LATEST INTEREST DATE
 			SELECT
 				CusipId,
-				LtTrdExctnDt,
+				TrdExctnDt,
 				RptdPr,
-				RptSideCd,
-				BuyCmsnRt,
-				SellCmsnRt,
-				Coupon,
+				(Coupon * 1.0 / 100) * PrincipalAmt AS Coupon,
+				PrincipalAmt,
 				InterestFrequency,
 				FirstInterestDate,
-				CASE
-					WHEN LtTrdExctnDt < FirstInterestDate THEN FirstInterestDate
-					ELSE 
-						DATEADD( 
-							MONTH,
-							360 / InterestFrequency / 30,
-							DATEADD( 
-								MONTH,
-								( ABS ( dbo.YearFact(LtTrdExctnDt, FirstInterestDate, 0 ) ) ) / ( 360 / InterestFrequency ) * (360 / InterestFrequency / 30),
-								FirstInterestDate
-							)
-						)
+				CASE 
+					WHEN InterestFrequency = 0 THEN NULL
+					ELSE
+						CASE
+							WHEN TrdExctnDt < FirstInterestDate THEN FirstInterestDate
+							ELSE 
+								DATEADD( 
+									MONTH,
+									360 / InterestFrequency / 30,
+									DATEADD( 
+										MONTH,
+										( ABS ( dbo.YearFact(TrdExctnDt, FirstInterestDate, 0 ) ) ) / ( 360 / InterestFrequency ) * (360 / InterestFrequency / 30),
+										FirstInterestDate
+									)
+								)
+						END 
 				END AS NextInterestDate,
 				CASE
-					WHEN LtTrdExctnDt < FirstInterestDate THEN NULL
+					WHEN InterestFrequency = 0 THEN NULL
 					ELSE
-						DATEADD( 
-							MONTH,
-							( ABS ( dbo.YearFact(LtTrdExctnDt, FirstInterestDate, 0 ) ) ) / ( 360 / InterestFrequency ) * (360 / InterestFrequency / 30),
-							FirstInterestDate
-						) 
+						CASE
+							WHEN TrdExctnDt < FirstInterestDate THEN NULL
+							ELSE
+								DATEADD( 
+									MONTH,
+									( ABS ( dbo.YearFact(TrdExctnDt, FirstInterestDate, 0 ) ) ) / ( 360 / InterestFrequency ) * (360 / InterestFrequency / 30),
+									FirstInterestDate
+								) 
+						END 
 				END AS LatestInterestDate
 			FROM (
 				-- JOIN ON LATEST TRADING DATE AND CUSIP, GET TRADING PARTICULARS
 				SELECT
 					A.CusipId,
-					A.LtTrdExctnDt,
-					AVG(B.RptdPr) AS RptdPr,
-					MAX(B.RptSideCd) AS RptSideCd,
-					MAX(B.BuyCmsnRt) AS BuyCmsnRt,
-					MAX(B.SellCmsnRt) AS SellCmsnRt,
-					MAX(B.Coupon) AS Coupon,
+					A.TrdExctnDt,
+					AVG(A.RptdPr) AS RptdPr,
+					AVG(A.Coupon) AS Coupon,
+					MAX(A.PrincipalAmt) AS PrincipalAmt,
 					CASE
-						WHEN MAX(B.InterestFrequency) IS NOT NULL AND MAX(B.InterestFrequency) <> 0 THEN MAX(B.InterestFrequency)
+						WHEN AVG(A.InterestFrequency) IS NOT NULL THEN AVG(A.InterestFrequency)
 						ELSE 2
 					END AS InterestFrequency,
 					CASE
-						WHEN MAX(B.FirstInterestDate) IS NOT NULL THEN MAX(B.FirstInterestDate)
-						ELSE MAX(B.OfferingDate)
+						WHEN MAX(A.FirstInterestDate) IS NOT NULL THEN MAX(A.FirstInterestDate)
+						ELSE MAX(A.OfferingDate)
 					END AS FirstInterestDate
-				FROM (
-					-- GET LATEST TRADING DATE FOR EVERY CUSIP
-					SELECT
-						CusipId,
-						MAX(TrdExctnDt) AS LtTrdExctnDt
-					FROM 
-						Trace_withRatings_filtered
-					GROUP BY
-						CusipId,
-						TrdExctnMn,
-						TrdExctnYr 
-				) A
-				INNER JOIN 
-					Trace_withRatings_filtered B ON A.CusipId = B.CusipId AND A.LtTrdExctnDt = B.TrdExctnDt
+				FROM 
+					Trace_filtered_withRatings A
 				GROUP BY
-					A.LtTrdExctnDt,
-					A.CusipId
+					CusipId,
+					TrdExctnDt
 			) B
 		) C
 	) D
 ) E
-ORDER BY
-	LtTrdExctnDt
