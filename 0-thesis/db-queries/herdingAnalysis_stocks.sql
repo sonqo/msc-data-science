@@ -36,6 +36,15 @@ FROM (
             (PrcCd / LAG(A.PrcCd)  OVER (PARTITION BY A.LPermNo ORDER BY A.DataDate)) - 1 AS DailyReturns
         FROM
             CrspcSecuritiesDaily A
+		INNER JOIN (
+			SELECT DISTINCT
+				PermNo
+			FROM
+				CrspcCodes
+			WHERE
+				Shrcd IN (10, 11)
+				AND Exchcd IN (1, 2, 3)
+		) C ON A.LPermNo = C.PermNo
         INNER JOIN
             MarketFactors B ON A.DataDate = B.Date
         WHERE
@@ -53,7 +62,16 @@ ORDER BY
 SELECT
 	COUNT(DISTINCT LPermNo)
 FROM
-	CrspcSecuritiesDaily
+	CrspcSecuritiesDaily A
+INNER JOIN (
+	SELECT DISTINCT
+		PermNo
+	FROM
+		CrspcCodes
+	WHERE
+		Shrcd IN (10, 11)
+		AND Exchcd IN (1, 2, 3)
+) B ON A.LPermNo = B.PermNo
 WHERE
 	DataDate >= '2002-01-1' AND DataDate < '2022-01-01'
 
@@ -62,7 +80,16 @@ SELECT
 	Exchange,
 	COUNT(DISTINCT LPermNo)
 FROM
-	CrspcSecuritiesDaily
+	CrspcSecuritiesDaily A
+INNER JOIN (
+	SELECT DISTINCT
+		PermNo
+	FROM
+		CrspcCodes
+	WHERE
+		Shrcd IN (10, 11)
+		AND Exchcd IN (1, 2, 3)
+) B ON A.LPermNo = B.PermNo
 WHERE
 	DataDate >= '2002-01-1' AND DataDate < '2022-01-01'
 GROUP BY
@@ -73,7 +100,16 @@ SELECT
 	Industry,
 	COUNT(DISTINCT LPermNo)
 FROM
-	CrspcSecuritiesDaily
+	CrspcSecuritiesDaily A
+INNER JOIN (
+	SELECT DISTINCT
+		PermNo
+	FROM
+		CrspcCodes
+	WHERE
+		Shrcd IN (10, 11)
+		AND Exchcd IN (1, 2, 3)
+) B ON A.LPermNo = B.PermNo
 WHERE
 	DataDate >= '2002-01-1' AND DataDate < '2022-01-01'
 GROUP BY
