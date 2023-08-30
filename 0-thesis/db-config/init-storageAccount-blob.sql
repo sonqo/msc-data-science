@@ -50,19 +50,19 @@ WITH
 )
 
 -- CRSPC BLOB
-CREATE DATABASE SCOPED CREDENTIAL [https://findbstore.blob.core.windows.net/crspc]
+CREATE DATABASE SCOPED CREDENTIAL [https://findb.blob.core.windows.net/crspc]
 WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
-SECRET = 'sp=r&st=2023-08-17T20:48:10Z&se=2023-08-18T04:48:10Z&spr=https&sv=2022-11-02&sr=c&sig=%2FaMg4CCMgtK5uGjc0NYgQcjAaSzrbi28WQN2fYlFj2o%3D'
+SECRET = 'sp=r&st=2023-08-29T11:51:30Z&se=2023-08-29T19:51:30Z&spr=https&sv=2022-11-02&sr=c&sig=7x5Nxu1RZ1hdyaCKzFnM0YkWeN9br1tUz99bTzN6D0Y%3D'
 CREATE EXTERNAL DATA SOURCE dataset_crspc
 WITH 
 (
     TYPE = BLOB_STORAGE,
-    LOCATION = 'https://findbstore.blob.core.windows.net',
-    CREDENTIAL = [https://findbstore.blob.core.windows.net/crspc]
+    LOCATION = 'https://findb.blob.core.windows.net',
+    CREDENTIAL = [https://findb.blob.core.windows.net/crspc]
 )
 
 -- TRACE BLOB
-CREATE DATABASE SCOPED CREDENTIAL [https://findb.blob.core.windows.net/trace]
+CREATE DATABASE SCOPED CREDENTIAL [https://findbstore.blob.core.windows.net/trace]
 WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
 SECRET = 'sp=r&st=2023-08-24T12:19:41Z&se=2023-08-24T20:19:41Z&spr=https&sv=2022-11-02&sr=c&sig=U9DDH1Ur5Rt6Ei7%2B7qm9JAcbS1v0TfW2XJmV0Tf51o0%3D'
 CREATE EXTERNAL DATA SOURCE dataset_trace

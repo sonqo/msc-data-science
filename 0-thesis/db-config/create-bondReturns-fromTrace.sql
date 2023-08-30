@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS [dbo].[BondReturns_fromTrace]
 
 SELECT
 	*,
-	CASE 
+	CASE
 		WHEN PrevRptdPr IS NULL OR PrevRptdPr = 0 THEN NULL
 		ELSE
 			CASE
