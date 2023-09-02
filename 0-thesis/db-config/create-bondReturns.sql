@@ -58,7 +58,7 @@ CREATE TABLE [dbo].[BondReturns](
     [DefaultDate] [date] NULL,
     [DefaultType] [nvarchar](1) NULL,
     [Reinstated] [nvarchar](1) NULL,
-    ReinstatedDate [date] NULL,
+    [ReinstatedDate] [date] NULL,
 	CONSTRAINT [PK_BondReturns] PRIMARY KEY CLUSTERED (
         [Cusip] ASC,
 		[Date] ASC
