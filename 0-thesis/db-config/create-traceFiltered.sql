@@ -35,4 +35,4 @@ WHERE
 	AND C.CountryDomicile = 'USA' 
 	AND A.TrdExctnDt <= B.Maturity
 	AND B.OfferingDate < B.Maturity
-	AND C.IndustryCode NOT IN (40, 41, 42, 43, 44, 45)
+	AND C.IndustryCode NOT IN (40, 41, 42, 43, 44, 45) -- goverment
