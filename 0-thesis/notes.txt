@@ -1,0 +1,18 @@
+- amihud ratio
+- information assymetry
+
+- portfolios
+    - monthly returns
+        - (startPrice + Coupon + AccruedInterest - endPrice - lagAccruedInterest) / endPrice + lagAccruedInterest
+    - top performing bonds / non top performing
+        - top performing bonds : top 3 per issuer
+    - hy / ig
+    - private issuers / non private issuer : match CRPSC
+    - institunional / retail : threshold 500k
+
+- fractions
+    - week / month level
+    - implemented date, cusip : add date, issuer
+        - top performing bonds : same as portfolios
+        - non top performing
+        - private issuers / non private issuers
