@@ -7,7 +7,7 @@ BEGIN
 		SELECT
 			SUM(RetEom / 100 * TDvolume) / SUM(TDvolume) AS Rm
 		FROM
-			BondReturns
+			[dbo].[BondReturns]
 		GROUP BY
 			Date
 	) A;
@@ -25,7 +25,7 @@ BEGIN
 		SELECT
 			SUM(RetEom / 100 * TDvolume) / SUM(TDvolume) AS Rm
 		FROM
-			BondReturns
+			[dbo].[BondReturns]
 		GROUP BY
 			Date
 	) A;
