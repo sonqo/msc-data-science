@@ -3,12 +3,11 @@
 
 - portfolios
     - monthly returns
-        - (startPrice + Coupon + AccruedInterest - endPrice - lagAccruedInterest) / endPrice + lagAccruedInterest
+        - ( startPrice + Coupon + AccruedInterest - ( endPrice + lagAccruedInterest ) ) / ( endPrice + lagAccruedInterest )
     - top performing bonds / non top performing
-        - top performing bonds : top 3 per issuer
-    - hy / ig
-    - private issuers / non private issuer : match CRPSC
-    - institunional / retail : threshold 500k
+        - top performing bonds : top 3 per issuer => Trace
+    - hy / ig => BondReturns
+    - private issuers / non private issuer : match CRPSC => BondReturns
 
 - fractions
     - week / month level

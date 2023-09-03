@@ -1,7 +1,7 @@
 BULK INSERT  
-	[dbo].[CrspcSecuritiesDaily]
+	[dbo].[CrspcBondLink]
 FROM 
-	'crspc/CRSPC_12-2002.csv'
+	'crspc/bond-crspc-link.csv'
 WITH (
 	DATA_SOURCE = 'dataset_crspc',
 	FIRSTROW = 2,
