@@ -10,6 +10,7 @@ SELECT
 	A.RptSideCd,
 	A.BuyCmsnRt,
 	A.SellCmsnRt,
+	A.CntraMpId,
 	B.InterestFrequency,
 	B.Coupon,
 	B.OfferingDate,
@@ -30,8 +31,7 @@ INNER JOIN
 INNER JOIN 
 	BondIssuers C ON B.IssuerId = C.IssuerId
 WHERE
-	A.CntraMpId = 'C' -- customer
-	AND C.IndustryGroup <> 4 -- governemt
+	C.IndustryGroup <> 4 -- governemt
 	AND C.CountryDomicile = 'USA' 
 	AND A.TrdExctnDt <= B.Maturity
 	AND B.OfferingDate < B.Maturity

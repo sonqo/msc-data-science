@@ -1,21 +1,27 @@
 CREATE PROCEDURE
 
-	[dbo].[Momentum_VolumeGroups] @VolumeRangeStart INT, @VolumeRangeEnd INT
+	[dbo].[Momentum_VolumeGroups] @VolumeRangeStart INT, @VolumeRangeEnd INT, @HoldingPeriod INT
 
 AS
 
 BEGIN
 	
+	SET NOCOUNT ON
+
 	-- CREATE TEMP TABLE
 	SELECT
 		A.CusipId,
+		EOMONTH(B.TrdExctnDt) AS Date,
 		A.TrdExctnDt AS StartDate,
 		B.TrdExctnDt AS EndDate,
 		A.WeightPrice AS StartPrice,
 		B.WeightPrice AS EndPrice,
+		A.Volume,
 		A.Coupon,
 		A.PrincipalAmt,
 		A.InterestFrequency,
+		A.RatingNum,
+		A.Maturity,
 		A.FirstInterestDate,
 		CASE 
 			WHEN A.InterestFrequency = 0 THEN NULL
@@ -57,12 +63,15 @@ BEGIN
 			EOMONTH(TrdExctnDt) AS TrdExctnDtEOM,
 			CONCAT(MONTH(TrdExctnDt), '-', YEAR(TrdExctnDt)) AS MontYearId,
 			SUM(PriceVolumeProduct) / SUM(EntrdVolQt) AS WeightPrice,
+			SUM(EntrdVolQt) AS Volume,
 			MAX(Coupon) AS Coupon,
 			MAX(PrincipalAmt) AS PrincipalAmt,
 			CASE
 				WHEN MAX(InterestFrequency) IS NOT NULL THEN MAX(InterestFrequency)
 				ELSE 2
 			END AS InterestFrequency,
+			MAX(RatingNum) AS RatingNum,
+			MAX(Maturity) AS Maturity,
 			CASE
 				WHEN MAX(FirstInterestDate) IS NOT NULL THEN MAX(FirstInterestDate)
 				ELSE MAX(OfferingDate)
@@ -71,11 +80,13 @@ BEGIN
 			SELECT
 				B.CusipId,
 				B.TrdExctnDt,
-				EntrdVolQt,
 				RptdPr * EntrdVolQt AS PriceVolumeProduct,
+				EntrdVolQt,
 				Coupon,
 				PrincipalAmt,
 				InterestFrequency,
+				RatingNum,
+				Maturity,
 				FirstInterestDate,
 				OfferingDate
 			FROM (
@@ -146,6 +157,9 @@ BEGIN
 				TrdExctnDt
 		) A
 	) B ON A.CusipId = B.CusipId AND A.MontYearId = B.MontYearId
+	WHERE
+		DATEADD(MONTH, @HoldingPeriod, A.TrdExctnDt) <= A.Maturity
+
 
 	-- SELECT STATEMENT
 	SELECT
@@ -192,7 +206,11 @@ BEGIN
 				ELSE
 					CASE
 						WHEN NextInterestDate >= StartDate AND NextInterestDate <= EndDate THEN dbo.YearFact(NextInterestDate, EndDate, 0 )
-						ELSE dbo.YearFact(LatestInterestDate, EndDate, 0)
+						ELSE
+							CASE
+								WHEN LatestInterestDate IS NULL THEN 0
+								ELSE dbo.YearFact(LatestInterestDate, EndDate, 0)
+							END
 					END 
 			END AS EndD
 		FROM

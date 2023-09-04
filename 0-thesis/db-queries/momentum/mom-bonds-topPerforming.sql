@@ -1,14 +1,17 @@
 CREATE PROCEDURE
 
-	[dbo].[Momentum_TopPerformers] @TopPerformers INT
+	[dbo].[Momentum_TopPerformers] @TopPerformers INT, @HoldingPeriod INT
 
 AS
 
 BEGIN
 	
+	SET NOCOUNT ON
+
 	-- CREATE TEMP TABLE
 	SELECT
 		A.CusipId,
+		EOMONTH(B.TrdExctnDt) AS Date,
 		A.TrdExctnDt AS StartDate,
 		B.TrdExctnDt AS EndDate,
 		A.WeightPrice AS StartPrice,
@@ -16,6 +19,8 @@ BEGIN
 		A.Coupon,
 		A.PrincipalAmt,
 		A.InterestFrequency,
+		A.RatingNum,
+		A.Maturity,
 		A.FirstInterestDate,
 		CASE 
 			WHEN A.InterestFrequency = 0 THEN NULL
@@ -63,6 +68,8 @@ BEGIN
 				WHEN MAX(InterestFrequency) IS NOT NULL THEN MAX(InterestFrequency)
 				ELSE 2
 			END AS InterestFrequency,
+			MAX(RatingNum) AS RatingNum,
+			MAX(Maturity) AS Maturity,
 			CASE
 				WHEN MAX(FirstInterestDate) IS NOT NULL THEN MAX(FirstInterestDate)
 				ELSE MAX(OfferingDate)
@@ -76,6 +83,8 @@ BEGIN
 				Coupon,
 				PrincipalAmt,
 				InterestFrequency,
+				RatingNum,
+				Maturity,
 				FirstInterestDate,
 				OfferingDate
 			FROM (
@@ -208,6 +217,8 @@ BEGIN
 				TrdExctnDt
 		) A
 	) B ON A.CusipId = B.CusipId AND A.MontYearId = B.MontYearId
+	WHERE
+		DATEADD(MONTH, @HoldingPeriod, A.TrdExctnDt) <= A.Maturity
 
 	-- SELECT STATEMENT
 	SELECT
