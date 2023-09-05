@@ -31,8 +31,8 @@ INNER JOIN
 INNER JOIN 
 	BondIssuers C ON B.IssuerId = C.IssuerId
 WHERE
-	C.IndustryGroup <> 4 -- governemt
+	C.IndustryGroup <> 4 -- government
 	AND C.CountryDomicile = 'USA' 
 	AND A.TrdExctnDt <= B.Maturity
 	AND B.OfferingDate < B.Maturity
-	AND C.IndustryCode NOT IN (40, 41, 42, 43, 44, 45) -- goverment
+	AND C.IndustryCode NOT IN (40, 41, 42, 43, 44, 45) -- government

@@ -1,6 +1,6 @@
 CREATE PROCEDURE
 
-	[dbo].[Momentum_TopPerformers] @TopPerformers INT, @HoldingPeriod INT
+	[dbo].[Momentum_TopPerformers_v1] @HoldingPeriod INT
 
 AS
 
@@ -16,6 +16,7 @@ BEGIN
 		B.TrdExctnDt AS EndDate,
 		A.WeightPrice AS StartPrice,
 		B.WeightPrice AS EndPrice,
+		A.Volume,
 		A.Coupon,
 		A.PrincipalAmt,
 		A.InterestFrequency,
@@ -62,6 +63,7 @@ BEGIN
 			EOMONTH(TrdExctnDt) AS TrdExctnDtEOM,
 			CONCAT(MONTH(TrdExctnDt), '-', YEAR(TrdExctnDt)) AS MontYearId,
 			SUM(PriceVolumeProduct) / SUM(EntrdVolQt) AS WeightPrice,
+			SUM(EntrdVolQt) AS Volume,
 			MAX(Coupon) AS Coupon,
 			MAX(PrincipalAmt) AS PrincipalAmt,
 			CASE
@@ -78,8 +80,8 @@ BEGIN
 			SELECT
 				B.CusipId,
 				B.TrdExctnDt,
-				EntrdVolQt,
 				RptdPr * EntrdVolQt AS PriceVolumeProduct,
+				EntrdVolQt,
 				Coupon,
 				PrincipalAmt,
 				InterestFrequency,
@@ -89,50 +91,48 @@ BEGIN
 				OfferingDate
 			FROM (
 				SELECT
-					CusipId,
-					MAX(TrdExctnDt) AS TrdExctnDt
+					A.CusipId,
+					MAX(A.TrdExctnDt) AS TrdExctnDt
 				FROM (
 					SELECT
-						B.CusipId,
-						B.TrdExctnDt
-					FROM (
+						*,
+						CONCAT(MONTH(TrdExctnDt), '-', YEAR(TrdExctnDt)) AS MonthYearInd
+					FROM
+						Trace_filtered_withRatings
+				) A
+				INNER JOIN (
+					SELECT
+						CusipId,
+						MonthYearInd
+					FROM (    
 						SELECT
 							*,
-							DENSE_RANK() OVER (PARTITION BY IssuerId, MonthYearId ORDER BY SumVolume DESC) AS Ranking
-						FROM (
+							DENSE_RANK() OVER (PARTITION BY IssuerId, MonthYearInd ORDER BY Volume DESC) AS VolumeRanking
+						FROM (    
 							SELECT
 								IssuerId,
 								CusipId,
-								CONCAT(MONTH(TrdExctnDt), '-', YEAR(TrdExctnDt)) AS MonthYearId,
-								SUM(EntrdVolQt) AS SumVolume
+								CONCAT(MONTH(TrdExctnDt), '-', YEAR(TrdExctnDt)) AS MonthYearInd,
+								SUM(EntrdVolQt) AS Volume
 							FROM
 								Trace_filtered_withRatings
 							GROUP BY
-								IssuerId,
 								CusipId,
-								MONTH(TrdExctnDt),
-								YEAR(TrdExctnDt)
+								IssuerId,
+								YEAR(TrdExctnDt),
+								MONTH(TrdExctnDt)
 						) A
-					) A
-					INNER JOIN (
-						SELECT
-							CusipId,
-							TrdExctnDt,
-							CONCAT(MONTH(TrdExctnDt), '-', YEAR(TrdExctnDt)) AS MonthYearId
-						FROM
-							Trace_filtered_withRatings
-						WHERE
-							RatingNum <> 0
-					) B ON A.CusipId = B.CusipId AND A.MonthYearId = B.MonthYearId
+					) B
 					WHERE
-						A.Ranking <= @TopPerformers
-				) A
+						VolumeRanking <= 3
+				) B ON A.CusipId = B.CusipId AND A.MonthYearInd = B.MonthYearInd
 				WHERE
-					TrdExctnDt >= DATEFROMPARTS(YEAR(TrdExctnDt), MONTH(TrdExctnDt), 1) AND TrdExctnDt <= DATEFROMPARTS(YEAR(TrdExctnDt), MONTH(TrdExctnDt), 5)
+					A.RatingNum <> 0
+					AND TrdExctnDt >= DATEFROMPARTS(YEAR(TrdExctnDt), MONTH(TrdExctnDt), 1) AND TrdExctnDt <= DATEFROMPARTS(YEAR(TrdExctnDt), MONTH(TrdExctnDt), 5)
 				GROUP BY
-					CusipId,
-					YEAR(TrdExctnDt),
-					MONTH(TrdExctnDt)
+					A.CusipId,
+					YEAR(A.TrdExctnDt),
+					MONTH(A.TrdExctnDt)
 			) A
 			INNER JOIN 
 				Trace_filtered_withRatings B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.TrdExctnDt
@@ -162,50 +162,48 @@ BEGIN
 					RptdPr * EntrdVolQt AS PriceVolumeProduct
 				FROM (
 					SELECT
-						CusipId,
-						MAX(TrdExctnDt) AS TrdExctnDt
+						A.CusipId,
+						MAX(A.TrdExctnDt) AS TrdExctnDt
 					FROM (
 						SELECT
-							B.CusipId,
-							B.TrdExctnDt
-						FROM (
+							*,
+							CONCAT(MONTH(TrdExctnDt), '-', YEAR(TrdExctnDt)) AS MonthYearInd
+						FROM
+							Trace_filtered_withRatings
+					) A
+					INNER JOIN (
+						SELECT
+							CusipId,
+							MonthYearInd
+						FROM (    
 							SELECT
 								*,
-								DENSE_RANK() OVER (PARTITION BY IssuerId, MonthYearId ORDER BY SumVolume DESC) AS Ranking
-							FROM (
+								DENSE_RANK() OVER (PARTITION BY IssuerId, MonthYearInd ORDER BY Volume DESC) AS VolumeRanking
+							FROM (    
 								SELECT
 									IssuerId,
 									CusipId,
-									CONCAT(MONTH(TrdExctnDt), '-', YEAR(TrdExctnDt)) AS MonthYearId,
-									SUM(EntrdVolQt) AS SumVolume
+									CONCAT(MONTH(TrdExctnDt), '-', YEAR(TrdExctnDt)) AS MonthYearInd,
+									SUM(EntrdVolQt) AS Volume
 								FROM
 									Trace_filtered_withRatings
 								GROUP BY
-									IssuerId,
 									CusipId,
-									MONTH(TrdExctnDt),
-									YEAR(TrdExctnDt)
+									IssuerId,
+									YEAR(TrdExctnDt),
+									MONTH(TrdExctnDt)
 							) A
-						) A
-						INNER JOIN (
-							SELECT
-								CusipId,
-								TrdExctnDt,
-								CONCAT(MONTH(TrdExctnDt), '-', YEAR(TrdExctnDt)) AS MonthYearId
-							FROM
-								Trace_filtered_withRatings
-							WHERE
-								RatingNum <> 0
-						) B ON A.CusipId = B.CusipId AND A.MonthYearId = B.MonthYearId
+						) B
 						WHERE
-							A.Ranking <= @TopPerformers
-					) A
+							VolumeRanking <= 3
+					) B ON A.CusipId = B.CusipId AND A.MonthYearInd = B.MonthYearInd
 					WHERE
-						TrdExctnDt <= EOMONTH(TrdExctnDt) AND TrdExctnDt > DATEADD(DAY, -5, EOMONTH(TrdExctnDt))
+						A.RatingNum <> 0
+						AND A.TrdExctnDt <= EOMONTH(A.TrdExctnDt) AND A.TrdExctnDt > DATEADD(DAY, -5, EOMONTH(A.TrdExctnDt))
 					GROUP BY
-						CusipId,
-						YEAR(TrdExctnDt),
-						MONTH(TrdExctnDt)
+						A.CusipId,
+						YEAR(A.TrdExctnDt),
+						MONTH(A.TrdExctnDt)
 				) A
 				INNER JOIN 
 					Trace_filtered_withRatings B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.TrdExctnDt
@@ -220,61 +218,71 @@ BEGIN
 	WHERE
 		DATEADD(MONTH, @HoldingPeriod, A.TrdExctnDt) <= A.Maturity
 
+
 	-- SELECT STATEMENT
 	SELECT
-		*,
-		ABS(
-			DATEDIFF(
-				MONTH,
-				StartDate,
-				LAG(EndDate) OVER (PARTITION BY CusipId ORDER BY StartDate)
-			)
-		) AS MonthGap,
-		CASE
-			WHEN InterestFrequency = 0 THEN 0
-			ELSE ( 
-				-- PRICE @ T
-				EndPrice * PrincipalAmt / 100 +
-				-- COUPONS PAID DURING T-1, T
-				CouponsPaid * Coupon * PrincipalAmt / 100 / InterestFrequency / 360 + ( 
-				-- ACCRUED INTEREST @ T
-				Coupon * PrincipalAmt / 100 * EndD / InterestFrequency / 360 ) -
-				-- PRICE @ T-1
-				StartPrice * PrincipalAmt / 100 - (
-				-- ACCRUED INTEREST @ T-1
-				Coupon * PrincipalAmt / 100 * StartD / InterestFrequency / 360 ) ) / ( 
-				-- PRICE @ T-1
-				StartPrice * PrincipalAmt / 100 + ( 
-				-- ACCRUED INTEREST @ T-1
-				Coupon * PrincipalAmt / 100 * StartD / InterestFrequency / 360 ) 
-			)
-		END AS R
+		*
 	FROM (
 		SELECT
 			*,
-			CASE
-				WHEN NextInterestDate >= StartDate AND NextInterestDate <= EndDate THEN 1
-				ELSE 0
-			END AS CouponsPaid,
-			CASE
-				WHEN InterestFrequency = 0 OR LatestInterestDate IS NULL THEN 0
-				ELSE dbo.YearFact(LatestInterestDate, StartDate, 0 )
-			END AS StartD,
+			ABS(
+				DATEDIFF(
+					MONTH,
+					StartDate,
+					LAG(EndDate) OVER (PARTITION BY CusipId ORDER BY StartDate)
+				)
+			) AS MonthGap,
 			CASE
 				WHEN InterestFrequency = 0 THEN 0
-				ELSE
-					CASE
-						WHEN NextInterestDate >= StartDate AND NextInterestDate <= EndDate THEN dbo.YearFact(NextInterestDate, EndDate, 0 )
-						ELSE dbo.YearFact(LatestInterestDate, EndDate, 0)
-					END 
-			END AS EndD
-		FROM
-			#TEMP_TABLE
-		WHERE
-			PrincipalAmt IS NOT NULL
-	) A
+				ELSE ( 
+					-- PRICE @ T
+					EndPrice * PrincipalAmt / 100 +
+					-- COUPONS PAID DURING T-1, T
+					CouponsPaid * Coupon * PrincipalAmt / 100 / InterestFrequency / 360 + ( 
+					-- ACCRUED INTEREST @ T
+					Coupon * PrincipalAmt / 100 * EndD / InterestFrequency / 360 ) -
+					-- PRICE @ T-1
+					StartPrice * PrincipalAmt / 100 - (
+					-- ACCRUED INTEREST @ T-1
+					Coupon * PrincipalAmt / 100 * StartD / InterestFrequency / 360 ) ) / ( 
+					-- PRICE @ T-1
+					StartPrice * PrincipalAmt / 100 + ( 
+					-- ACCRUED INTEREST @ T-1
+					Coupon * PrincipalAmt / 100 * StartD / InterestFrequency / 360 ) 
+				)
+			END AS R
+		FROM (
+			SELECT
+				*,
+				CASE
+					WHEN NextInterestDate >= StartDate AND NextInterestDate <= EndDate THEN 1
+					ELSE 0
+				END AS CouponsPaid,
+				CASE
+					WHEN InterestFrequency = 0 OR LatestInterestDate IS NULL THEN 0
+					ELSE dbo.YearFact(LatestInterestDate, StartDate, 0 )
+				END AS StartD,
+				CASE
+					WHEN InterestFrequency = 0 THEN 0
+					ELSE
+						CASE
+							WHEN NextInterestDate >= StartDate AND NextInterestDate <= EndDate THEN dbo.YearFact(NextInterestDate, EndDate, 0 )
+							ELSE
+								CASE
+									WHEN LatestInterestDate IS NULL THEN 0
+									ELSE dbo.YearFact(LatestInterestDate, EndDate, 0)
+								END
+						END 
+				END AS EndD
+			FROM
+				#TEMP_TABLE
+			WHERE
+				PrincipalAmt IS NOT NULL
+		) A
+	) B
+	WHERE
+		MonthGap = 1
 	ORDER BY
-		CusipId,
 		StartDate
 
 	-- DROP TEMP TABLE

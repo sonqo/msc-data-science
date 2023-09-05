@@ -1,6 +1,6 @@
 CREATE PROCEDURE
 
-	[dbo].[Momentum_VolumeGroups] @VolumeRangeStart INT, @VolumeRangeEnd INT, @HoldingPeriod INT
+	[dbo].[Momentum_TopPerformers_v2] @HoldingPeriod INT
 
 AS
 
@@ -91,24 +91,24 @@ BEGIN
 				OfferingDate
 			FROM (
 				SELECT
-					CusipId,
-					MAX(TrdExctnDt) AS TrdExctnDt
+					A.CusipId,
+					MAX(A.TrdExctnDt) AS TrdExctnDt
 				FROM
-					Trace_filtered_withRatings
+					Trace_filtered_withRatings A
+				INNER JOIN
+					BondTopPerformers B ON A.CusipId = B.CusipId AND A.TrdExctnDt >= B.RangeStart AND A.TrdExctnDt <= B.RangeEnd
 				WHERE
-					RatingNum <> 0
-					AND EntrdVolQt BETWEEN @VolumeRangeStart AND @VolumeRangeEnd
+					A.RatingNum <> 0
 					AND TrdExctnDt >= DATEFROMPARTS(YEAR(TrdExctnDt), MONTH(TrdExctnDt), 1) AND TrdExctnDt <= DATEFROMPARTS(YEAR(TrdExctnDt), MONTH(TrdExctnDt), 5)
 				GROUP BY
-					CusipId,
-					YEAR(TrdExctnDt),
-					MONTH(TrdExctnDt)
+					A.CusipId,
+					YEAR(A.TrdExctnDt),
+					MONTH(A.TrdExctnDt)
 			) A
 			INNER JOIN 
 				Trace_filtered_withRatings B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.TrdExctnDt
 			WHERE
 				B.RatingNum <> 0
-				AND B.EntrdVolQt BETWEEN @VolumeRangeStart AND @VolumeRangeEnd
 		) A
 		GROUP BY
 			CusipId,
@@ -133,24 +133,24 @@ BEGIN
 					RptdPr * EntrdVolQt AS PriceVolumeProduct
 				FROM (
 					SELECT
-						CusipId,
-						MAX(TrdExctnDt) AS TrdExctnDt
+						A.CusipId,
+						MAX(A.TrdExctnDt) AS TrdExctnDt
 					FROM
-						Trace_filtered_withRatings
+						Trace_filtered_withRatings A
+					INNER JOIN
+						BondTopPerformers B ON A.CusipId = B.CusipId AND A.TrdExctnDt >= B.RangeStart AND A.TrdExctnDt <= B.RangeEnd
 					WHERE
-						RatingNum <> 0
-						AND EntrdVolQt BETWEEN @VolumeRangeStart AND @VolumeRangeEnd
-						AND TrdExctnDt <= EOMONTH(TrdExctnDt) AND TrdExctnDt > DATEADD(DAY, -5, EOMONTH(TrdExctnDt))
+						A.RatingNum <> 0
+						AND A.TrdExctnDt <= EOMONTH(A.TrdExctnDt) AND A.TrdExctnDt > DATEADD(DAY, -5, EOMONTH(A.TrdExctnDt))
 					GROUP BY
-						CusipId,
-						YEAR(TrdExctnDt),
-						MONTH(TrdExctnDt)
+						A.CusipId,
+						YEAR(A.TrdExctnDt),
+						MONTH(A.TrdExctnDt)
 				) A
 				INNER JOIN 
 					Trace_filtered_withRatings B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.TrdExctnDt
 				WHERE
 					B.RatingNum <> 0
-					AND B.EntrdVolQt BETWEEN @VolumeRangeStart AND @VolumeRangeEnd
 			) A
 			GROUP BY
 				CusipId,
@@ -226,7 +226,7 @@ BEGIN
 		MonthGap = 1
 	ORDER BY
 		StartDate
-
+	
 	-- DROP TEMP TABLE
 	DROP TABLE #TEMP_TABLE
 
