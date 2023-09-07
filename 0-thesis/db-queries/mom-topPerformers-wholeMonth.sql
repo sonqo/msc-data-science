@@ -1,7 +1,9 @@
 -- TOP BONDS
 SELECT
-	B.*
-FROM (
+	A.*
+FROM
+	BondReturns_fromTrace_last5DaysMonth A
+LEFT JOIN (
 	SELECT
 		*
 	FROM (
@@ -29,9 +31,7 @@ FROM (
 	) B
 	WHERE
 		VolumeRanking <= 3
-) A
-INNER JOIN
-	BondReturns_fromTrace_last5DaysMonth B ON A.CusipId = B.CusipId AND A.TrdExctnDtEOM = B.TrdExctnDtEOM
+) B ON A.CusipId = B.CusipId AND A.TrdExctnDtEOM = B.TrdExctnDtEOM
 ORDER BY
 	B.CusipId,
 	B.TrdExctnDtEOM
