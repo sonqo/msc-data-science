@@ -1,17 +1,5 @@
-- amihud ratio
-- information assymetry
 
-- portfolios
-    - monthly returns
-        - ( startPrice + Coupon + AccruedInterest - ( endPrice + lagAccruedInterest ) ) / ( endPrice + lagAccruedInterest )
-    - top performing bonds / non top performing
-        - top performing bonds : top 3 per issuer => Trace
-    - hy / ig => BondReturns
-    - private issuers / non private issuer : match CRPSC => BondReturns
-
-- fractions
-    - week / month level
-    - implemented date, cusip : add date, issuer
-        - top performing bonds : same as portfolios
-        - non top performing
-        - private issuers / non private issuers
+- REMOVE 6 DAY CONSECUTIVE CHECK (PARAMETER ON VOLUME THRESHOLD) ( DATEADD(MONTH, @HoldingPeriod, A.TrdExctnDt) <= A.Maturity )
+    - TOP 3 PER ISSUER WHOLE MONTH (INST) 
+    - TOP 3 PER ISSUER LAST 5 OF MONTH (INST)
+    - 
