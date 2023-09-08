@@ -1,6 +1,6 @@
 CREATE PROCEDURE
 
-	[dbo].[Momentum_topBonds] @numberOfTopBonds INT = 3, @topBondThreshold INT = 500000, @CreditRisk NVARCHAR(10) = NULL, @Ownership NVARCHAR(10) = NULL
+	[dbo].[Momentum_topBonds] @numberOfTopBonds INT = 3, @CreditRisk NVARCHAR(10) = NULL, @Ownership NVARCHAR(10) = NULL
 
 AS
 
@@ -37,7 +37,7 @@ BEGIN
             ) A
             WHERE
                 RatingNum <> 0
-                AND EntrdVolQt >= @topBondThreshold -- institunional
+                AND EntrdVolQt >= 500000 -- institunional
                 AND PrincipalAmt IS NOT NULL
                 AND RatingNum > CASE WHEN @CreditRisk = 'HY' THEN 10 ELSE 0 END
                 AND RatingNum < CASE WHEN @CreditRisk = 'IG' THEN 11 ELSE 25 END
