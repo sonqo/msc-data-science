@@ -1,13 +1,43 @@
-DROP TABLE IF EXISTS [dbo].[BondReturns_fromTrace_last5DaysMonth]
+DROP TABLE IF EXISTS [dbo].[BondReturns_wholeMonth_nonTopBonds]
 
--- TEMP TABLE : TOP PERFORMERS ACCORDING TO THE WHOLE MONTH
+-- TEMP TABLE : TOP PERFORMERS ACCORDING TO THE LAST 5 DAYS OF THE MONTH
 SELECT
     CusipId,
     TrdExctnDtEOM
 INTO
-    #TEMP_TopPerformers_wholeMonth
+    #TEMP_TopPerformers
 FROM (
-    SELECT
+
+	SELECT
+		*
+	FROM (
+		SELECT
+			*,
+			DENSE_RANK() OVER (PARTITION BY IssuerId, TrdExctnDtEOM ORDER BY Volume DESC) AS VolumeRanking
+		FROM (
+			SELECT
+				IssuerId,
+				CusipId,
+				EOMONTH(TrdExctnDt) AS TrdExctnDtEOM,
+				SUM(EntrdVolQt) AS Volume
+			FROM
+				Trace_filtered_withRatings A
+			WHERE
+				RatingNum <> 0
+				AND EntrdVolQt >= 500000 -- institunional
+				AND PrincipalAmt IS NOT NULL
+			GROUP BY
+				IssuerId,
+				CusipId,
+				EOMONTH(TrdExctnDt)
+		) A
+	) B
+	WHERE
+		VolumeRanking > 3
+
+	UNION ALL
+
+	SELECT
         *,
         DENSE_RANK() OVER (PARTITION BY IssuerId, TrdExctnDtEOM ORDER BY Volume DESC) AS VolumeRanking
     FROM (
@@ -20,7 +50,7 @@ FROM (
             Trace_filtered_withRatings A
         WHERE
             RatingNum <> 0
-            AND EntrdVolQt >= 500000 -- institunional
+            AND EntrdVolQt < 500000 -- institunional
             AND PrincipalAmt IS NOT NULL
         GROUP BY
             IssuerId,
@@ -28,8 +58,7 @@ FROM (
             EOMONTH(TrdExctnDt)
     ) A
 ) B
-WHERE
-    VolumeRanking <= 3
+
 
 -- TEMP TABLE : RETURN PARTICULARS
 SELECT
@@ -103,7 +132,18 @@ FROM (
 				ELSE 2
 			END AS InterestFrequency,
 			MAX(RatingNum) AS RatingNum,
+			CASE
+				WHEN MAX(RatingNum) <= 10 THEN 'HY'
+				WHEN MAX(RatingNum) >= 11 THEN 'IG'
+				ELSE NULL
+			END AS RatingClass,
 			MAX(Maturity) AS Maturity,
+			CASE 
+				WHEN ABS(DATEDIFF(DAY, MAX(Maturity), MAX(OfferingDate))) * 1.0 / 360 <= 4 THEN 1
+				WHEN ABS(DATEDIFF(DAY, MAX(Maturity), MAX(OfferingDate))) * 1.0 / 360 <= 14 THEN 2
+				WHEN ABS(DATEDIFF(DAY, MAX(Maturity), MAX(OfferingDate))) * 1.0 / 360 >= 15 THEN 3
+				ELSE NULL
+			END AS MaturityBand,
 			CASE
 				WHEN MAX(FirstInterestDate) IS NOT NULL THEN MAX(FirstInterestDate)
 				ELSE MAX(OfferingDate)
@@ -133,7 +173,7 @@ FROM (
                     FROM
                         Trace_filtered_withRatings A
                     INNER JOIN
-                        #TEMP_TopPerformers_wholeMonth B ON A.CusipId = B.CusipId AND EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
+                        #TEMP_TopPerformers B ON A.CusipId = B.CusipId AND EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
                 ) A
 				WHERE
 				    TrdExctnDt <= EOMONTH(TrdExctnDt) AND TrdExctnDt > DATEADD(DAY, -5, EOMONTH(TrdExctnDt))
@@ -180,7 +220,9 @@ FROM (
 			C.PrincipalAmt,
 			C.InterestFrequency,
 			C.RatingNum,
+			C.RatingClass,
 			C.Maturity,
+			C.MaturityBand,
 			C.FirstInterestDate,
 			C.NextInterestDate,
 			C.LatestInterestDate,
@@ -206,7 +248,7 @@ FROM (
 SELECT
 	A.*
 INTO
-	[dbo].[BondReturns_fromTrace_last5DaysMonth]
+	[dbo].[BondReturns_wholeMonth_nonTopBonds]
 FROM
 	#TEMP_RETURNS A
 INNER JOIN (
@@ -222,6 +264,6 @@ INNER JOIN (
 		CusipId
 ) B ON A.CusipId = B.CusipId AND A.TrdExctnDtEOM >= B.MinTrdExctnDtEOM AND A.TrdExctnDtEOM <= MaxTrdExctnDtEOM
 
--- DROP TABLE #TEMP_TopPerformers_wholeMonth
--- DROP TABLE #TEMP_TABLE
--- DROP TABLE #TEMP_RETURNS
+DROP TABLE #TEMP_TABLE
+DROP TABLE #TEMP_RETURNS
+DROP TABLE #TEMP_TopPerformers
