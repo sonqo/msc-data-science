@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS [dbo].[BondReturns_lastFive_topBonds]
+DROP TABLE IF EXISTS [dbo].[BondReturns_top3Bonds]
 
 -- TEMP TABLE : TOP PERFORMERS ACCORDING TO THE LAST 5 DAYS OF THE MONTH
 SELECT
@@ -105,8 +105,8 @@ FROM (
 			END AS InterestFrequency,
 			MAX(RatingNum) AS RatingNum,
 			CASE
-				WHEN MAX(RatingNum) <= 10 THEN 'HY'
-				WHEN MAX(RatingNum) >= 11 THEN 'IG'
+				WHEN MAX(RatingNum) <= 10 THEN 'IG'
+				WHEN MAX(RatingNum) >= 11 THEN 'HY'
 				ELSE NULL
 			END AS RatingClass,
 			MAX(Maturity) AS Maturity,
@@ -220,7 +220,7 @@ FROM (
 SELECT
 	A.*
 INTO
-	[dbo].[BondReturns_lastFive_topBonds]
+	[dbo].[BondReturns_top3Bonds]
 FROM
 	#TEMP_RETURNS A
 INNER JOIN (

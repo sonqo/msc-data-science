@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS [dbo].[BondReturns_wholeMonth_nonTopBonds]
+DROP TABLE IF EXISTS [dbo].[BondReturns_nonTop3Bods]
 
 -- TEMP TABLE : TOP PERFORMERS ACCORDING TO THE LAST 5 DAYS OF THE MONTH
 SELECT
@@ -26,6 +26,7 @@ FROM (
 				RatingNum <> 0
 				AND EntrdVolQt >= 500000 -- institunional
 				AND PrincipalAmt IS NOT NULL
+				AND TrdExctnDt <= EOMONTH(TrdExctnDt) AND TrdExctnDt > DATEADD(DAY, -5, EOMONTH(TrdExctnDt))
 			GROUP BY
 				IssuerId,
 				CusipId,
@@ -52,6 +53,7 @@ FROM (
             RatingNum <> 0
             AND EntrdVolQt < 500000 -- institunional
             AND PrincipalAmt IS NOT NULL
+			AND TrdExctnDt <= EOMONTH(TrdExctnDt) AND TrdExctnDt > DATEADD(DAY, -5, EOMONTH(TrdExctnDt))
         GROUP BY
             IssuerId,
             CusipId,
@@ -133,8 +135,8 @@ FROM (
 			END AS InterestFrequency,
 			MAX(RatingNum) AS RatingNum,
 			CASE
-				WHEN MAX(RatingNum) <= 10 THEN 'HY'
-				WHEN MAX(RatingNum) >= 11 THEN 'IG'
+				WHEN MAX(RatingNum) <= 10 THEN 'IG'
+				WHEN MAX(RatingNum) >= 11 THEN 'HY'
 				ELSE NULL
 			END AS RatingClass,
 			MAX(Maturity) AS Maturity,
@@ -248,7 +250,7 @@ FROM (
 SELECT
 	A.*
 INTO
-	[dbo].[BondReturns_wholeMonth_nonTopBonds]
+	[dbo].[BondReturns_nonTop3Bods]
 FROM
 	#TEMP_RETURNS A
 INNER JOIN (

@@ -1,35 +1,4 @@
-DROP TABLE IF EXISTS [dbo].[BondReturns_wholeMonth_topBonds]
-
--- TEMP TABLE : TOP PERFORMERS ACCORDING TO THE WHOLE MONTH
-SELECT
-    CusipId,
-    TrdExctnDtEOM
-INTO
-    #TEMP_TopPerformers
-FROM (
-    SELECT
-        *,
-        DENSE_RANK() OVER (PARTITION BY IssuerId, TrdExctnDtEOM ORDER BY Volume DESC) AS VolumeRanking
-    FROM (
-        SELECT
-            IssuerId,
-            CusipId,
-            EOMONTH(TrdExctnDt) AS TrdExctnDtEOM,
-            SUM(EntrdVolQt) AS Volume
-        FROM
-            Trace_filtered_withRatings A
-        WHERE
-            RatingNum <> 0
-            AND EntrdVolQt >= 500000 -- institunional
-            AND PrincipalAmt IS NOT NULL
-        GROUP BY
-            IssuerId,
-            CusipId,
-            EOMONTH(TrdExctnDt)
-    ) A
-) B
-WHERE
-    VolumeRanking <= 3
+DROP TABLE IF EXISTS [dbo].[BondReturns_whole]
 
 -- TEMP TABLE : RETURN PARTICULARS
 SELECT
@@ -104,8 +73,8 @@ FROM (
 			END AS InterestFrequency,
 			MAX(RatingNum) AS RatingNum,
 			CASE
-				WHEN MAX(RatingNum) <= 10 THEN 'HY'
-				WHEN MAX(RatingNum) >= 11 THEN 'IG'
+				WHEN MAX(RatingNum) <= 10 THEN 'IG'
+				WHEN MAX(RatingNum) >= 11 THEN 'HY'
 				ELSE NULL
 			END AS RatingClass,
 			MAX(Maturity) AS Maturity,
@@ -138,16 +107,12 @@ FROM (
 				SELECT
 					CusipId,
 					MAX(TrdExctnDt) AS TrdExctnDt
-				FROM (
-                    SELECT
-                        A.*
-                    FROM
-                        Trace_filtered_withRatings A
-                    INNER JOIN
-                        #TEMP_TopPerformers B ON A.CusipId = B.CusipId AND EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
-                ) A
+				FROM
+                    Trace_filtered_withRatings
 				WHERE
-				    TrdExctnDt <= EOMONTH(TrdExctnDt) AND TrdExctnDt > DATEADD(DAY, -5, EOMONTH(TrdExctnDt))
+                    RatingNum <> 0
+                    AND PrincipalAmt IS NOT NULL
+				    AND TrdExctnDt <= EOMONTH(TrdExctnDt) AND TrdExctnDt > DATEADD(DAY, -5, EOMONTH(TrdExctnDt))
 				GROUP BY
 					CusipId,
 					EOMONTH(TrdExctnDt)
@@ -219,7 +184,7 @@ FROM (
 SELECT
 	A.*
 INTO
-	[dbo].[BondReturns_wholeMonth_topBonds]
+	[dbo].[BondReturns_whole]
 FROM
 	#TEMP_RETURNS A
 INNER JOIN (
@@ -237,4 +202,3 @@ INNER JOIN (
 
 DROP TABLE #TEMP_TABLE
 DROP TABLE #TEMP_RETURNS
-DROP TABLE #TEMP_TopPerformers
