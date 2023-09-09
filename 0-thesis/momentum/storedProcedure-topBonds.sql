@@ -165,6 +165,9 @@ BEGIN
                             Trace_filtered_withRatings A
                         INNER JOIN
                             #TEMP_TopPerformers B ON A.CusipId = B.CusipId AND EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
+						WHERE
+							RatingNum > CASE WHEN @CreditRisk = 'HY' THEN 10 ELSE 0 END
+							AND RatingNum < CASE WHEN @CreditRisk = 'IG' THEN 11 ELSE 25 END
                     ) A
                     WHERE
                         TrdExctnDt <= EOMONTH(TrdExctnDt) AND TrdExctnDt > DATEADD(DAY, -5, EOMONTH(TrdExctnDt))
