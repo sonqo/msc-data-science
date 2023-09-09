@@ -1,13 +1,13 @@
 CREATE PROCEDURE
 
-	[dbo].[Momentum_topBonds] @numberOfTopBonds INT = 3, @CreditRisk NVARCHAR(10) = NULL, @Ownership NVARCHAR(10) = NULL
+	[dbo].[Momentum_nonTopBonds] @numberOfTopBonds INT = 3, @CreditRisk NVARCHAR(10) = NULL, @Ownership NVARCHAR(10) = NULL
 
 AS
 
 BEGIN
 	
     SET NOCOUNT ON
-   
+
     -- TEMP TABLE : TOP PERFORMERS ACCORDING TO THE LAST 5 DAYS OF THE MONTH
     SELECT
         CusipId,
@@ -15,6 +15,48 @@ BEGIN
     INTO
         #TEMP_TopPerformers
     FROM (
+
+        SELECT
+            *
+        FROM (
+            SELECT
+                *,
+                DENSE_RANK() OVER (PARTITION BY IssuerId, TrdExctnDtEOM ORDER BY Volume DESC) AS VolumeRanking
+            FROM (
+                SELECT
+                    IssuerId,
+                    CusipId,
+                    EOMONTH(TrdExctnDt) AS TrdExctnDtEOM,
+                    SUM(EntrdVolQt) AS Volume
+                FROM (
+                    SELECT
+                        A.*
+                    FROM
+                        Trace_filtered_withRatings A
+                    INNER JOIN
+                        BondIssuers_privatePublic B ON A.IssuerId = B.IssuerId
+                    WHERE
+                        Private < CASE WHEN @Ownership = 'Public' THEN 1 ELSE 2 END
+                        AND Private > CASE WHEN @Ownership = 'Private' THEN 0 ELSE -1 END
+                ) A
+                WHERE
+                    RatingNum <> 0
+                    AND EntrdVolQt >= 500000 -- institunional
+                    AND PrincipalAmt IS NOT NULL
+                    AND RatingNum > CASE WHEN @CreditRisk = 'HY' THEN 10 ELSE 0 END
+                    AND RatingNum < CASE WHEN @CreditRisk = 'IG' THEN 11 ELSE 25 END
+                    AND TrdExctnDt <= EOMONTH(TrdExctnDt) AND TrdExctnDt > DATEADD(DAY, -5, EOMONTH(TrdExctnDt))
+                GROUP BY
+                    IssuerId,
+                    CusipId,
+                    EOMONTH(TrdExctnDt)
+            ) A
+        ) B
+        WHERE
+            VolumeRanking > 3
+
+        UNION ALL
+
         SELECT
             *,
             DENSE_RANK() OVER (PARTITION BY IssuerId, TrdExctnDtEOM ORDER BY Volume DESC) AS VolumeRanking
@@ -37,7 +79,7 @@ BEGIN
             ) A
             WHERE
                 RatingNum <> 0
-                AND EntrdVolQt >= 500000 -- institunional
+                AND EntrdVolQt < 500000 -- institunional
                 AND PrincipalAmt IS NOT NULL
                 AND RatingNum > CASE WHEN @CreditRisk = 'HY' THEN 10 ELSE 0 END
                 AND RatingNum < CASE WHEN @CreditRisk = 'IG' THEN 11 ELSE 25 END
@@ -48,8 +90,7 @@ BEGIN
                 EOMONTH(TrdExctnDt)
         ) A
     ) B
-    WHERE
-        VolumeRanking <= @numberOfTopBonds
+
 
     -- TEMP TABLE : RETURN PARTICULARS
     SELECT
@@ -90,7 +131,7 @@ BEGIN
                                 1.0 * 360 / InterestFrequency / 30,
                                 DATEADD( 
                                     MONTH,
-                                    1.0 * ( ABS ( dbo.YearFact(TrdExctnDt, FirstInterestDate, 0 ) ) ) / ( 1.0 * 360 / InterestFrequency ) * ( 1.0 * 360 / InterestFrequency / 30 ),
+                                    1.0 * ( ABS ( dbo.YearFact(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 1.0 * 360 / InterestFrequency ) * ( 1.0 * 360 / InterestFrequency / 30 ),
                                     FirstInterestDate
                                 )
                             )
@@ -104,7 +145,7 @@ BEGIN
                         ELSE
                             DATEADD( 
                                 MONTH,
-                                1.0 * ( ABS ( dbo.YearFact(TrdExctnDt, FirstInterestDate, 0 ) ) ) / ( 1.0 * 360 / InterestFrequency ) * ( 1.0 * 360 / InterestFrequency / 30 ),
+                                1.0 * ( ABS ( dbo.YearFact(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 1.0 * 360 / InterestFrequency ) * ( 1.0 * 360 / InterestFrequency / 30 ),
                                 FirstInterestDate
                             ) 
                     END 
@@ -236,7 +277,6 @@ BEGIN
         ) A
     ) A
 
-    -- RETURNS
     SELECT
         A.*
     FROM
