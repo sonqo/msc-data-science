@@ -1,8 +1,9 @@
-DROP TABLE IF EXISTS [dbo].[Trace_filtered_withoutRatings];
+DROP TABLE IF EXISTS [dbo].[Trace_filtered];
 
 SELECT
 	A.CusipId,
 	A.TrdExctnDt,
+	A.TrdExctnTm,
 	A.TrdExctnMn,
 	A.TrdExctnYr,
 	A.EntrdVolQt,
@@ -23,7 +24,7 @@ SELECT
 	C.IndustryCode,
 	C.IndustryGroup
 INTO
-	[dbo].[Trace_filtered_withoutRatings]
+	[dbo].[Trace_filtered]
 FROM 
 	Trace A
 INNER JOIN

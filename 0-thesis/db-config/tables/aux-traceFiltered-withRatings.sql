@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS [dbo].[Trace_filtered_withRatings];
+DROP TABLE IF EXISTS [dbo].[Trace_filteredWithRatings];
 
 SELECT
 	A.*,
@@ -7,9 +7,9 @@ SELECT
         ELSE C.RatingNum
     END AS RatingNum
 INTO
-	[dbo].[Trace_filtered_withRatings]
+	[dbo].[Trace_filteredWithRatings]
 FROM
-	Trace_filtered_withoutRatings A
+	Trace_filtered A
 -- join with BondReturns
 INNER JOIN (
 	-- get minimum rating for current TradeExecutionDate and LatestRatingDate
@@ -35,7 +35,7 @@ INNER JOIN (
 				ELSE MAX(B.Date)
 			END AS LatestRatingDate
 		FROM
-			Trace_filtered_withoutRatings A
+			Trace_filtered A
 		LEFT JOIN
 			BondReturns B ON A.CusipId = B.Cusip AND A.TrdExctnDt >= B.Date
 		GROUP BY
@@ -72,7 +72,7 @@ INNER JOIN (
 				ELSE MAX(B.RatingDate)
 			END AS LatestRatingDate
 		FROM
-			Trace_filtered_withoutRatings A
+			Trace_filtered A
 		LEFT JOIN
 			BondRatings B ON A.CusipId = B.CompleteCusip AND A.TrdExctnDt >= B.RatingDate
 		GROUP BY
@@ -89,16 +89,16 @@ INNER JOIN (
 -- ADD PRINCIPAL AMOUNT COLUMN
 
 ALTER TABLE
-	[dbo].[Trace_filtered_withRatings]
+	[dbo].[Trace_filteredWithRatings]
 ADD
 	PrincipalAmt INT
 
 UPDATE
-	[dbo].[Trace_filtered_withRatings]
+	[dbo].[Trace_filteredWithRatings]
 SET
 	PrincipalAmt = B.PrincipalAmt
 FROM
-	[dbo].[Trace_filtered_withRatings] A
+	[dbo].[Trace_filteredWithRatings] A
 INNER JOIN (
 	SELECT 
 		Cusip,
