@@ -8,89 +8,6 @@ BEGIN
 	
     SET NOCOUNT ON
 
-    -- TEMP TABLE : TOP PERFORMERS ACCORDING TO THE LAST 5 DAYS OF THE MONTH
-    SELECT
-        CusipId,
-        TrdExctnDtEOM
-    INTO
-        #TEMP_TopPerformers
-    FROM (
-        SELECT
-            *
-        FROM (
-            SELECT
-                *,
-                DENSE_RANK() OVER (PARTITION BY IssuerId, TrdExctnDtEOM ORDER BY Volume DESC) AS VolumeRanking
-            FROM (
-                SELECT
-                    IssuerId,
-                    CusipId,
-                    EOMONTH(TrdExctnDt) AS TrdExctnDtEOM,
-                    SUM(EntrdVolQt) AS Volume
-                FROM (
-                    SELECT
-                        A.*
-                    FROM
-                        Trace_filtered_withRatings A
-                    INNER JOIN
-                        BondIssuers_privatePublic B ON A.IssuerId = B.IssuerId
-                    WHERE
-                        Private < CASE WHEN @Ownership = 'Public' THEN 1 ELSE 2 END
-                        AND Private > CASE WHEN @Ownership = 'Private' THEN 0 ELSE -1 END
-                ) A
-                WHERE
-                    RatingNum <> 0
-                    AND EntrdVolQt >= 500000 -- institunional
-                    AND PrincipalAmt IS NOT NULL
-                    AND RatingNum > CASE WHEN @CreditRisk = 'HY' THEN 10 ELSE 0 END
-                    AND RatingNum < CASE WHEN @CreditRisk = 'IG' THEN 11 ELSE 25 END
-                    AND TrdExctnDt <= EOMONTH(TrdExctnDt) AND TrdExctnDt > DATEADD(DAY, -5, EOMONTH(TrdExctnDt))
-                GROUP BY
-                    IssuerId,
-                    CusipId,
-                    EOMONTH(TrdExctnDt)
-            ) A
-        ) B
-        WHERE
-            VolumeRanking > 3
-
-        UNION
-        
-        SELECT
-            *,
-            NULL AS VolumeRanking
-        FROM (
-            SELECT
-                IssuerId,
-                CusipId,
-                EOMONTH(TrdExctnDt) AS TrdExctnDtEOM,
-                SUM(EntrdVolQt) AS Volume
-            FROM (
-                SELECT
-                    A.*
-                FROM
-                    Trace_filtered_withRatings A
-                INNER JOIN
-                    BondIssuers_privatePublic B ON A.IssuerId = B.IssuerId
-                WHERE
-                    Private < CASE WHEN @Ownership = 'Public' THEN 1 ELSE 2 END
-                    AND Private > CASE WHEN @Ownership = 'Private' THEN 0 ELSE -1 END
-            ) A
-            WHERE
-                RatingNum <> 0
-                AND EntrdVolQt < 500000
-                AND PrincipalAmt IS NOT NULL
-                AND RatingNum > CASE WHEN @CreditRisk = 'HY' THEN 10 ELSE 0 END
-                AND RatingNum < CASE WHEN @CreditRisk = 'IG' THEN 11 ELSE 25 END
-                AND TrdExctnDt <= EOMONTH(TrdExctnDt) AND TrdExctnDt > DATEADD(DAY, -5, EOMONTH(TrdExctnDt))
-            GROUP BY
-                IssuerId,
-                CusipId,
-                EOMONTH(TrdExctnDt)
-        ) A
-    ) B
-
-
     -- TEMP TABLE : RETURN PARTICULARS
     SELECT
         *,
@@ -193,7 +110,7 @@ BEGIN
                     A.FirstInterestDate,
                     A.OfferingDate
                 FROM
-                    Trace_filtered_withRatings A
+                    Trace_filteredWithRatings A
                 INNER JOIN (
                     SELECT
                         CusipId,
@@ -202,12 +119,14 @@ BEGIN
                         SELECT
                             A.*
                         FROM
-                            Trace_filtered_withRatings A
-                        INNER JOIN
-                            #TEMP_TopPerformers B ON A.CusipId = B.CusipId AND EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
+                            Trace_filteredWithRatings A
+                        LEFT JOIN
+                            BondReturns_topBonds B ON A.CusipId = B.CusipId AND EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
 						WHERE
-							RatingNum > CASE WHEN @CreditRisk = 'HY' THEN 10 ELSE 0 END
-							AND RatingNum < CASE WHEN @CreditRisk = 'IG' THEN 11 ELSE 25 END
+							B.CusipId IS NULL
+                            AND A.PrincipalAmt IS NOT NULL
+							AND A.RatingNum > CASE WHEN @CreditRisk = 'HY' THEN 10 ELSE 0 END
+							AND A.RatingNum < CASE WHEN @CreditRisk = 'IG' THEN 11 ELSE 25 END
                     ) A
                     WHERE
                         TrdExctnDt <= EOMONTH(TrdExctnDt) AND TrdExctnDt > DATEADD(DAY, -5, EOMONTH(TrdExctnDt))
@@ -298,6 +217,5 @@ BEGIN
 
     DROP TABLE #TEMP_TABLE
     DROP TABLE #TEMP_RETURNS
-    DROP TABLE #TEMP_TopPerformers
 
 END
