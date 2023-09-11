@@ -1,6 +1,8 @@
 -- TOP BONDS
 SELECT
-	*
+	*,
+	RetailVolume / (InstitutionalVolume + RetailVolume) AS VolumeFraction,
+	RetailTrades / (InstitutionalTrades + RetailTrades) AS TradesFraction
 FROM (
 	SELECT
 		EOMONTH(A.TrdExctnDt) AS TrdExctnDtEOM,
@@ -11,7 +13,7 @@ FROM (
 		COUNT(DISTINCT (CASE WHEN EntrdVolQt >= 500000 THEN A.CusipId END)) AS InstitutionalCusips,
 		COUNT(DISTINCT (CASE WHEN EntrdVolQt < 250000 THEN A.CusipId END)) AS RetailCusips
 	FROM
-		Trace_filtered_withRatings A
+		Trace_filteredWithRatings A
 	INNER JOIN (
 		SELECT
 			CusipId,
@@ -27,7 +29,7 @@ FROM (
 					EOMONTH(TrdExctnDt) AS TrdExctnDtEOM,
 					SUM(EntrdVolQt) AS Volume
 				FROM
-					Trace_filtered_withRatings
+					Trace_filteredWithRatings
 				WHERE
 					RatingNum <> 0
 					AND EntrdVolQt >= 500000 -- institunional
@@ -50,7 +52,9 @@ ORDER BY
 
 -- NON-TOP BONDS
 SELECT
-	*
+	*,
+	RetailVolume / (InstitutionalVolume + RetailVolume) AS VolumeFraction,
+	RetailTrades / (InstitutionalTrades + RetailTrades) AS TradesFraction
 FROM (
 	SELECT
 		EOMONTH(A.TrdExctnDt) AS TrdExctnDtEOM,
@@ -61,7 +65,7 @@ FROM (
 		COUNT(DISTINCT (CASE WHEN EntrdVolQt >= 500000 THEN A.CusipId END)) AS InstitutionalCusips,
 		COUNT(DISTINCT (CASE WHEN EntrdVolQt < 250000 THEN A.CusipId END)) AS RetailCusips
 	FROM
-		Trace_filtered_withRatings A
+		Trace_filteredWithRatings A
 	INNER JOIN (
 
 		SELECT
@@ -78,7 +82,7 @@ FROM (
 					EOMONTH(TrdExctnDt) AS TrdExctnDtEOM,
 					SUM(EntrdVolQt) AS Volume
 				FROM
-					Trace_filtered_withRatings
+					Trace_filteredWithRatings
 				WHERE
 					RatingNum <> 0
 					AND EntrdVolQt >= 500000 -- institunional
@@ -109,7 +113,7 @@ FROM (
 					EOMONTH(TrdExctnDt) AS TrdExctnDtEOM,
 					SUM(EntrdVolQt) AS Volume
 				FROM
-					Trace_filtered_withRatings
+					Trace_filteredWithRatings
 				WHERE
 					RatingNum <> 0
 					AND EntrdVolQt < 500000
