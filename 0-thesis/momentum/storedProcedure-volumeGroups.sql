@@ -106,7 +106,7 @@ BEGIN
 					CusipId,
 					MIN(TrdExctnDt) AS TrdExctnDt
 				FROM
-					Trace_filtered_withRatings
+					Trace_filteredWithRatings
 				WHERE
 					RatingNum <> 0
 					AND EntrdVolQt >= @VolumeRangeStart AND EntrdVolQt < @VolumeRangeEnd
@@ -117,7 +117,7 @@ BEGIN
 					MONTH(TrdExctnDt)
 			) A
 			INNER JOIN 
-				Trace_filtered_withRatings B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.TrdExctnDt
+				Trace_filteredWithRatings B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.TrdExctnDt
 			WHERE
 				B.RatingNum <> 0
 				AND EntrdVolQt >= @VolumeRangeStart AND EntrdVolQt < @VolumeRangeEnd
@@ -147,7 +147,7 @@ BEGIN
 						CusipId,
 						MAX(TrdExctnDt) AS TrdExctnDt
 					FROM
-						Trace_filtered_withRatings
+						Trace_filteredWithRatings
 					WHERE
 						RatingNum <> 0
 						AND EntrdVolQt >= @VolumeRangeStart AND EntrdVolQt < @VolumeRangeEnd
@@ -158,7 +158,7 @@ BEGIN
 						MONTH(TrdExctnDt)
 				) A
 				INNER JOIN 
-					Trace_filtered_withRatings B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.TrdExctnDt
+					Trace_filteredWithRatings B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.TrdExctnDt
 				WHERE
 					B.RatingNum <> 0
 					AND EntrdVolQt >= @VolumeRangeStart AND EntrdVolQt < @VolumeRangeEnd

@@ -15,7 +15,7 @@ BEGIN
             WHEN InterestFrequency = 0 THEN NULL
             ELSE
                 CASE
-                    WHEN NextInterestDate <= TrdExctnDtEOM AND NextInterestDate >= DATEFROMPARTS(YEAR(TrdExctnDtEOM), MONTH(TrdExctnDtEOM), 1) THEN 1
+                    WHEN LatestInterestDate <= TrdExctnDtEOM AND LatestInterestDate >= DATEFROMPARTS(YEAR(TrdExctnDtEOM), MONTH(TrdExctnDtEOM), 1) THEN 1
                     ELSE 0
                 END
         END AS CouponsPaid,
@@ -44,10 +44,10 @@ BEGIN
                         ELSE 
                             DATEADD( 
                                 MONTH,
-                                1.0 * 360 / InterestFrequency / 30,
+                                360 / InterestFrequency / 30,
                                 DATEADD( 
                                     MONTH,
-                                    1.0 * ( ABS ( dbo.YearFact(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 1.0 * 360 / InterestFrequency ) * ( 1.0 * 360 / InterestFrequency / 30 ),
+                                    ( ABS ( dbo.YearFact(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 360 / InterestFrequency ) * ( 360 / InterestFrequency / 30 ),
                                     FirstInterestDate
                                 )
                             )
@@ -61,7 +61,7 @@ BEGIN
                         ELSE
                             DATEADD( 
                                 MONTH,
-                                1.0 * ( ABS ( dbo.YearFact(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 1.0 * 360 / InterestFrequency ) * ( 1.0 * 360 / InterestFrequency / 30 ),
+                                ( ABS ( dbo.YearFact(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 360 / InterestFrequency ) * ( 360 / InterestFrequency / 30 ),
                                 FirstInterestDate
                             ) 
                     END 
@@ -110,16 +110,15 @@ BEGIN
                     A.FirstInterestDate,
                     A.OfferingDate
                 FROM
-                    Trace_filtered_withRatings A
+                    Trace_filteredWithRatings A
                 INNER JOIN (
                     SELECT
                         CusipId,
                         MAX(TrdExctnDt) AS TrdExctnDt
                     FROM
-						Trace_filtered_withRatings A
+						Trace_filteredWithRatings A
                     WHERE
-						RatingNum <> 0
-						AND PrincipalAmt IS NOT NULL
+						PrincipalAmt IS NOT NULL
 						AND RatingNum > CASE WHEN @CreditRisk = 'HY' THEN 10 ELSE 0 END
 						AND RatingNum < CASE WHEN @CreditRisk = 'IG' THEN 11 ELSE 25 END
                         AND TrdExctnDt <= EOMONTH(TrdExctnDt) AND TrdExctnDt > DATEADD(DAY, -5, EOMONTH(TrdExctnDt))
@@ -140,14 +139,14 @@ BEGIN
     SELECT
         *,
         CASE
-            WHEN InterestFrequency = 0 THEN ( WeightPrice * PrincipalAmt / 100 - LagWeightedPrice * PrincipalAmt / 100 ) / ( LagWeightedPrice * PrincipalAmt / 100 )
+            WHEN InterestFrequency = 0 THEN ( WeightPrice - LagWeightedPrice ) / ( LagWeightedPrice )
             ELSE ( 
-                WeightPrice * PrincipalAmt / 100 + 
-                CouponsPaid * Coupon * PrincipalAmt * InterestFrequency / 360 +
+                WeightPrice + 
+                CouponsPaid * Coupon / 100 * PrincipalAmt / InterestFrequency +
                 AI - 
-                LagWeightedPrice * PrincipalAmt / 100 -
+                LagWeightedPrice -
                 LagAI 
-                ) / ( LagWeightedPrice * PrincipalAmt / 100 + LagAI )
+                ) / ( LagWeightedPrice + LagAI )
         END AS R
     INTO
         #TEMP_RETURNS
@@ -191,7 +190,7 @@ BEGIN
         ) A
     ) A
 
-    -- RETURNS
+    -- FINAL
     SELECT
         A.*
     FROM
@@ -213,3 +212,5 @@ BEGIN
     DROP TABLE #TEMP_RETURNS
 
 END
+
+select * from #TEMP_RETURNS order by cusipid, TrdExctnDtEOM
