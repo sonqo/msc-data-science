@@ -152,14 +152,14 @@ BEGIN
 								Trace_filteredWithRatings A
 							WHERE
 								PrincipalAmt IN (10, 1000)
-								AND EntrdVolQt >= @VolumeRangeStart --AND EntrdVolQt < @VolumeRangeEnd
+								AND EntrdVolQt >= @VolumeRangeStart AND EntrdVolQt < @VolumeRangeEnd
 								AND TrdExctnDt <= EOMONTH(TrdExctnDt) AND TrdExctnDt > DATEADD(DAY, -5, EOMONTH(TrdExctnDt))
 							GROUP BY
 								A.CusipId,
 								EOMONTH(A.TrdExctnDt)
 						) B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.TrdExctnDt
 						WHERE
-							EntrdVolQt >= @VolumeRangeStart --AND EntrdVolQt < @VolumeRangeEnd
+							EntrdVolQt >= @VolumeRangeStart AND EntrdVolQt < @VolumeRangeEnd
 					) C
 					GROUP BY
 						CusipId,
