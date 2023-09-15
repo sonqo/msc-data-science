@@ -4,7 +4,7 @@ from scipy import stats
 import matplotlib.pyplot as plt
 from pandas.tseries.offsets import *
 
-for com in [(i, j) for i in range(1, 13) for j in range(1, 24)]:
+for com in [(i, j) for i in range(1, 13) for j in range(1, 13)]:
 
     # read
     directory = 'source/topBonds.csv'
