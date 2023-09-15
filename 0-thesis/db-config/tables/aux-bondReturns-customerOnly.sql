@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS [dbo].[BondReturns_fromTrace]
+DROP TABLE IF EXISTS [dbo].[BondReturns_customerOnly]
 
 SELECT
 	*,
@@ -27,7 +27,6 @@ FROM (
 						END
 				END
 		END AS D
-	
 	FROM (
 		SELECT
 			CusipId,
@@ -142,12 +141,15 @@ FROM (
 						FROM
 							Trace_filteredWithRatings A
 						WHERE
-							PrincipalAmt IS NOT NULL
+							CntraMpId = 'C'
+							AND PrincipalAmt IN (10, 1000)
 							AND TrdExctnDt <= EOMONTH(TrdExctnDt) AND TrdExctnDt > DATEADD(DAY, -5, EOMONTH(TrdExctnDt))
 						GROUP BY
 							CusipId,
 							EOMONTH(TrdExctnDt)
 					) B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.TrdExctnDt
+					WHERE
+						A.CntraMpId = 'C'
 				) C
 				GROUP BY
 					CusipId,
@@ -222,7 +224,7 @@ FROM (
 SELECT
     A.*
 INTO
-	[dbo].[BondReturns_fromTrace]
+	[dbo].[BondReturns_customerOnly]
 FROM
     #TEMP_TABLE_V2 A
 INNER JOIN (
