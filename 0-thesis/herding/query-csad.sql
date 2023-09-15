@@ -22,7 +22,7 @@ FROM (
             -- MONTHLY RM
             SELECT
                 TrdExctnDtEOM AS Date,
-                SUM(R / 100 * TD_volume) / SUM(TD_volume) AS Rm
+                SUM(R * TD_volume) / SUM(TD_volume) AS Rm
             FROM
                 BondReturns_customerOnly
             GROUP BY

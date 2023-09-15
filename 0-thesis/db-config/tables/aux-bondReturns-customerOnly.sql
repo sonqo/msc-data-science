@@ -7,7 +7,7 @@ SELECT
 		ELSE 0 
 	END AS CouponAmount,
 	CASE
-		WHEN CouponMonth >= 0 AND InterestFrequency > 0 THEN (Coupon * D) / 360
+		WHEN InterestFrequency > 0 THEN (Coupon * D) / 360
 		ELSE 0 
 	END AS CouponAccrued
 INTO
@@ -22,7 +22,7 @@ FROM (
 					WHEN NextInterestDate <= TrdExctnDt AND NextInterestDate >= DATEFROMPARTS(YEAR(TrdExctnDt), MONTH(TrdExctnDt), 1) THEN dbo.YearFact(TrdExctnDt, NextInterestDate, 0)
 					ELSE 
 						CASE
-							WHEN LatestInterestDate IS NULL THEN 0
+							WHEN LatestInterestDate IS NULL THEN dbo.YearFact(OfferingDate, TrdExctnDt, 0)
 							ELSE dbo.YearFact(LatestInterestDate, TrdExctnDt, 0)
 						END
 				END
@@ -42,6 +42,7 @@ FROM (
 			RatingClass,
 			Maturity,
 			MaturityBand,
+			OfferingDate,
 			FirstInterestDate,
 			LatestInterestDate,
 			CASE
@@ -114,7 +115,8 @@ FROM (
 					CASE
 						WHEN MAX(FirstInterestDate) IS NOT NULL THEN MAX(FirstInterestDate)
 						ELSE MAX(OfferingDate)
-					END AS FirstInterestDate
+					END AS FirstInterestDate,
+					MAX(OfferingDate) AS OfferingDate
 				FROM (
 					SELECT
 						A.CusipId,
@@ -181,6 +183,7 @@ FROM (
 		CouponAmount,
 		CouponAccrued,
 		LAG(CouponAccrued) OVER (PARTITION BY CusipId ORDER BY TrdExctnDtEOM) AS LagCouponAccrued,
+		D,
 		RatingNum,
 		RatingClass,
 		FirstInterestDate,
@@ -202,6 +205,7 @@ FROM (
 			C.CouponAccrued,
 			C.RatingNum,
 			C.RatingClass,
+			C.OfferingDate,
 			C.FirstInterestDate,
 			C.LatestInterestDate,
 			C.NextInterestDate,
