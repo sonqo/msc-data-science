@@ -1,6 +1,6 @@
 SELECT DISTINCT
     TrdExctnDt,
-    PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY Amihud) OVER (PARTITION BY TrdExctnDt) AS MedianAmihud
+    PERCENTILE_DISC(0.5) WITHIN GROUP (ORDER BY Amihud) OVER (PARTITION BY TrdExctnDt) * 1000000 AS MedianAmihud
 FROM (
     SELECT
         CusipId,
@@ -27,5 +27,9 @@ FROM (
                 CusipId,
                 TrdExctnDt
         ) B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.TrdExctnDt AND A.TrdExctnTm = B.CloseTime
+        WHERE
+            B.Volume <> 0
     ) C
 ) D
+ORDER BY
+    TrdExctnDt
