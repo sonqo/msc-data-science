@@ -19,7 +19,6 @@ FROM (
         FROM
             BondReturns_customerOnly A
         INNER JOIN (
-            -- MONTHLY RM
             SELECT
                 TrdExctnDtEOM AS Date,
                 SUM(R * TD_volume) / SUM(TD_volume) AS Rm
