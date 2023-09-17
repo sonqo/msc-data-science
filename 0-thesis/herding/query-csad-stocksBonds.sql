@@ -120,3 +120,14 @@ INNER JOIN (
 ) B ON A.Date = B.Datadate
 ORDER BY
 	A.Date
+
+-- DISTINCT ISSUERS AND PERMCOs
+SELECT
+	COUNT(DISTINCT A.IssuerId) AS DistinctIssuers,
+	COUNT(DISTINCT C.LPermNo) AS DistinctPermCos
+FROM
+	BondReturns_topBonds A
+INNER JOIN
+	CrspcBondLink B ON A.CusipId = B.Cusip
+INNER JOIN
+	CrspcSecuritiesDaily C ON B.PermNo = C.LPermNo
