@@ -1,6 +1,8 @@
 /data/source
 /data/processed
 
+/db-desc/source
+
 /momentum/source
 
 /herding/source

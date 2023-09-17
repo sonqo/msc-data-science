@@ -6,11 +6,11 @@ SELECT
 FROM (
     SELECT
         TrdExctnDt,
-        CASE WHEN EntrdVolQt < 100000 THEN 'R' ELSE 'IN' END AS RetailThreshold,
+        CASE WHEN EntrdVolQt < 250000 THEN 'R' WHEN EntrdVolQt >= 500000 THEN 'IN' END AS RetailThreshold,
         CusipId,
         EntrdVolQt
     FROM
-        Trace_filtered_withRatings
+        Trace_filteredWithRatings
     WHERE
         TrdExctnDt >= '2002-01-1' AND TrdExctnDt < '2023-01-01'
 		AND RatingNum <> 0
