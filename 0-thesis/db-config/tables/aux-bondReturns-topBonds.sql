@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS [dbo].[BondReturns_topBonds]
 
 SELECT
 	CusipId,
+	IssuerId,
 	TrdExctnDtEOM
 INTO
 	[dbo].[BondReturns_topBonds]
