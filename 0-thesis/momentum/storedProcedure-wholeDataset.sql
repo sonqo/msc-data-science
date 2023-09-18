@@ -38,10 +38,14 @@ BEGIN
 		FROM (
 			SELECT
 				CusipId,
+				IssuerId,
+				IssuerOwnership,
 				TrdExctnDt,
 				T_Price,
 				T_Volume,
 				TD_Volume,
+				InstitunionalTradeShare,
+				InstitunionalVolumeShare,
 				Coupon,
 				CouponMonth,
 				PrincipalAmt,
@@ -94,10 +98,14 @@ BEGIN
 				FROM (
 					 SELECT
 						CusipId,
+						MAX(IssuerId) AS IssuerId,
+						MAX(IssuerOwnership) AS IssuerOwnership,
 						TrdExctnDt,
 						SUM(PriceVolumeProduct) / SUM(EntrdVolQt) AS T_Price,
 						SUM(EntrdVolQt) AS T_Volume,
 						SUM(PriceVolumeProduct) AS TD_Volume,
+						1.0 * SUM(CASE WHEN EntrdVolQt >= 500000 THEN 1 ELSE 0 END) / SUM(1) AS InstitunionalTradeShare,
+						1.0 * SUM(CASE WHEN EntrdVolQt >= 500000 THEN EntrdVolQt ELSE 0 END) / SUM(EntrdVolQt) AS InstitunionalVolumeShare,
 						MAX(Coupon) AS Coupon,
 						MAX(PrincipalAmt) AS PrincipalAmt,
 						CASE
@@ -128,6 +136,8 @@ BEGIN
 					FROM (
 						SELECT
 							A.CusipId,
+							A.IssuerId,
+							C.Private AS IssuerOwnership,
 							A.TrdExctnDt,
 							RptdPr,
 							CASE
@@ -159,6 +169,8 @@ BEGIN
 								CusipId,
 								EOMONTH(TrdExctnDt)
 						) B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.TrdExctnDt
+						INNER JOIN
+							BondIssuers_ownership C ON A.IssuerId = C.IssuerId
 						WHERE
 							RatingNum > CASE WHEN @CreditRisk = 'HY' THEN 10 ELSE 0 END
 							AND RatingNum < CASE WHEN @CreditRisk = 'IG' THEN 11 ELSE 25 END
@@ -182,11 +194,15 @@ BEGIN
 	FROM (
 		SELECT
 			CusipId,
+			IssuerId,
+			IssuerOwnership,
 			TrdExctnDtEOM,
 			T_Price,
 			LAG(T_Price) OVER (PARTITION BY CusipId ORDER BY TrdExctnDtEOM) AS LagT_Price,
 			T_Volume,
 			TD_Volume,
+			InstitunionalTradeShare,
+			InstitunionalVolumeShare,
 			PrincipalAmt,
 			InterestFrequency,
 			Coupon,
@@ -195,6 +211,7 @@ BEGIN
 			LAG(CouponAccrued) OVER (PARTITION BY CusipId ORDER BY TrdExctnDtEOM) AS LagCouponAccrued,
 			RatingNum,
 			RatingClass,
+			OfferingDate,
 			FirstInterestDate,
 			LatestInterestDate,
 			NextInterestDate,
@@ -203,10 +220,14 @@ BEGIN
 		FROM (
 			SELECT
 				B.CusipId,
+				C.IssuerId,
+				C.IssuerOwnership,
 				A.MonthDateEOM AS TrdExctnDtEOM,
 				C.T_Price,
 				C.T_Volume,
 				C.TD_Volume,
+				C.InstitunionalTradeShare,
+				C.InstitunionalVolumeShare,
 				C.PrincipalAmt,
 				C.InterestFrequency,
 				C.Coupon,
@@ -214,6 +235,7 @@ BEGIN
 				C.CouponAccrued,
 				C.RatingNum,
 				C.RatingClass,
+				C.OfferingDate,
 				C.FirstInterestDate,
 				C.LatestInterestDate,
 				C.NextInterestDate,
@@ -234,7 +256,8 @@ BEGIN
 	) B
 
 	SELECT
-		A.*
+		A.*,
+		C.TopBondGrouping
 	FROM
 		#TEMP_TABLE_V2 A
 	INNER JOIN (
@@ -249,6 +272,30 @@ BEGIN
 		GROUP BY
 			CusipId
 	) B ON A.CusipId = B.CusipId AND A.TrdExctnDtEOM >= B.MinTrdExctnDtEOM AND A.TrdExctnDtEOM <= MaxTrdExctnDtEOM
+	INNER JOIN (
+		SELECT
+			IssuerId,
+			TrdExctnDtEOM,
+			CASE
+				WHEN TopCusips = TotalCusips THEN 'G3'
+				WHEN TopCusips = 0 OR TopCusips IS NULL THEN 'G1'
+				ELSE 'G2'
+			END AS TopBondGrouping
+		FROM (
+			SELECT
+				A.IssuerId,
+				EOMONTH(A.TrdExctnDt) AS TrdExctnDtEOM,
+				COUNT(DISTINCT A.CusipId) AS TotalCusips,
+				COUNT(DISTINCT B.CusipId) AS TopCusips
+			FROM
+				Trace_filteredWithRatings A
+			LEFT JOIN
+				BondReturns_topBonds B ON A.IssuerId = B.IssuerId AND  EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
+			GROUP BY
+				A.IssuerId,
+				EOMONTH(A.TrdExctnDt)
+		) A
+	) C ON A.IssuerId = C.IssuerId AND A.TrdExctnDtEOM = C.TrdExctnDtEOM
 
 	DROP TABLE #TEMP_TABLE_V1
 	DROP TABLE #TEMP_TABLE_V2
