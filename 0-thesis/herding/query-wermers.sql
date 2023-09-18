@@ -95,6 +95,40 @@ ORDER BY
 	TrdExctnDtEOM,
 	CusipId
 
+-- YEARLY: WHOLE
+SELECT
+	CusipId,
+	TrdExctnDtYr,
+	ABS(BuyAmount - SellAmount) / (BuyAmount + SellAmount) AS Hm,
+	CASE
+		WHEN BuyAmount > SellAmount THEN 'Buy Herding'
+		WHEN SellAmount > BuyAmount THEN 'Sell Herding'
+	END AS Flag
+FROM (
+	SELECT
+		CusipId,
+		TrdExctnDtYr,
+		SUM(CASE WHEN RptSideCd = 'S' THEN EntrdVolQt * RptdPr / 100 ELSE 0 END) AS BuyAmount,
+		SUM(CASE WHEN RptSideCd = 'B' THEN EntrdVolQt * RptdPr / 100 ELSE 0 END) AS SellAmount
+	FROM (
+		SELECT
+			*,
+			YEAR(TrdExctnDt) AS TrdExctnDtYr
+		FROM
+			Trace_filteredWithRatings
+		WHERE
+			CntraMpId = 'C'
+	) A
+	GROUP BY
+		CusipId,
+		TrdExctnDtYr
+) A
+WHERE
+	BuyAmount <> 0 AND SellAmount <> 0
+ORDER BY
+	TrdExctnDtYr,
+	CusipId
+
 -- DAILY: INSTITUTIONAL
 SELECT
 	CusipId,
@@ -195,6 +229,41 @@ ORDER BY
 	TrdExctnDtEOM,
 	CusipId
 
+-- YEARLY: INSTITUTIONAL
+SELECT
+	CusipId,
+	TrdExctnDtYr,
+	ABS(BuyAmount - SellAmount) / (BuyAmount + SellAmount) AS Hm,
+	CASE
+		WHEN BuyAmount > SellAmount THEN 'Buy Herding'
+		WHEN SellAmount > BuyAmount THEN 'Sell Herding'
+	END AS Flag
+FROM (
+	SELECT
+		CusipId,
+		TrdExctnDtYr,
+		SUM(CASE WHEN RptSideCd = 'S' THEN EntrdVolQt * RptdPr / 100 ELSE 0 END) AS BuyAmount,
+		SUM(CASE WHEN RptSideCd = 'B' THEN EntrdVolQt * RptdPr / 100 ELSE 0 END) AS SellAmount
+	FROM (
+		SELECT
+			*,
+			YEAR(TrdExctnDt) AS TrdExctnDtYr
+		FROM
+			Trace_filteredWithRatings
+		WHERE
+			CntraMpId = 'C'
+			AND EntrdVolQt >= 500000
+	) A
+	GROUP BY
+		CusipId,
+		TrdExctnDtYr
+) A
+WHERE
+	BuyAmount <> 0 AND SellAmount <> 0
+ORDER BY
+	TrdExctnDtYr,
+	CusipId
+
 -- DAILY: RETAIL
 SELECT
 	CusipId,
@@ -293,4 +362,39 @@ WHERE
 	BuyAmount <> 0 AND SellAmount <> 0
 ORDER BY
 	TrdExctnDtEOM,
+	CusipId
+
+-- YEARLY: RETAIL
+SELECT
+	CusipId,
+	TrdExctnDtYr,
+	ABS(BuyAmount - SellAmount) / (BuyAmount + SellAmount) AS Hm,
+	CASE
+		WHEN BuyAmount > SellAmount THEN 'Buy Herding'
+		WHEN SellAmount > BuyAmount THEN 'Sell Herding'
+	END AS Flag
+FROM (
+	SELECT
+		CusipId,
+		TrdExctnDtYr,
+		SUM(CASE WHEN RptSideCd = 'S' THEN EntrdVolQt * RptdPr / 100 ELSE 0 END) AS BuyAmount,
+		SUM(CASE WHEN RptSideCd = 'B' THEN EntrdVolQt * RptdPr / 100 ELSE 0 END) AS SellAmount
+	FROM (
+		SELECT
+			*,
+			YEAR(TrdExctnDt) AS TrdExctnDtYr
+		FROM
+			Trace_filteredWithRatings
+		WHERE
+			CntraMpId = 'C'
+			AND EntrdVolQt < 250000
+	) A
+	GROUP BY
+		CusipId,
+		TrdExctnDtYr
+) A
+WHERE
+	BuyAmount <> 0 AND SellAmount <> 0
+ORDER BY
+	TrdExctnDtYr,
 	CusipId

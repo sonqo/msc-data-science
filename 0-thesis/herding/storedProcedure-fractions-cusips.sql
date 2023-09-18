@@ -1,6 +1,6 @@
 CREATE PROCEDURE
 
-	[dbo].[Herding_fractions]
+	[dbo].[Herding_fractions_cusips]
 
 AS
 
@@ -10,7 +10,7 @@ BEGIN
 	
 	SELECT
 		TrdExctnDt,
-		IssuerId,
+		CusipId,
 		1.0 * InstitutionalNominator / InstitutionalDenominator AS InstFraction,
 		1.0 * RetailNominator / RetailDenominator AS RetFraction,
 		1.0 * UnknownNominator / UnknownDenominator AS UnFraction
@@ -19,7 +19,7 @@ BEGIN
 	FROM (
 		SELECT
 			TrdExctnDt,
-			IssuerId,
+			CusipId,
 			SUM(CASE WHEN RptSideCd = 'S' AND EntrdVolQt >= 500000 THEN EntrdVolQt ELSE 0 END) AS InstitutionalNominator,
 			SUM(CASE WHEN EntrdVolQt >= 500000 THEN EntrdVolQt ELSE 0 END) AS InstitutionalDenominator,
 			SUM(CASE WHEN RptSideCd = 'S' AND EntrdVolQt < 250000 THEN EntrdVolQt ELSE 0 END) AS RetailNominator,
@@ -32,7 +32,7 @@ BEGIN
 			EntrdVolQt <> 0
 		GROUP BY
 			TrdExctnDt,
-			IssuerId
+			CusipId
 	) A
 	WHERE
 		RetailDenominator <> 0	
@@ -41,7 +41,7 @@ BEGIN
 
 	SELECT
 		A.TrdExctnDt,
-		A.IssuerId,
+		A.CusipId,
 		CASE 
 			WHEN StdInstFraction <> 0 THEN (InstFraction - AverageInstFraction) / StdInstFraction 
 			ELSE InstFraction
@@ -75,22 +75,34 @@ BEGIN
 
 	SELECT 
 		A.TrdExctnDt,
-		A.IssuerId,
+		A.CusipId,
 		A.InstitutionalFraction AS InstitutionalFraction,
 		A.RetailFraction AS RetailFraction,
 		A.UnFraction AS UnFraction,
-		B.InstitutionalFraction AS LagWeekInstitutionalFraction,
-		B.RetailFraction AS LagWeekRetailFraction,
-		B.UnFraction AS LagWeekUnFraction,
-		C.InstitutionalFraction AS LagMonthInstitutionalFraction,
-		C.RetailFraction AS LagMonthRetailFraction,
-		C.UnFraction AS LagMonthUnFraction
+		B.InstitutionalFraction AS LagDayInstitutionalFraction,
+		B.RetailFraction AS LagDayRetailFraction,
+		B.UnFraction AS LagDayUnFraction,
+		C.InstitutionalFraction AS LagWeekInstitutionalFraction,
+		C.RetailFraction AS LagWeekRetailFraction,
+		C.UnFraction AS LagWeekUnFraction,
+		D.InstitutionalFraction AS LagMonthInstitutionalFraction,
+		D.RetailFraction AS LagMonthRetailFraction,
+		D.UnFraction AS LagMonthUnFraction,
+		E.InstitutionalFraction AS LagYearInstitutionalFraction,
+		E.RetailFraction AS LagYearRetailFraction,
+		E.UnFraction AS LagYearUnFraction
 	FROM
 		#TEMP_FRACTIONS A
 	INNER JOIN
-		#TEMP_FRACTIONS B ON A.IssuerId = B.IssuerId AND DATEDIFF(DAY, B.TrdExctnDt, A.TrdExctnDt) = 7
+		#TEMP_FRACTIONS B ON A.CusipId = B.CusipId AND DATEDIFF(DAY, B.TrdExctnDt, A.TrdExctnDt) = 1
 	INNER JOIN
-		#TEMP_FRACTIONS C ON A.IssuerId = C.IssuerId AND DATEDIFF(DAY, C.TrdExctnDt, A.TrdExctnDt) = 30
+		#TEMP_FRACTIONS C ON A.CusipId = C.CusipId AND DATEDIFF(DAY, C.TrdExctnDt, A.TrdExctnDt) = 7
+	INNER JOIN
+		#TEMP_FRACTIONS D ON A.CusipId = D.CusipId AND DATEDIFF(DAY, D.TrdExctnDt, A.TrdExctnDt) = 30
+	INNER JOIN
+		#TEMP_FRACTIONS E ON A.CusipId = E.CusipId AND DATEDIFF(DAY, E.TrdExctnDt, A.TrdExctnDt) = 360
+	ORDER BY
+		A.TrdExctnDt
 
 	DROP TABLE #TEMP_TABLE
 	DROP TABLE #TEMP_FRACTIONS
