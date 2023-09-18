@@ -1,3 +1,4 @@
+-- TODO: WEEKLY/MONTHLY
 SELECT
 	CusipId,
 	TrdExctnDt,

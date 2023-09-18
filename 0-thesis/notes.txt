@@ -1,0 +1,10 @@
+1) Στο LSV herding measure θέλω διαχωρισμό σε institutional(>500,000) και retail (<250,000). Το LSV θα το υπολογίσουμε και σε ετήσια βάση για όλο το δείγμα, για Institutional και Retail.
+
+2) Στο Wermers herding measure θέλω διαχωρισμό σε institutional(>500,000) και retail (<250,000). Το Wermers θα το υπολογίσουμε και σε ετήσια βάση για όλο το δείγμα, για Institutional και Retail.
+
+3) Στα fractions για το herding measure του Sias επίστρεψε και το fraction για την ενδιάμεση κατηγορία (250,000-500,000), για να το έχω ως robustness στην παλινδρόμηση.
+
+4) Στο CSAD measure for bonds θέλω διαχωρισμό σε institutional(>500,000) και retail (<250,000).
+
+5) Θέλω και αυτά τα δύο για το information asymmetry που σου στέλνω στο σκρινσοτ στο teams. 
+
