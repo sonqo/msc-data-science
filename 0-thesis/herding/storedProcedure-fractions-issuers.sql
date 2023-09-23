@@ -1,6 +1,6 @@
 CREATE PROCEDURE
 
-	[dbo].[Herding_fractions_cusips]
+	[dbo].[Herding_fractions_issuers]
 
 AS
 
