@@ -4,7 +4,8 @@ SELECT
     A.CusipId,
     ABS(Pt - P) AS FirstTerm,
 	ABS(1.0 * P * BionomialDraw / N - P) AS SecondTerm,
-	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm
+	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm,
+    CASE WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) > P THEN 'BHm' WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) < P THEN 'SHm' END AS HerdingFlag
 FROM (     
     SELECT
         TrdExctnDt,
@@ -59,7 +60,8 @@ SELECT
     A.CusipId,
     ABS(Pt - P) AS FirstTerm,
 	ABS(1.0 * P * BionomialDraw / N - P) AS SecondTerm,
-	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm
+	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm,
+    CASE WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) > P THEN 'BHm' WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) < P THEN 'SHm' END AS HerdingFlag
 FROM (     
     SELECT
         TrdExctnDtSOW,
@@ -124,7 +126,8 @@ SELECT
     A.CusipId,
     ABS(Pt - P) AS FirstTerm,
 	ABS(1.0 * P * BionomialDraw / N - P) AS SecondTerm,
-	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm
+	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm,
+    CASE WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) > P THEN 'BHm' WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) < P THEN 'SHm' END AS HerdingFlag
 FROM (     
     SELECT
         TrdExctnDtEOM,
@@ -189,7 +192,8 @@ SELECT
     A.CusipId,
     ABS(Pt - P) AS FirstTerm,
 	ABS(1.0 * P * BionomialDraw / N - P) AS SecondTerm,
-	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm
+	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm,
+    CASE WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) > P THEN 'BHm' WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) < P THEN 'SHm' END AS HerdingFlag
 FROM (     
     SELECT
         TrdExctnDtYr,
@@ -254,7 +258,8 @@ SELECT
     A.CusipId,
     ABS(Pt - P) AS FirstTerm,
 	ABS(1.0 * P * BionomialDraw / N - P) AS SecondTerm,
-	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm
+	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm,
+    CASE WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) > P THEN 'BHm' WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) < P THEN 'SHm' END AS HerdingFlag
 FROM (     
     SELECT
         TrdExctnDt,
@@ -311,7 +316,8 @@ SELECT
     A.CusipId,
     ABS(Pt - P) AS FirstTerm,
 	ABS(1.0 * P * BionomialDraw / N - P) AS SecondTerm,
-	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm
+	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm,
+    CASE WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) > P THEN 'BHm' WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) < P THEN 'SHm' END AS HerdingFlag
 FROM (     
     SELECT
         TrdExctnDtSOW,
@@ -378,7 +384,8 @@ SELECT
     A.CusipId,
     ABS(Pt - P) AS FirstTerm,
 	ABS(1.0 * P * BionomialDraw / N - P) AS SecondTerm,
-	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm
+	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm,
+    CASE WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) > P THEN 'BHm' WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) < P THEN 'SHm' END AS HerdingFlag
 FROM (     
     SELECT
         TrdExctnDtEOM,
@@ -445,7 +452,8 @@ SELECT
     A.CusipId,
     ABS(Pt - P) AS FirstTerm,
 	ABS(1.0 * P * BionomialDraw / N - P) AS SecondTerm,
-	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm
+	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm,
+    CASE WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) > P THEN 'BHm' WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) < P THEN 'SHm' END AS HerdingFlag
 FROM (     
     SELECT
         TrdExctnDtYr,
@@ -512,7 +520,8 @@ SELECT
     A.CusipId,
     ABS(Pt - P) AS FirstTerm,
 	ABS(1.0 * P * BionomialDraw / N - P) AS SecondTerm,
-	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm
+	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm,
+    CASE WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) > P THEN 'BHm' WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) < P THEN 'SHm' END AS HerdingFlag
 FROM (     
     SELECT
         TrdExctnDt,
@@ -569,7 +578,8 @@ SELECT
     A.CusipId,
     ABS(Pt - P) AS FirstTerm,
 	ABS(1.0 * P * BionomialDraw / N - P) AS SecondTerm,
-	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm
+	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm,
+    CASE WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) > P THEN 'BHm' WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) < P THEN 'SHm' END AS HerdingFlag
 FROM (     
     SELECT
         TrdExctnDtSOW,
@@ -626,7 +636,8 @@ SELECT
     A.CusipId,
     ABS(Pt - P) AS FirstTerm,
 	ABS(1.0 * P * BionomialDraw / N - P) AS SecondTerm,
-	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm
+	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm,
+    CASE WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) > P THEN 'BHm' WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) < P THEN 'SHm' END AS HerdingFlag
 FROM (     
     SELECT
         TrdExctnDtEOM,
@@ -693,7 +704,8 @@ SELECT
     A.CusipId,
     ABS(Pt - P) AS FirstTerm,
 	ABS(1.0 * P * BionomialDraw / N - P) AS SecondTerm,
-	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm
+	1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) AS Hm,
+    CASE WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) > P THEN 'BHm' WHEN 1.0 * ABS(Pt - P) - 1.0 * ABS(1.0 * P * BionomialDraw / N - P) < P THEN 'SHm' END AS HerdingFlag
 FROM (     
     SELECT
         TrdExctnDtYr,
