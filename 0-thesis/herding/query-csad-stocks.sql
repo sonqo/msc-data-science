@@ -1,13 +1,13 @@
 SELECT
 	Datadate,
-	MktRf, Smb, Hml, Rmw, Cma, Rf, Mom, Rm,
+	MktRf, Smb, Hml, Rmw, Cma, Rf, Rm,
 	ABS(Rm) AS AbsoluteRm,
 	POWER(Rm, 2) AS SquaredRm, 
 	Sum / Count AS Csad
 FROM (
 	SELECT
 		DataDate,
-		MktRf, Smb, Hml, Rmw, Cma, Rf, Mom, Rm,
+		MktRf, Smb, Hml, Rmw, Cma, Rf, Rm,
 		ABS(SUM(MonthlyReturns) - Rm) AS Sum,
 		COUNT(DISTINCT LPermNo) AS Count
 	FROM (
@@ -28,26 +28,12 @@ FROM (
 				LPermNo,
 				EOMONTH(DataDate)
 		) B ON A.LPermNo = B.LPermNo AND A.DataDate = B.MaxDate
-		INNER JOIN (
-			SELECT
-				EOMONTH(Date) AS Date,
-				AVG(MktRf) AS MktRf,
-				AVG(Smb) AS Smb,
-				AVG(Hml) AS Hml,
-				AVG(Rmw) AS Rmw,
-				AVG(Cma) AS Cma,
-				AVG(Rf) AS Rf,
-				AVG(Mom) AS Mom,
-				AVG(Rm) AS Rm
-			FROM
-				MarketFactors
-			GROUP BY
-				EOMONTH(Date)
-		) C ON EOMONTH(A.DataDate) = C.Date
+		INNER JOIN
+			MarketFactors C ON EOMONTH(A.DataDate) = C.Date
 	) A
 	GROUP BY
 		DataDate,
-		MktRf, Smb, Hml, Rmw, Cma, Rf, Mom, Rm
+		MktRf, Smb, Hml, Rmw, Cma, Rf, Rm
 ) A
 ORDER BY
 	DataDate

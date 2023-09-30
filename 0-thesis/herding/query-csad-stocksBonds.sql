@@ -103,15 +103,8 @@ INNER JOIN (
 					LPermNo,
 					EOMONTH(DataDate)
 			) B ON A.LPermNo = B.LPermNo AND A.DataDate = B.MaxDate
-			INNER JOIN (
-				SELECT
-					EOMONTH(Date) AS Date,
-					AVG(Rm) AS Rm
-				FROM
-					MarketFactors
-				GROUP BY
-					EOMONTH(Date)
-			) C ON EOMONTH(A.DataDate) = C.Date
+			INNER JOIN
+				MarketFactors C ON EOMONTH(A.DataDate) = C.Date
 		) A
 		GROUP BY
 			DataDate,
