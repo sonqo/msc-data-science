@@ -1,9 +1,9 @@
 BULK INSERT  
-	[dbo].[Trace]
+	[dbo].[MarketFactors]
 FROM 
-	'trace/trace_enhanced-2002.csv'
+	'crspc/factors.csv'
 WITH (
-	DATA_SOURCE = 'dataset_trace',
+	DATA_SOURCE = 'dataset_crspc',
 	FIRSTROW = 2,
 	FIELDTERMINATOR = ',',
 	ROWTERMINATOR = '0x0a',

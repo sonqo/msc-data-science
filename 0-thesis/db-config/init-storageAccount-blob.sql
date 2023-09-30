@@ -52,7 +52,7 @@ WITH
 -- CRSPC BLOB
 CREATE DATABASE SCOPED CREDENTIAL [https://finstorageaccount.blob.core.windows.net//crspc]
 WITH IDENTITY = 'SHARED ACCESS SIGNATURE',
-SECRET = 'sp=r&st=2023-09-03T21:57:08Z&se=2023-09-04T05:57:08Z&spr=https&sv=2022-11-02&sr=c&sig=zoqf4baEYe9OJwOSk1a3j8iT5NNP6lpajL2XxP%2FwOXk%3D'
+SECRET = 'sp=r&st=2023-09-30T11:27:00Z&se=2023-09-30T19:27:00Z&spr=https&sv=2022-11-02&sr=c&sig=EpuEzgxrf4Zcofi9lWTN1PDAk2%2FWP0BQXVFI4f9GM4w%3D'
 CREATE EXTERNAL DATA SOURCE dataset_crspc
 WITH 
 (

@@ -9,7 +9,6 @@ CREATE TABLE [dbo].[MarketFactors](
 	[Cma] [float] NULL,
 	[Rf] [float] NULL,
 	[Rm] [float] NULL,
-	[Mom] [float] NULL,
 	CONSTRAINT [PK_MarketFactors] PRIMARY KEY CLUSTERED (
 		[Date] ASC
 	) WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
