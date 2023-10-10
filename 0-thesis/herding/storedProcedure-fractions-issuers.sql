@@ -1,6 +1,6 @@
 CREATE PROCEDURE
 
-	[dbo].[Herding_fractions_issuers]
+	[dbo].[Herding_FractionsIssuers] @Timeframe int = 1
 
 AS
 
@@ -11,12 +11,30 @@ BEGIN
 	SELECT
 		TrdExctnDt,
 		IssuerId,
-		1.0 * VolInstitutionalNominator / VolInstitutionalDenominator AS VolInstFraction,
-		1.0 * VolRetailNominator / VolRetailDenominator AS VolRetFraction,
-		1.0 * VolUnknownNominator / VolUnknownDenominator AS VolUnFraction,
-		1.0 * CntInstitutionalNominator / CntInstitutionalDenominator AS CntInstFraction,
-		1.0 * CntRetailNominator / CntRetailDenominator AS CntRetFraction,
-		1.0 * CntUnknownNominator / CntUnknownDenominator AS CntUnFraction
+		CASE
+			WHEN VolInstitutionalDenominator <> 0 THEN 1.0 * VolInstitutionalNominator / VolInstitutionalDenominator 
+			ELSE NULL
+		END AS VolInstFraction,
+		CASE
+			WHEN VolRetailDenominator <> 0 THEN 1.0 * VolRetailNominator / VolRetailDenominator 
+			ELSE NULL
+		END AS VolRetFraction,
+		CASE
+			WHEN VolUnknownDenominator <> 0 THEN 1.0 * VolUnknownNominator / VolUnknownDenominator
+			ELSE NULL
+		END AS VolUnFraction,
+		CASE
+			WHEN CntInstitutionalDenominator <> 0 THEN 1.0 * CntInstitutionalNominator / CntInstitutionalDenominator 
+			ELSE NULL
+		END AS CntInstFraction,
+		CASE
+			WHEN CntRetailDenominator <> 0 THEN 1.0 * CntRetailNominator / CntRetailDenominator 
+			ELSE NULL
+		END AS CntRetFraction,
+		CASE
+			WHEN CntUnknownDenominator <> 0 THEN 1.0 * CntUnknownNominator / CntUnknownDenominator
+			ELSE NULL
+		END AS CntUnFraction
 	INTO
 		#TEMP_TABLE
 	FROM (
@@ -43,10 +61,6 @@ BEGIN
 			TrdExctnDt,
 			IssuerId
 	) A
-	WHERE
-		VolRetailDenominator <> 0 AND CntRetailDenominator <> 0	
-		AND VolUnknownDenominator <> 0 AND CntUnknownDenominator <> 0
-		AND VolInstitutionalDenominator <> 0 AND CntInstitutionalDenominator <> 0
 
 	SELECT
 		A.TrdExctnDt,
@@ -106,43 +120,19 @@ BEGIN
 		A.VolInstitutionalFraction AS VolInstitutionalFraction,
 		A.VolRetailFraction AS VolRetailFraction,
 		A.VolUnFraction AS VolUnFraction,
-		B.VolInstitutionalFraction AS VolLagDayInstitutionalFraction,
-		B.VolRetailFraction AS VolLagDayRetailFraction,
-		B.VolUnFraction AS VolLagDayUnFraction,
-		C.VolInstitutionalFraction AS VolLagWeekInstitutionalFraction,
-		C.VolRetailFraction AS VolLagWeekRetailFraction,
-		C.VolUnFraction AS VolLagWeekUnFraction,
-		D.VolInstitutionalFraction AS VolLagMonthInstitutionalFraction,
-		D.VolRetailFraction AS VolLagMonthRetailFraction,
-		D.VolUnFraction AS VolLagMonthUnFraction,
-		E.VolInstitutionalFraction AS VolLagYearInstitutionalFraction,
-		E.VolRetailFraction AS VolLagYearRetailFraction,
-		E.VolUnFraction AS VolLagYearUnFraction,
+		B.VolInstitutionalFraction AS VolLagInstitutionalFraction,
+		B.VolRetailFraction AS VolLagRetailFraction,
+		B.VolUnFraction AS VolLagUnFraction,
 		A.CntInstitutionalFraction AS CntInstitutionalFraction,
 		A.CntRetailFraction AS CntRetailFraction,
 		A.CntUnFraction AS CntUnFraction,
-		B.CntInstitutionalFraction AS CntLagDayInstitutionalFraction,
-		B.CntRetailFraction AS CntLagDayRetailFraction,
-		B.CntUnFraction AS CntLagDayUnFraction,
-		C.CntInstitutionalFraction AS CntLagWeekInstitutionalFraction,
-		C.CntRetailFraction AS CntLagWeekRetailFraction,
-		C.CntUnFraction AS CntLagWeekUnFraction,
-		D.CntInstitutionalFraction AS CntLagMonthInstitutionalFraction,
-		D.CntRetailFraction AS CntLagMonthRetailFraction,
-		D.CntUnFraction AS CntLagMonthUnFraction,
-		E.CntInstitutionalFraction AS CntLagYearInstitutionalFraction,
-		E.CntRetailFraction AS CntLagYearRetailFraction,
-		E.CntUnFraction AS CntLagYearUnFraction
+		B.CntInstitutionalFraction AS CntLagInstitutionalFraction,
+		B.CntRetailFraction AS CntLagRetailFraction,
+		B.CntUnFraction AS CntLagUnFraction
 	FROM
 		#TEMP_FRACTIONS A
 	INNER JOIN
-		#TEMP_FRACTIONS B ON A.IssuerId = B.IssuerId AND DATEDIFF(DAY, B.TrdExctnDt, A.TrdExctnDt) = 1
-	INNER JOIN
-		#TEMP_FRACTIONS C ON A.IssuerId = C.IssuerId AND DATEDIFF(DAY, C.TrdExctnDt, A.TrdExctnDt) = 7
-	INNER JOIN
-		#TEMP_FRACTIONS D ON A.IssuerId = D.IssuerId AND DATEDIFF(DAY, D.TrdExctnDt, A.TrdExctnDt) = 30
-	INNER JOIN
-		#TEMP_FRACTIONS E ON A.IssuerId = E.IssuerId AND DATEDIFF(DAY, E.TrdExctnDt, A.TrdExctnDt) = 360
+		#TEMP_FRACTIONS B ON A.IssuerId = B.IssuerId AND DATEDIFF(DAY, B.TrdExctnDt, A.TrdExctnDt) = @Timeframe
 	ORDER BY
 		A.TrdExctnDt
 
