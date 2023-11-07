@@ -1,6 +1,6 @@
 CREATE PROCEDURE
 
-	[dbo].[Measures_LSV] @TimeFrame INT = 1, @Investor INT = NULL, @CreditRisk INT = NULL
+	[dbo].[Measures_Lsv] @TimeFrame INT = 1, @Investor INT = NULL, @CreditRisk INT = NULL
 
 AS
 
