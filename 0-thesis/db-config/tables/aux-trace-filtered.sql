@@ -36,4 +36,5 @@ WHERE
 	AND C.CountryDomicile = 'USA' 
 	AND A.TrdExctnDt <= B.Maturity
 	AND B.OfferingDate < B.Maturity
+	AND RptdPr >= 10 AND RptdPr <= 500
 	AND C.IndustryCode NOT IN (40, 41, 42, 43, 44, 45) -- government
