@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS [dbo].[Trace_filtered];
+DROP TABLE IF EXISTS [dbo].[TraceFiltered];
 
 SELECT
 	A.CusipId,
@@ -24,7 +24,7 @@ SELECT
 	C.IndustryCode,
 	C.IndustryGroup
 INTO
-	[dbo].[Trace_filtered]
+	[dbo].[TraceFiltered]
 FROM 
 	Trace A
 INNER JOIN

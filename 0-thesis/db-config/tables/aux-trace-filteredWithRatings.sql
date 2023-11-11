@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS [dbo].[Trace_filteredWithRatings];
+DROP TABLE IF EXISTS [dbo].[TraceFilteredWithRatings];
 
 SELECT
 	A.*,
@@ -7,7 +7,7 @@ SELECT
         ELSE C.RatingNum
     END AS RatingNum
 INTO
-	[dbo].[Trace_filteredWithRatings]
+	[dbo].[TraceFilteredWithRatings]
 FROM
 	Trace_filtered A
 -- join with BondReturns
@@ -89,16 +89,16 @@ INNER JOIN (
 -- ADD PRINCIPAL AMOUNT COLUMN
 
 ALTER TABLE
-	[dbo].[Trace_filteredWithRatings]
+	[dbo].[TraceFilteredWithRatings]
 ADD
 	PrincipalAmt INT
 
 UPDATE
-	[dbo].[Trace_filteredWithRatings]
+	[dbo].[TraceFilteredWithRatings]
 SET
 	PrincipalAmt = B.PrincipalAmt
 FROM
-	[dbo].[Trace_filteredWithRatings] A
+	[dbo].[TraceFilteredWithRatings] A
 INNER JOIN (
 	SELECT 
 		Cusip,

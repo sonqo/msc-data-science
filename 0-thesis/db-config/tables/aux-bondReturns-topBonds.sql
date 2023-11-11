@@ -1,10 +1,10 @@
-DROP TABLE IF EXISTS [dbo].[BondReturns_topBonds]
+DROP TABLE IF EXISTS [dbo].[BondReturnsTopBonds]
 
 SELECT
 	*,
 	ROW_NUMBER() OVER (PARTITION BY CusipId, IssuerId, DateRanking ORDER BY TrdExctnDtEOM) as ConsecutiveMonths
 INTO
-	[dbo].[BondReturns_topBonds]
+	[dbo].[BondReturnsTopBonds]
 FROM (
 	SELECT
 		*,
