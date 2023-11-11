@@ -167,7 +167,6 @@ BEGIN
 							WHERE
 								B.CusipId IS NULL
 								AND PrincipalAmt IN (10, 1000)
-								AND RptdPr >= 10 AND RptdPr <= 500
 								AND Private < CASE WHEN @Ownership = 'Public' THEN 1 ELSE 2 END
 								AND RatingNum > CASE WHEN @CreditRisk = 'HY' THEN 10 ELSE 0 END
 								AND RatingNum < CASE WHEN @CreditRisk = 'IG' THEN 11 ELSE 25 END
@@ -180,8 +179,7 @@ BEGIN
 						INNER JOIN
 							BondIssuers_ownership C ON A.IssuerId = C.IssuerId
 						WHERE
-							RptdPr >= 10 AND RptdPr <= 500
-							AND RatingNum > CASE WHEN @CreditRisk = 'HY' THEN 10 ELSE 0 END
+							RatingNum > CASE WHEN @CreditRisk = 'HY' THEN 10 ELSE 0 END
 							AND RatingNum < CASE WHEN @CreditRisk = 'IG' THEN 11 ELSE 25 END
 					) C
 					GROUP BY
