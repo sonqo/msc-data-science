@@ -1,6 +1,6 @@
 CREATE PROCEDURE
 
-	[dbo].[MomentumVolumeGroups]  @VolumeRangeStart INT, @VolumeRangeEnd INT
+	[dbo].[Momentum-VolumeGroups]  @VolumeRangeStart INT, @VolumeRangeEnd INT
 
 AS
 
@@ -143,13 +143,13 @@ BEGIN
 							A.FirstInterestDate,
 							A.OfferingDate
 						FROM
-							Trace_filteredWithRatings A
+							TraceFilteredWithRatings A
 						INNER JOIN (
 							SELECT
 								A.CusipId,
 								MAX(A.TrdExctnDt) AS TrdExctnDt
 							FROM
-								Trace_filteredWithRatings A
+								TraceFilteredWithRatings A
 							WHERE
 								PrincipalAmt IN (10, 1000)
 								AND EntrdVolQt >= @VolumeRangeStart AND EntrdVolQt < @VolumeRangeEnd

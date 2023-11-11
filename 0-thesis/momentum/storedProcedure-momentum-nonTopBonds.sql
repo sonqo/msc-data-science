@@ -1,6 +1,6 @@
 CREATE PROCEDURE
 
-	[dbo].[MomentumNonTopBonds] @CreditRisk NVARCHAR(10) = NULL, @Ownership NVARCHAR(10) = NULL
+	[dbo].[Momentum-NonTopBonds] @CreditRisk NVARCHAR(10) = NULL, @Ownership NVARCHAR(10) = NULL
 
 AS
 
@@ -153,17 +153,17 @@ BEGIN
 							A.FirstInterestDate,
 							A.OfferingDate
 						FROM
-							Trace_filteredWithRatings A
+							TraceFilteredWithRatings A
 						INNER JOIN (
 							SELECT
 								A.CusipId,
 								MAX(A.TrdExctnDt) AS TrdExctnDt
 							FROM
-								Trace_filteredWithRatings A
+								TraceFilteredWithRatings A
 							LEFT JOIN
-								BondReturns_topBonds B ON A.CusipId = B.CusipId AND EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
+								BondReturnsTopBonds B ON A.CusipId = B.CusipId AND EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
 							INNER JOIN
-								BondIssuers_ownership C ON A.IssuerId = C.IssuerId
+								BondIssuersOwnership C ON A.IssuerId = C.IssuerId
 							WHERE
 								B.CusipId IS NULL
 								AND PrincipalAmt IN (10, 1000)
@@ -177,7 +177,7 @@ BEGIN
 								EOMONTH(A.TrdExctnDt)
 						) B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.TrdExctnDt
 						INNER JOIN
-							BondIssuers_ownership C ON A.IssuerId = C.IssuerId
+							BondIssuersOwnership C ON A.IssuerId = C.IssuerId
 						WHERE
 							RatingNum > CASE WHEN @CreditRisk = 'HY' THEN 10 ELSE 0 END
 							AND RatingNum < CASE WHEN @CreditRisk = 'IG' THEN 11 ELSE 25 END
@@ -310,9 +310,9 @@ BEGIN
 				COUNT(DISTINCT A.CusipId) AS TotalCusips,
 				COUNT(DISTINCT B.CusipId) AS TopCusips
 			FROM
-				Trace_filteredWithRatings A
+				TraceFilteredWithRatings A
 			LEFT JOIN
-				BondReturns_topBonds B ON A.IssuerId = B.IssuerId AND  EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
+				BondReturnsTopBonds B ON A.IssuerId = B.IssuerId AND  EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
 			GROUP BY
 				A.IssuerId,
 				EOMONTH(A.TrdExctnDt)
