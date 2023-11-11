@@ -1,6 +1,6 @@
 CREATE PROCEDURE
 
-	[dbo].[Momentum_wholeDataset] @CreditRisk NVARCHAR(10) = NULL
+	[dbo].[MomentumWholeDataset] @CreditRisk NVARCHAR(10) = NULL
 
 AS
 
@@ -162,6 +162,7 @@ BEGIN
 								Trace_filteredWithRatings A
 							WHERE
 								PrincipalAmt IN (10, 1000)
+								AND RptdPr >= 10 AND RptdPr <= 500
 								AND RatingNum > CASE WHEN @CreditRisk = 'HY' THEN 10 ELSE 0 END
 								AND RatingNum < CASE WHEN @CreditRisk = 'IG' THEN 11 ELSE 25 END
 								AND TrdExctnDt <= EOMONTH(TrdExctnDt) AND TrdExctnDt > DATEADD(DAY, -5, EOMONTH(TrdExctnDt))
@@ -172,7 +173,8 @@ BEGIN
 						INNER JOIN
 							BondIssuers_ownership C ON A.IssuerId = C.IssuerId
 						WHERE
-							RatingNum > CASE WHEN @CreditRisk = 'HY' THEN 10 ELSE 0 END
+							RptdPr >= 10 AND RptdPr <= 500
+							AND RatingNum > CASE WHEN @CreditRisk = 'HY' THEN 10 ELSE 0 END
 							AND RatingNum < CASE WHEN @CreditRisk = 'IG' THEN 11 ELSE 25 END
 					) C
 					GROUP BY

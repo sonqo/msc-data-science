@@ -1,6 +1,6 @@
 CREATE PROCEDURE
 
-	[dbo].[Momentum_volumeGroups]  @VolumeRangeStart INT, @VolumeRangeEnd INT
+	[dbo].[MomentumVolumeGroups]  @VolumeRangeStart INT, @VolumeRangeEnd INT
 
 AS
 
@@ -152,6 +152,7 @@ BEGIN
 								Trace_filteredWithRatings A
 							WHERE
 								PrincipalAmt IN (10, 1000)
+								AND RptdPr >= 10 AND RptdPr <= 500
 								AND EntrdVolQt >= @VolumeRangeStart AND EntrdVolQt < @VolumeRangeEnd
 								AND TrdExctnDt <= EOMONTH(TrdExctnDt) AND TrdExctnDt > DATEADD(DAY, -5, EOMONTH(TrdExctnDt))
 							GROUP BY
@@ -159,7 +160,8 @@ BEGIN
 								EOMONTH(A.TrdExctnDt)
 						) B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.TrdExctnDt
 						WHERE
-							EntrdVolQt >= @VolumeRangeStart AND EntrdVolQt < @VolumeRangeEnd
+							RptdPr >= 10 AND RptdPr <= 500
+							AND EntrdVolQt >= @VolumeRangeStart AND EntrdVolQt < @VolumeRangeEnd
 					) C
 					GROUP BY
 						CusipId,
