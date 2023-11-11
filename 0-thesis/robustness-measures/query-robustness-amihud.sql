@@ -15,7 +15,7 @@ FROM (
             LAG(A.RptdPr) OVER (PARTITION BY A.CusipId ORDER BY A.TrdExctnDt) AS LagRptdPr,
             B.Volume
         FROM
-            Trace_filteredWithRatings A
+            TraceFilteredWithRatings A
         INNER JOIN (    
             SELECT
                 CusipId,
@@ -23,7 +23,7 @@ FROM (
                 MAX(TrdExctnTm) AS CloseTime,
                 SUM(EntrdVolQt) AS Volume
             FROM
-                Trace_filteredWithRatings
+                TraceFilteredWithRatings
             GROUP BY
                 CusipId,
                 TrdExctnDt
@@ -56,7 +56,7 @@ FROM (
                 *,
                 DATEADD(DAY, 1 - DATEPART(WEEKDAY, TrdExctnDt) + 1, TrdExctnDt) AS TrdExctnDtSOW
             FROM 
-                Trace_filteredWithRatings
+                TraceFilteredWithRatings
         ) A
         INNER JOIN (    
             SELECT
@@ -65,7 +65,7 @@ FROM (
                 MAX(TrdExctnTm) AS CloseTime,
                 SUM(EntrdVolQt) AS Volume
             FROM
-                Trace_filteredWithRatings
+                TraceFilteredWithRatings
             GROUP BY
                 CusipId,
                 DATEADD(DAY, 1 - DATEPART(WEEKDAY, TrdExctnDt) + 1, TrdExctnDt)
@@ -98,7 +98,7 @@ FROM (
                 *,
                 EOMONTH(TrdExctnDt) AS TrdExctnDtEOM
             FROM 
-                Trace_filteredWithRatings
+                TraceFilteredWithRatings
         ) A
         INNER JOIN (    
             SELECT
@@ -107,7 +107,7 @@ FROM (
                 MAX(TrdExctnTm) AS CloseTime,
                 SUM(EntrdVolQt) AS Volume
             FROM
-                Trace_filteredWithRatings
+                TraceFilteredWithRatings
             GROUP BY
                 CusipId,
                 EOMONTH(TrdExctnDt)
@@ -140,7 +140,7 @@ FROM (
                 *,
                 YEAR(TrdExctnDt) AS TrdExctnDtYr
             FROM 
-                Trace_filteredWithRatings
+                TraceFilteredWithRatings
         ) A
         INNER JOIN (    
             SELECT
@@ -149,7 +149,7 @@ FROM (
                 MAX(TrdExctnTm) AS CloseTime,
                 SUM(EntrdVolQt) AS Volume
             FROM
-                Trace_filteredWithRatings
+                TraceFilteredWithRatings
             GROUP BY
                 CusipId,
                 YEAR(TrdExctnDt)

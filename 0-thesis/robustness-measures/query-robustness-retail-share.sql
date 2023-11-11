@@ -13,9 +13,9 @@ FROM (
 		COUNT(DISTINCT (CASE WHEN EntrdVolQt >= 500000 THEN A.CusipId END)) AS InstitutionalCusips,
 		COUNT(DISTINCT (CASE WHEN EntrdVolQt < 250000 THEN A.CusipId END)) AS RetailCusips
 	FROM
-		Trace_filteredWithRatings A
+		TraceFilteredWithRatings A
 	INNER JOIN
-		BondReturns_topBonds B ON A.CusipId = B.CusipId AND EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
+		BondReturnsTopBonds B ON A.CusipId = B.CusipId AND EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
 	WHERE
 		A.RatingNum <> 0
 	GROUP BY
@@ -39,9 +39,9 @@ FROM (
 		COUNT(DISTINCT (CASE WHEN EntrdVolQt >= 500000 THEN A.CusipId END)) AS InstitutionalCusips,
 		COUNT(DISTINCT (CASE WHEN EntrdVolQt < 250000 THEN A.CusipId END)) AS RetailCusips
 	FROM
-		Trace_filteredWithRatings A
+		TraceFilteredWithRatings A
 	LEFT JOIN 
-		BondReturns_topBonds B ON A.CusipId = B.CusipId AND EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
+		BondReturnsTopBonds B ON A.CusipId = B.CusipId AND EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
 	WHERE
 		A.RatingNum <> 0
 		AND B.CusipId IS NULL

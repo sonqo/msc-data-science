@@ -29,14 +29,14 @@ FROM (
 			CASE WHEN RptSideCd = 'S' THEN 1 WHEN RptSideCd = 'B' THEN -1 END AS Qt,
 			CASE WHEN RptSideCd = 'S' THEN 1 * EntrdVolQt WHEN RptSideCd = 'B' THEN -1 * EntrdVolQt END AS QtVt
 		FROM
-			Trace_filteredWithRatings A
+			TraceFilteredWithRatings A
 		INNER JOIN (
 			SELECT
 				CusipId,
 				TrdExctnDt,
 				MIN(TrdExctnTm) AS MinTrdExctnTm
 			FROM
-				Trace_filteredWithRatings
+				TraceFilteredWithRatings
 			WHERE
 				CntraMpId = 'C'
 				AND EntrdVolQt <> CASE WHEN RatingNum <= 10 THEN 5000000 WHEN RatingNum >= 11 THEN 1000000 END
@@ -44,6 +44,9 @@ FROM (
 				CusipId,
 				TrdExctnDt
 		) B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.TrdExctnDt AND A.TrdExctnTm = B.MinTrdExctnTm
+		WHERE
+			CntraMpId = 'C'
+			AND EntrdVolQt <> CASE WHEN RatingNum <= 10 THEN 5000000 WHEN RatingNum >= 11 THEN 1000000 END
 	) A
 ) B
 WHERE
@@ -86,7 +89,7 @@ FROM (
 			CASE WHEN RptSideCd = 'S' THEN 1 WHEN RptSideCd = 'B' THEN -1 END AS Qt,
 			CASE WHEN RptSideCd = 'S' THEN 1 * EntrdVolQt WHEN RptSideCd = 'B' THEN -1 * EntrdVolQt END AS QtVt
 		FROM
-			Trace_filteredWithRatings A
+			TraceFilteredWithRatings A
 		INNER JOIN (
 			SELECT
 				CusipId,
@@ -98,7 +101,7 @@ FROM (
 					*,
 					DATEADD(DAY, 1 - DATEPART(WEEKDAY, TrdExctnDt) + 1, TrdExctnDt) AS TrdExctnDtSOW
 				FROM
-					Trace_filteredWithRatings
+					TraceFilteredWithRatings
 			) A
 			WHERE
 				CntraMpId = 'C'
@@ -107,6 +110,9 @@ FROM (
 				CusipId,
 				TrdExctnDtSOW
 		) B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.MinTrdExctnDt AND A.TrdExctnTm = B.MinTrdExctnTm
+		WHERE
+			CntraMpId = 'C'
+			AND EntrdVolQt <> CASE WHEN RatingNum <= 10 THEN 5000000 WHEN RatingNum >= 11 THEN 1000000 END
 	) A
 ) B
 WHERE
@@ -149,7 +155,7 @@ FROM (
 			CASE WHEN RptSideCd = 'S' THEN 1 WHEN RptSideCd = 'B' THEN -1 END AS Qt,
 			CASE WHEN RptSideCd = 'S' THEN 1 * EntrdVolQt WHEN RptSideCd = 'B' THEN -1 * EntrdVolQt END AS QtVt
 		FROM
-			Trace_filteredWithRatings A
+			TraceFilteredWithRatings A
 		INNER JOIN (
 			SELECT
 				CusipId,
@@ -161,7 +167,7 @@ FROM (
 					*,
 					EOMONTH(TrdExctnDt) AS TrdExctnDtEOM
 				FROM
-					Trace_filteredWithRatings
+					TraceFilteredWithRatings
 			) A
 			WHERE
 				CntraMpId = 'C'
@@ -170,6 +176,9 @@ FROM (
 				CusipId,
 				TrdExctnDtEOM
 		) B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.MinTrdExctnDt AND A.TrdExctnTm = B.MinTrdExctnTm
+		WHERE
+			CntraMpId = 'C'
+			AND EntrdVolQt <> CASE WHEN RatingNum <= 10 THEN 5000000 WHEN RatingNum >= 11 THEN 1000000 END
 	) A
 ) B
 WHERE
@@ -212,7 +221,7 @@ FROM (
 			CASE WHEN RptSideCd = 'S' THEN 1 WHEN RptSideCd = 'B' THEN -1 END AS Qt,
 			CASE WHEN RptSideCd = 'S' THEN 1 * EntrdVolQt WHEN RptSideCd = 'B' THEN -1 * EntrdVolQt END AS QtVt
 		FROM
-			Trace_filteredWithRatings A
+			TraceFilteredWithRatings A
 		INNER JOIN (
 			SELECT
 				CusipId,
@@ -220,7 +229,7 @@ FROM (
 				MIN(TrdExctnDt) AS MinTrdExctnDt,
 				MIN(TrdExctnTm) AS MinTrdExctnTm
 			FROM 
-				Trace_filteredWithRatings
+				TraceFilteredWithRatings
 			WHERE
 				CntraMpId = 'C'
 				AND EntrdVolQt <> CASE WHEN RatingNum <= 10 THEN 5000000 WHEN RatingNum >= 11 THEN 1000000 END
@@ -228,6 +237,9 @@ FROM (
 				CusipId,
 				YEAR(TrdExctnDt)
 		) B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.MinTrdExctnDt AND A.TrdExctnTm = B.MinTrdExctnTm
+		WHERE
+			CntraMpId = 'C'
+			AND EntrdVolQt <> CASE WHEN RatingNum <= 10 THEN 5000000 WHEN RatingNum >= 11 THEN 1000000 END
 	) A
 ) B
 WHERE
