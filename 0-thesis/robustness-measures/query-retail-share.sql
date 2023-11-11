@@ -16,6 +16,8 @@ FROM (
 		Trace_filteredWithRatings A
 	INNER JOIN
 		BondReturns_topBonds B ON A.CusipId = B.CusipId AND EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
+	WHERE
+		A.RatingNum <> 0
 	GROUP BY
 		EOMONTH(A.TrdExctnDt)
 ) A
