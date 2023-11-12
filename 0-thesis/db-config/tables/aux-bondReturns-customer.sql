@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS [dbo].[BondReturnsCustomerOnly]
+DROP TABLE IF EXISTS [dbo].[BondReturnsCustomer]
 
 SELECT
 	*,
@@ -228,7 +228,7 @@ FROM (
 SELECT
     A.*
 INTO
-	[dbo].[BondReturnsCustomerOnly]
+	[dbo].[BondReturnsCustomer]
 FROM
     #TEMP_TABLE_V2 A
 INNER JOIN (
