@@ -1,6 +1,6 @@
 CREATE PROCEDURE
 
-	[dbo].[Herding_FractionsIssuers] @Timeframe int = 1
+	[dbo].[Herding-Fractions-Issuers] @Timeframe int = 1
 
 AS
 
@@ -54,7 +54,7 @@ BEGIN
 			SUM(CASE WHEN RptSideCd = 'S' AND EntrdVolQt >= 250000 AND EntrdVolQt < 500000 THEN 1 ELSE 0 END) AS CntUnknownNominator,
 			SUM(CASE WHEN EntrdVolQt >= 250000 AND EntrdVolQt < 500000 THEN 1 ELSE 0 END) AS CntUnknownDenominator
 		FROM
-			Trace_filteredWithRatings
+			TraceFilteredWithRatings
 		WHERE
 			EntrdVolQt <> 0
 		GROUP BY

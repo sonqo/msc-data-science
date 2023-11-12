@@ -18,13 +18,13 @@ FROM (
             A.R AS RetEom,
             B.Rm
         FROM
-            BondReturns_customerOnly A
+            BondReturnsCustomer A
         INNER JOIN (
             SELECT
                 TrdExctnDtEOM AS Date,
                 SUM(R * TD_volume) / SUM(TD_volume) AS Rm
             FROM
-                BondReturns_customerOnly
+                BondReturnsCustomer
             GROUP BY
                 TrdExctnDtEOM
         ) B ON A.TrdExctnDtEOM = B.Date
@@ -72,7 +72,7 @@ FROM (
 					A.CusipId AS Cusip,
 					A.R + 1 AS RetEom
 				FROM
-					BondReturns_customerOnly A
+					BondReturnsCustomer A
 			) A
 			GROUP BY
 				A.Date,
@@ -93,7 +93,7 @@ FROM (
 					END AS Date,
 					SUM(R * TD_volume) / SUM(TD_volume) + 1 AS Rm
 				FROM
-					BondReturns_customerOnly
+					BondReturnsCustomer
 				GROUP BY
 					TrdExctnDtEOM
 			) A
@@ -130,13 +130,13 @@ FROM (
             A.R AS RetEom,
             B.Rm
         FROM
-            BondReturns_customerOnly_institutional A
+            BondReturnsCustomer_institutional A
         INNER JOIN (
             SELECT
                 TrdExctnDtEOM AS Date,
                 SUM(R * TD_volume) / SUM(TD_volume) AS Rm
             FROM
-                BondReturns_customerOnly_institutional
+                BondReturnsCustomer_institutional
             GROUP BY
                 TrdExctnDtEOM
         ) B ON A.TrdExctnDtEOM = B.Date
@@ -170,13 +170,13 @@ FROM (
             A.R AS RetEom,
             B.Rm
         FROM
-            BondReturns_customerOnly_retail A
+            BondReturnsCustomer_retail A
         INNER JOIN (
             SELECT
                 TrdExctnDtEOM AS Date,
                 SUM(R * TD_volume) / SUM(TD_volume) AS Rm
             FROM
-                BondReturns_customerOnly_retail
+                BondReturnsCustomer_retail
             GROUP BY
                 TrdExctnDtEOM
         ) B ON A.TrdExctnDtEOM = B.Date

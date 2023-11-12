@@ -1,6 +1,6 @@
 CREATE PROCEDURE
 
-	[dbo].[Measures_Wermers] @TimeFrame INT = 1, @Investor INT = NULL
+	[dbo].[Herding-Measures-Wermers] @TimeFrame INT = 1, @Investor INT = NULL
 
 AS
 
@@ -44,7 +44,7 @@ BEGIN
 					ELSE 1 -- WHOLE
 				END AS Investor
 			FROM
-				Trace_filteredWithRatings
+				TraceFilteredWithRatings
 			WHERE
 				CntraMpId = 'C'
 		) A

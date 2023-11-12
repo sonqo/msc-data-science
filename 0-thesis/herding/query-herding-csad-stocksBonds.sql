@@ -28,14 +28,14 @@ FROM (
 				A.R AS RetEom,
 				C.Rm
 			FROM
-				BondReturns_customerOnly A
+				BondReturnsCustomer A
 			INNER JOIN (
 				SELECT DISTINCT
 					A.CusipId,
 					A.TrdExctnDtEOM,
 					B.PermNo
 				FROM
-					BondReturns_topBonds A
+					BondReturnsTopBonds A
 				INNER JOIN
 					CrspcBondLink B ON A.CusipId = B.Cusip
 				INNER JOIN
@@ -46,7 +46,7 @@ FROM (
 					TrdExctnDtEOM AS Date,
 					SUM(R * TD_volume) / SUM(TD_volume) AS Rm
 				FROM
-					BondReturns_customerOnly
+					BondReturnsCustomer
 				GROUP BY
 					TrdExctnDtEOM
 			) C ON A.TrdExctnDtEOM = C.Date
@@ -93,7 +93,7 @@ INNER JOIN (
 						A.TrdExctnDtEOM,
 						B.PermNo
 					FROM
-						BondReturns_topBonds A
+						BondReturnsTopBonds A
 					INNER JOIN
 						CrspcBondLink B ON A.CusipId = B.Cusip
 					INNER JOIN
@@ -119,7 +119,7 @@ SELECT
 	COUNT(DISTINCT A.IssuerId) AS DistinctIssuers,
 	COUNT(DISTINCT C.LPermNo) AS DistinctPermCos
 FROM
-	BondReturns_topBonds A
+	BondReturnsTopBonds A
 INNER JOIN
 	CrspcBondLink B ON A.CusipId = B.Cusip
 INNER JOIN
