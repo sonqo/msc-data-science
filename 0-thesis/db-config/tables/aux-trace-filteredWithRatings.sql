@@ -9,7 +9,7 @@ SELECT
 INTO
 	[dbo].[TraceFilteredWithRatings]
 FROM
-	Trace_filtered A
+	TraceFiltered A
 -- join with BondReturns
 INNER JOIN (
 	-- get minimum rating for current TradeExecutionDate and LatestRatingDate
@@ -35,15 +35,15 @@ INNER JOIN (
 				ELSE MAX(B.Date)
 			END AS LatestRatingDate
 		FROM
-			Trace_filtered A
+			TraceFiltered A
 		LEFT JOIN
-			BondReturns B ON A.CusipId = B.Cusip AND A.TrdExctnDt >= B.Date
+			BondReturnsWrds B ON A.CusipId = B.Cusip AND A.TrdExctnDt >= B.Date
 		GROUP BY
 			A.CusipId,
 			A.TrdExctnDt
 	) B
 	LEFT JOIN 
-		BondReturns A ON A.Cusip = B.CusipId AND A.Date = B.LatestRatingDate
+		BondReturnsWrds A ON A.Cusip = B.CusipId AND A.Date = B.LatestRatingDate
 ) B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.TrdExctnDt
 -- join with BondRatings
 INNER JOIN (
@@ -72,7 +72,7 @@ INNER JOIN (
 				ELSE MAX(B.RatingDate)
 			END AS LatestRatingDate
 		FROM
-			Trace_filtered A
+			TraceFiltered A
 		LEFT JOIN
 			BondRatings B ON A.CusipId = B.CompleteCusip AND A.TrdExctnDt >= B.RatingDate
 		GROUP BY
@@ -104,7 +104,7 @@ INNER JOIN (
 		Cusip,
 		MAX(PrincipalAmt) AS PrincipalAmt
 	FROM
-		BondReturns
+		BondReturnsWrds
 	GROUP BY
 		Cusip
 ) B ON A.CusipId = B.Cusip

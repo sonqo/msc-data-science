@@ -1,6 +1,6 @@
 CREATE PROCEDURE
 
-	[dbo].[Momentum-NonTopBonds] @CreditRisk NVARCHAR(10) = NULL, @Ownership NVARCHAR(10) = NULL
+	[dbo].[Momentum-TopBondsRetail] @CreditRisk NVARCHAR(10) = NULL, @Ownership NVARCHAR(10) = NULL
 
 AS
 
@@ -60,7 +60,8 @@ BEGIN
 				CASE
 					WHEN TempNextInterestDate > Maturity THEN Maturity
 					ELSE TempNextInterestDate
-				END AS NextInterestDate
+				END AS NextInterestDate,
+				ConsecutiveMonths
 			FROM (
 				SELECT
 					*,
@@ -132,7 +133,8 @@ BEGIN
 							WHEN MAX(FirstInterestDate) IS NOT NULL THEN MAX(FirstInterestDate)
 							ELSE MAX(OfferingDate)
 						END AS FirstInterestDate,
-						MAX(OfferingDate) AS OfferingDate
+						MAX(OfferingDate) AS OfferingDate,
+						MAX(ConsecutiveMonths) AS ConsecutiveMonths
 					FROM (
 						SELECT
 							A.CusipId,
@@ -151,22 +153,23 @@ BEGIN
 							A.RatingNum,
 							A.Maturity,
 							A.FirstInterestDate,
-							A.OfferingDate
+							A.OfferingDate,
+							B.ConsecutiveMonths
 						FROM
 							TraceFilteredWithRatings A
 						INNER JOIN (
 							SELECT
 								A.CusipId,
-								MAX(A.TrdExctnDt) AS TrdExctnDt
+								MAX(A.TrdExctnDt) AS TrdExctnDt,
+								MAX(B.ConsecutiveMonths) AS ConsecutiveMonths
 							FROM
 								TraceFilteredWithRatings A
-							LEFT JOIN
-								BondReturnsTopBonds B ON A.CusipId = B.CusipId AND EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
+							INNER JOIN
+								TopBondsRetail B ON A.CusipId = B.CusipId AND EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
 							INNER JOIN
 								BondIssuersOwnership C ON A.IssuerId = C.IssuerId
 							WHERE
-								B.CusipId IS NULL
-								AND PrincipalAmt IN (10, 1000)
+								PrincipalAmt IN (10, 1000)
 								AND Private < CASE WHEN @Ownership = 'Public' THEN 1 ELSE 2 END
 								AND RatingNum > CASE WHEN @CreditRisk = 'HY' THEN 10 ELSE 0 END
 								AND RatingNum < CASE WHEN @CreditRisk = 'IG' THEN 11 ELSE 25 END
@@ -192,19 +195,6 @@ BEGIN
 			) E
 		) F
 	) G
-
-	SELECT
-		*,
-		ROW_NUMBER() OVER (PARTITION BY CusipId, IssuerId, DateRanking ORDER BY TrdExctnDt) as ConsecutiveMonths
-	INTO
-		#TEMP_TABLE_V1_CONMONTHS
-	FROM (
-		SELECT
-			*,
-			DATEPART(YEAR, TrdExctnDt) * 12 + DATEPART(MONTH, TrdExctnDt) - ROW_NUMBER() OVER (PARTITION BY CusipId, IssuerId ORDER BY TrdExctnDt) AS DateRanking
-		FROM
-			#TEMP_TABLE_V1
-	) B
 
 	SELECT
 		*,
@@ -270,10 +260,10 @@ BEGIN
 				SELECT
 					DISTINCT CusipId
 				FROM
-					#TEMP_TABLE_V1_CONMONTHS
+					#TEMP_TABLE_V1
 			) B
 			LEFT JOIN 
-				#TEMP_TABLE_V1_CONMONTHS C ON A.MonthDateEOM = EOMONTH(C.TrdExctnDt) AND B.CusipId = C.CusipId
+				#TEMP_TABLE_V1 C ON A.MonthDateEOM = EOMONTH(C.TrdExctnDt) AND B.CusipId = C.CusipId
 		) A
 	) B
 
@@ -312,7 +302,7 @@ BEGIN
 			FROM
 				TraceFilteredWithRatings A
 			LEFT JOIN
-				BondReturnsTopBonds B ON A.IssuerId = B.IssuerId AND  EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
+				TopBondsRetail B ON A.IssuerId = B.IssuerId AND  EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
 			GROUP BY
 				A.IssuerId,
 				EOMONTH(A.TrdExctnDt)
@@ -321,6 +311,5 @@ BEGIN
 
 	DROP TABLE #TEMP_TABLE_V1
 	DROP TABLE #TEMP_TABLE_V2
-	DROP TABLE #TEMP_TABLE_V1_CONMONTHS
 
 END

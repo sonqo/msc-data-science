@@ -15,7 +15,7 @@ FROM (
 	FROM
 		TraceFilteredWithRatings A
 	INNER JOIN
-		BondReturnsTopBonds B ON A.CusipId = B.CusipId AND EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
+		TopBondsInstitutional B ON A.CusipId = B.CusipId AND EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
 	WHERE
 		A.RatingNum <> 0
 	GROUP BY
@@ -41,7 +41,7 @@ FROM (
 	FROM
 		TraceFilteredWithRatings A
 	LEFT JOIN 
-		BondReturnsTopBonds B ON A.CusipId = B.CusipId AND EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
+		TopBondsInstitutional B ON A.CusipId = B.CusipId AND EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
 	WHERE
 		A.RatingNum <> 0
 		AND B.CusipId IS NULL

@@ -135,13 +135,13 @@ FROM (
 						A.FirstInterestDate,
 						A.OfferingDate
 					FROM
-						Trace_filteredWithRatings A
+						TraceFilteredWithRatings A
 					INNER JOIN (
 						SELECT
 							CusipId,
 							MAX(TrdExctnDt) AS TrdExctnDt
 						FROM
-							Trace_filteredWithRatings A
+							TraceFilteredWithRatings A
 						WHERE
 							CntraMpId = 'C'
 							AND PrincipalAmt IN (10, 1000)

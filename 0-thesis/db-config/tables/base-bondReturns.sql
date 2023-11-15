@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS [dbo].[BondReturns]
+DROP TABLE IF EXISTS [dbo].[BondReturnsWrds]
 
-CREATE TABLE [dbo].[BondReturns](
+CREATE TABLE [dbo].[BondReturnsWrds](
 	[Date] [date] NOT NULL,
     [IssueId] [int] NULL,
     [Cusip] [nvarchar](10) NOT NULL,
@@ -59,7 +59,7 @@ CREATE TABLE [dbo].[BondReturns](
     [DefaultType] [nvarchar](1) NULL,
     [Reinstated] [nvarchar](1) NULL,
     [ReinstatedDate] [date] NULL,
-	CONSTRAINT [PK_BondReturns] PRIMARY KEY CLUSTERED (
+	CONSTRAINT [Wrds] PRIMARY KEY CLUSTERED (
         [Cusip] ASC,
 		[Date] ASC
 	) WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]

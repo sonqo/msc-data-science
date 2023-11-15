@@ -43,7 +43,7 @@ FROM (
                         ELSE 'Int'
                     END AS IntRet
                 FROM  
-                    Trace_filtered_withRatings A
+                    TraceFilteredWithRatings A
                 WHERE
                     RatingNum <> 0
             ) B
@@ -66,7 +66,7 @@ FROM (
                         ELSE 'Int'
                     END AS IntRet
                 FROM  
-                    Trace_filtered_withRatings A
+                    TraceFilteredWithRatings A
                 WHERE
                     RatingNum <> 0
             ) B

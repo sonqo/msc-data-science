@@ -10,7 +10,7 @@ FROM (
             ELSE 'N'
         END AS InvestmentGrade
     FROM 
-        Trace_filteredWithRatings
+        TraceFilteredWithRatings
     WHERE
         TrdExctnDt >= '2002-01-1' AND TrdExctnDt < '2023-01-01'
 ) A
