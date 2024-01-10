@@ -28,14 +28,14 @@ FROM (
 				A.R AS RetEom,
 				C.Rm
 			FROM
-				BondReturnsCustomer A
+				[dbo].[BondReturns-customerTrades] A
 			INNER JOIN (
 				SELECT DISTINCT
 					A.CusipId,
 					A.TrdExctnDtEOM,
 					B.PermNo
 				FROM
-					BondReturnsTopBonds A
+					[dbo].[TopBonds] A
 				INNER JOIN
 					CrspcBondLink B ON A.CusipId = B.Cusip
 				INNER JOIN
@@ -46,7 +46,7 @@ FROM (
 					TrdExctnDtEOM AS Date,
 					SUM(R * TD_volume) / SUM(TD_volume) AS Rm
 				FROM
-					BondReturnsCustomer
+					[dbo].[BondReturns-customerTrades]
 				GROUP BY
 					TrdExctnDtEOM
 			) C ON A.TrdExctnDtEOM = C.Date
@@ -93,7 +93,7 @@ INNER JOIN (
 						A.TrdExctnDtEOM,
 						B.PermNo
 					FROM
-						BondReturnsTopBonds A
+						[dbo].[TopBonds] A
 					INNER JOIN
 						CrspcBondLink B ON A.CusipId = B.Cusip
 					INNER JOIN
@@ -103,8 +103,21 @@ INNER JOIN (
 					LPermNo,
 					EOMONTH(DataDate)
 			) B ON A.LPermNo = B.LPermNo AND A.DataDate = B.MaxDate
-			INNER JOIN
-				MarketFactors C ON EOMONTH(A.DataDate) = C.Date
+			INNER JOIN (
+				SELECT
+					DataDate,
+					AVG(MonthlyReturns) AS StocksRm
+				FROM (
+					SELECT
+						A.LPermNo,
+						EOMONTH(A.DataDate) AS DataDate,
+						(PrcCd / LAG(A.PrcCd)  OVER (PARTITION BY A.LPermNo ORDER BY EOMONTH(A.DataDate))) - 1 AS MonthlyReturns
+					FROM
+						CrspcSecuritiesDaily A
+				) B
+				GROUP BY
+					DataDate
+			) C ON A.DataDate = C.DataDate
 		) A
 		GROUP BY
 			DataDate,

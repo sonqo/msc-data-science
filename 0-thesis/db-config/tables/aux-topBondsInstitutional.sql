@@ -1,10 +1,10 @@
-DROP TABLE IF EXISTS [dbo].[TopBondsInstitutional]
+DROP TABLE IF EXISTS [dbo].[TopBonds]
 
 SELECT
 	*,
 	ROW_NUMBER() OVER (PARTITION BY CusipId, IssuerId, DateRanking ORDER BY TrdExctnDtEOM) as ConsecutiveMonths
 INTO
-	[dbo].[TopBondsInstitutional]
+	[dbo].[TopBonds]
 FROM (
 	SELECT
 		*,
@@ -13,7 +13,8 @@ FROM (
 		SELECT
 			CusipId,
 			IssuerId,
-			TrdExctnDtEOM
+			TrdExctnDtEOM,
+			RatingClass
 		FROM (
 			SELECT
 				*,
@@ -23,9 +24,14 @@ FROM (
 					IssuerId,
 					CusipId,
 					EOMONTH(TrdExctnDt) AS TrdExctnDtEOM,
-					SUM(EntrdVolQt) AS Volume
+					SUM(EntrdVolQt) AS Volume,
+					CASE
+						WHEN MAX(RatingNum) <= 10 THEN 'IG'
+						WHEN MAX(RatingNum) >= 11 THEN 'HY'
+						ELSE NULL
+					END AS RatingClass
 				FROM
-					TraceFilteredWithRatings
+					[dbo].[Trace-filteredWithRatings]
 				WHERE
 					RatingNum <> 0
 					AND EntrdVolQt >= 500000 -- institunional

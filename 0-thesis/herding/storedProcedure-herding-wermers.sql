@@ -12,6 +12,7 @@ BEGIN
 		CusipId,
 		TrdExctnDtTF,
 		ABS(BuyAmount - SellAmount) / (BuyAmount + SellAmount) AS Hm,
+		Ni,
 		CASE
 			WHEN BuyAmount > SellAmount THEN 'Buy Herding'
 			WHEN SellAmount > BuyAmount THEN 'Sell Herding'
@@ -21,7 +22,8 @@ BEGIN
 			CusipId,
 			TrdExctnDtTF,
 			SUM(CASE WHEN RptSideCd = 'S' THEN EntrdVolQt * RptdPr / 100 ELSE 0 END) AS BuyAmount,
-			SUM(CASE WHEN RptSideCd = 'B' THEN EntrdVolQt * RptdPr / 100 ELSE 0 END) AS SellAmount
+			SUM(CASE WHEN RptSideCd = 'B' THEN EntrdVolQt * RptdPr / 100 ELSE 0 END) AS SellAmount,
+			COUNT(CusipId) AS Ni
 		FROM (
 			SELECT
 				*,
