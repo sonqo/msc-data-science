@@ -17,7 +17,7 @@ BEGIN
         @d1 smallint = DATEPART(dd, @startDate),
 		@d2 smallint = DATEPART(dd, @endDate);
 
-    -- US: If both from and to dates are last day of february, set @d2 to 30.
+    -- US: If both from and to dates are last day of February, set @d2 to 30.
     IF (
 		@european = 0 
 		AND @m1 = 2 
@@ -26,7 +26,7 @@ BEGIN
 	)
     SET @d2 = 30;
 
-    -- US: If from date is last of february, set @d1=30.
+    -- US: If from date is last of February, set @d1=30.
     IF (
 		@european = 0
 		AND @m1 = 2 
