@@ -1,5 +1,5 @@
 -- AS FOUND AT SQLSUNDAY.COM : Calculating 30/360 day count convention
-CREATE FUNCTION [dbo].[YearFact] (
+CREATE FUNCTION [dbo].[YearFrac] (
     @startDate date,
     @endDate date,
     @european bit = 0 -- 0 = US NASD, 1 = European

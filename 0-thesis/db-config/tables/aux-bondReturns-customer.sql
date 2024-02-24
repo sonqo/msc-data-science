@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS [dbo].[BondReturnsCustomer]
+DROP TABLE IF EXISTS [dbo].[BondReturns-customerTrades]
 
 SELECT
 	*,
@@ -19,11 +19,11 @@ FROM (
 			WHEN InterestFrequency = 0 THEN NULL
 			ELSE
 				CASE
-					WHEN NextInterestDate <= TrdExctnDt AND NextInterestDate >= DATEFROMPARTS(YEAR(TrdExctnDt), MONTH(TrdExctnDt), 1) THEN dbo.YearFact(TrdExctnDt, NextInterestDate, 0)
+					WHEN NextInterestDate <= TrdExctnDt AND NextInterestDate >= DATEFROMPARTS(YEAR(TrdExctnDt), MONTH(TrdExctnDt), 1) THEN dbo.YearFrac(TrdExctnDt, NextInterestDate, 0)
 					ELSE 
 						CASE
-							WHEN LatestInterestDate IS NULL THEN dbo.YearFact(OfferingDate, TrdExctnDt, 0)
-							ELSE dbo.YearFact(LatestInterestDate, TrdExctnDt, 0)
+							WHEN LatestInterestDate IS NULL THEN dbo.YearFrac(OfferingDate, TrdExctnDt, 0)
+							ELSE dbo.YearFrac(LatestInterestDate, TrdExctnDt, 0)
 						END
 				END
 		END AS D
@@ -64,7 +64,7 @@ FROM (
 									360 / InterestFrequency / 30,
 									DATEADD( 
 										MONTH,
-										( ABS ( dbo.YearFact(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 360 / InterestFrequency ) * ( 360 / InterestFrequency / 30 ),
+										( ABS ( dbo.YearFrac(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 360 / InterestFrequency ) * ( 360 / InterestFrequency / 30 ),
 										FirstInterestDate
 									)
 								)
@@ -78,7 +78,7 @@ FROM (
 							ELSE
 								DATEADD( 
 									MONTH,
-									( ABS ( dbo.YearFact(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 360 / InterestFrequency ) * ( 360 / InterestFrequency / 30 ),
+									( ABS ( dbo.YearFrac(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 360 / InterestFrequency ) * ( 360 / InterestFrequency / 30 ),
 									FirstInterestDate
 								) 
 						END 
@@ -135,13 +135,13 @@ FROM (
 						A.FirstInterestDate,
 						A.OfferingDate
 					FROM
-						TraceFilteredWithRatings A
+						[dbo].[Trace-filteredWithRatings] A
 					INNER JOIN (
 						SELECT
 							CusipId,
 							MAX(TrdExctnDt) AS TrdExctnDt
 						FROM
-							TraceFilteredWithRatings A
+							[dbo].[Trace-filteredWithRatings] A
 						WHERE
 							CntraMpId = 'C'
 							AND PrincipalAmt IN (10, 1000)
@@ -228,7 +228,7 @@ FROM (
 SELECT
     A.*
 INTO
-	[dbo].[BondReturnsCustomer]
+	[dbo].[BondReturns-customerTrades]
 FROM
     #TEMP_TABLE_V2 A
 INNER JOIN (
@@ -246,3 +246,8 @@ INNER JOIN (
 
 DROP TABLE #TEMP_TABLE_V1
 DROP TABLE #TEMP_TABLE_V2
+
+CREATE CLUSTERED INDEX [IX_BondReturns-customerTrades] ON 
+	[dbo].[BondReturns-customerTrades] (
+			[TrdExctnDt], [CusipId]
+	);

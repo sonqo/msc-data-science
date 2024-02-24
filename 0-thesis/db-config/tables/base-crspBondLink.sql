@@ -1,13 +1,13 @@
-DROP TABLE IF EXISTS [dbo].[CrspcBondLink]
+DROP TABLE IF EXISTS [dbo].[BondLink]
 
-CREATE TABLE [dbo].[CrspcBondLink](
+CREATE TABLE [dbo].[CrspBondLink](
 	[Cusip] [nvarchar](10) NOT NULL,
 	[PermNo] [nvarchar](10) NOT NULL,
 	[PermCo] [nvarchar](10) NOT NULL,
 	[TraceStartDate] [date] NOT NULL,
 	[TraceEndDate] [date] NOT NULL,
-	[CrspcStartDate] [date] NOT NULL,
-	[CrspcEndDate] [date] NOT NULL,
+	[CrspStartDate] [date] NOT NULL,
+	[CrspEndDate] [date] NOT NULL,
 	[LinkStartDate] [date] NOT NULL,
 	[LinkEndDate] [date] NOT NULL
 ) ON [PRIMARY]

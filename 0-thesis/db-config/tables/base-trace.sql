@@ -44,22 +44,3 @@ CREATE TABLE [dbo].[Trace](
 	[Agency] [nvarchar](5) NULL
 ) ON [PRIMARY]
 GO
-
--- COMMIT AFTER POPULATING TABLE
-
-ALTER TABLE
-	[dbo].[Trace]
-ADD [TrdExctnDtInd] AS (
-	CASE
-        WHEN [TrdExctnDt] BETWEEN DATEADD(DAY, -5, EOMONTH([TrdExctnDt])) AND EOMONTH([TrdExctnDt]) THEN 1
-        ELSE 0 
-	END
-)
-
-ALTER TABLE
-	[dbo].[Trace]
-ADD [TrdExctnMn] AS MONTH([TrdExctnDt])
-
-ALTER TABLE
-	[dbo].[Trace]
-ADD [TrdExctnYr] AS YEAR([TrdExctnDt])

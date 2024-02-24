@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS [dbo].[CrspcSecuritiesDaily]
+DROP TABLE IF EXISTS [dbo].[CrspSecuritiesDaily]
 
-CREATE TABLE [dbo].[CrspcSecuritiesDaily](
+CREATE TABLE [dbo].[CrspSecuritiesDaily](
 	[GvKey] [nvarchar](10) NULL,
 	[LPermNo] [nvarchar](10) NOT NULL,
 	[IId] [nvarchar](10) NOT NULL,
@@ -29,9 +29,9 @@ CREATE TABLE [dbo].[CrspcSecuritiesDaily](
 	[DivspPayDate] [date] NULL,
 	[AnncDate] [date] NULL,
 	[IpoDate] [date] NULL,
-	CONSTRAINT [PK_CrspcSecuritiesDaily] PRIMARY KEY CLUSTERED (
-		[DataDate] ASC,
+	CONSTRAINT [PK_CrspSecuritiesDaily] PRIMARY KEY CLUSTERED (
 		[LPermNo] ASC,
+		[DataDate] ASC,
 		[IId] ASC
 	) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
