@@ -37,9 +37,9 @@ FROM (
 				FROM
 					[dbo].[TopBonds] A
 				INNER JOIN
-					CrspcBondLink B ON A.CusipId = B.Cusip
+					CrspBondLink B ON A.CusipId = B.Cusip
 				INNER JOIN
-					CrspcSecuritiesDaily C ON B.PermNo = C.LPermNo
+					CrspSecuritiesDaily C ON B.PermNo = C.LPermNo
 			) B ON A.CusipId = B.CusipId AND A.TrdExctnDtEOM = B.TrdExctnDtEOM
 			INNER JOIN (
 				SELECT
@@ -80,13 +80,13 @@ INNER JOIN (
 				(PrcCd / LAG(A.PrcCd)  OVER (PARTITION BY A.LPermNo ORDER BY EOMONTH(A.DataDate))) - 1 AS MonthlyReturns,
 				Rm
 			FROM
-				CrspcSecuritiesDaily A
+				CrspSecuritiesDaily A
 			INNER JOIN (
 				SELECT
 					LPermNo,
 					MAX(DataDate) AS MaxDate
 				FROM
-					CrspcSecuritiesDaily A
+					CrspSecuritiesDaily A
 				INNER JOIN (
 					SELECT DISTINCT
 						A.CusipId,
@@ -95,9 +95,9 @@ INNER JOIN (
 					FROM
 						[dbo].[TopBonds] A
 					INNER JOIN
-						CrspcBondLink B ON A.CusipId = B.Cusip
+						CrspBondLink B ON A.CusipId = B.Cusip
 					INNER JOIN
-						CrspcSecuritiesDaily C ON B.PermNo = C.LPermNo
+						CrspSecuritiesDaily C ON B.PermNo = C.LPermNo
 				) B ON A.LPermNo = B.PermNo
 				GROUP BY
 					LPermNo,
@@ -113,7 +113,7 @@ INNER JOIN (
 						EOMONTH(A.DataDate) AS DataDate,
 						(PrcCd / LAG(A.PrcCd)  OVER (PARTITION BY A.LPermNo ORDER BY EOMONTH(A.DataDate))) - 1 AS MonthlyReturns
 					FROM
-						CrspcSecuritiesDaily A
+						CrspSecuritiesDaily A
 				) B
 				GROUP BY
 					DataDate
@@ -134,6 +134,6 @@ SELECT
 FROM
 	BondReturnsTopBonds A
 INNER JOIN
-	CrspcBondLink B ON A.CusipId = B.Cusip
+	CrspBondLink B ON A.CusipId = B.Cusip
 INNER JOIN
-	CrspcSecuritiesDaily C ON B.PermNo = C.LPermNo
+	CrspSecuritiesDaily C ON B.PermNo = C.LPermNo

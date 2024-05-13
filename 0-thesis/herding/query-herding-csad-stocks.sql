@@ -17,13 +17,13 @@ FROM (
 			(PrcCd / LAG(A.PrcCd)  OVER (PARTITION BY A.LPermNo ORDER BY EOMONTH(A.DataDate))) - 1 AS MonthlyReturns,
 			C.*
 		FROM
-			CrspcSecuritiesDaily A
+			CrspSecuritiesDaily A
 		INNER JOIN (
 			SELECT
 				LPermNo,
 				MAX(DataDate) AS MaxDate
 			FROM
-				CrspcSecuritiesDaily A
+				CrspSecuritiesDaily A
 			GROUP BY
 				LPermNo,
 				EOMONTH(DataDate)
@@ -42,14 +42,14 @@ ORDER BY
 SELECT
 	COUNT(DISTINCT LPermNo)
 FROM
-	CrspcSecuritiesDaily A
+	CrspSecuritiesDaily A
 
 -- DISTINCT PERMNOs BY EXCHANGE
 SELECT
 	Exchange,
 	COUNT(DISTINCT LPermNo)
 FROM
-	CrspcSecuritiesDaily A
+	CrspSecuritiesDaily A
 GROUP BY
 	Exchange
 
@@ -58,6 +58,6 @@ SELECT
 	Industry,
 	COUNT(DISTINCT LPermNo)
 FROM
-	CrspcSecuritiesDaily A
+	CrspSecuritiesDaily A
 GROUP BY
 	Industry

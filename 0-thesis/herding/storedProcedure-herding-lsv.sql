@@ -1,6 +1,6 @@
 CREATE PROCEDURE
 
-	[dbo].[Herding-Measures-Lsv] @TimeFrame INT = 1, @Investor INT = NULL, @CreditRisk INT = NULL
+    [dbo].[Herding-Measures-Lsv] @TimeFrame INT = 1, @Investor INT = NULL, @CreditRisk INT = NULL
 
 AS
 
