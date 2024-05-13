@@ -27,11 +27,11 @@ BEGIN
 				WHEN InterestFrequency = 0 THEN NULL
 				ELSE
 					CASE
-						WHEN NextInterestDate <= TrdExctnDt AND NextInterestDate >= DATEFROMPARTS(YEAR(TrdExctnDt), MONTH(TrdExctnDt), 1) THEN dbo.YearFact(TrdExctnDt, NextInterestDate, 0)
+						WHEN NextInterestDate <= TrdExctnDt AND NextInterestDate >= DATEFROMPARTS(YEAR(TrdExctnDt), MONTH(TrdExctnDt), 1) THEN dbo.YearFrac(TrdExctnDt, NextInterestDate, 0)
 						ELSE 
 							CASE
-								WHEN LatestInterestDate IS NULL THEN dbo.YearFact(OfferingDate, TrdExctnDt, 0)
-								ELSE dbo.YearFact(LatestInterestDate, TrdExctnDt, 0)
+								WHEN LatestInterestDate IS NULL THEN dbo.YearFrac(OfferingDate, TrdExctnDt, 0)
+								ELSE dbo.YearFrac(LatestInterestDate, TrdExctnDt, 0)
 							END
 					END
 			END AS D
@@ -77,7 +77,7 @@ BEGIN
 										360 / InterestFrequency / 30,
 										DATEADD( 
 											MONTH,
-											( ABS ( dbo.YearFact(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 360 / InterestFrequency ) * ( 360 / InterestFrequency / 30 ),
+											( ABS ( dbo.YearFrac(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 360 / InterestFrequency ) * ( 360 / InterestFrequency / 30 ),
 											FirstInterestDate
 										)
 									)
@@ -91,7 +91,7 @@ BEGIN
 								ELSE
 									DATEADD( 
 										MONTH,
-										( ABS ( dbo.YearFact(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 360 / InterestFrequency ) * ( 360 / InterestFrequency / 30 ),
+										( ABS ( dbo.YearFrac(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 360 / InterestFrequency ) * ( 360 / InterestFrequency / 30 ),
 										FirstInterestDate
 									) 
 							END 
