@@ -16,7 +16,7 @@ FROM (
 			CusipId,
 			IssuerId
 		FROM
-			[dbo].[Trace-filteredWithRatings]
+			[dbo].[TraceFilteredWithRatings]
 		GROUP BY
 			CusipId,
 			IssuerId

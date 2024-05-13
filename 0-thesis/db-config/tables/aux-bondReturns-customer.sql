@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS [dbo].[BondReturns-customerTrades]
+DROP TABLE IF EXISTS [dbo].[BondReturnsCustomerTrades]
 
 SELECT
 	*,
@@ -135,13 +135,13 @@ FROM (
 						A.FirstInterestDate,
 						A.OfferingDate
 					FROM
-						[dbo].[Trace-filteredWithRatings] A
+						[dbo].[TraceFilteredWithRatings] A
 					INNER JOIN (
 						SELECT
 							CusipId,
 							MAX(TrdExctnDt) AS TrdExctnDt
 						FROM
-							[dbo].[Trace-filteredWithRatings] A
+							[dbo].[TraceFilteredWithRatings] A
 						WHERE
 							CntraMpId = 'C'
 							AND PrincipalAmt IN (10, 1000)
@@ -228,7 +228,7 @@ FROM (
 SELECT
     A.*
 INTO
-	[dbo].[BondReturns-customerTrades]
+	[dbo].[BondReturnsCustomerTrades]
 FROM
     #TEMP_TABLE_V2 A
 INNER JOIN (
@@ -247,7 +247,7 @@ INNER JOIN (
 DROP TABLE #TEMP_TABLE_V1
 DROP TABLE #TEMP_TABLE_V2
 
-CREATE CLUSTERED INDEX [IX_BondReturns-customerTrades] ON 
-	[dbo].[BondReturns-customerTrades] (
-			[TrdExctnDt], [CusipId]
+CREATE UNIQUE CLUSTERED INDEX [IX_BondReturnsCustomerTrades] ON 
+	[dbo].[BondReturnsCustomerTrades] (
+			[TrdExctnDtEOM], [CusipId]
 	);

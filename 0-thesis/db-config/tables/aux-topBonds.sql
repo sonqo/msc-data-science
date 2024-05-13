@@ -1,10 +1,10 @@
-DROP TABLE IF EXISTS [dbo].[TopBonds-institutional]
+DROP TABLE IF EXISTS [dbo].[TopBondsInstitutional]
 
 SELECT
 	*,
 	ROW_NUMBER() OVER (PARTITION BY CusipId, IssuerId, DateRanking ORDER BY TrdExctnDtEOM) as ConsecutiveMonths
 INTO
-	[dbo].[TopBonds-institutional]
+	[dbo].[TopBondsInstitutional]
 FROM (
 	SELECT
 		*,
@@ -31,7 +31,7 @@ FROM (
 						ELSE NULL
 					END AS RatingClass
 				FROM
-					[dbo].[Trace-filteredWithRatings]
+					[dbo].[TraceFilteredWithRatings]
 				WHERE
 					RatingNum <> 0
 					AND EntrdVolQt >= 500000 -- institunional

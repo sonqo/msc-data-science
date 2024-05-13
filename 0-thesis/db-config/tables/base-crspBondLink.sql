@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS [dbo].[BondLink]
+DROP TABLE IF EXISTS [dbo].[CrspBondLink]
 
 CREATE TABLE [dbo].[CrspBondLink](
 	[Cusip] [nvarchar](10) NOT NULL,

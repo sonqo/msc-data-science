@@ -44,3 +44,8 @@ CREATE TABLE [dbo].[Trace](
 	[Agency] [nvarchar](5) NULL
 ) ON [PRIMARY]
 GO
+
+CREATE CLUSTERED INDEX [IX_Trace] ON 
+	dbo.[Trace] (
+			[TrdExctnDt], [CusipId]
+	);

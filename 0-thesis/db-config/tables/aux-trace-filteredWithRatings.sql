@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS [dbo].[TEMP_Trace-filtered];
-DROP TABLE IF EXISTS [dbo].[Trace-filteredWithRatings];
+DROP TABLE IF EXISTS [dbo].[TEMP_TraceFiltered];
+DROP TABLE IF EXISTS [dbo].[TraceFilteredWithRatings];
 
 -- create temp table of filtered trace for faster iterations
 SELECT
@@ -26,7 +26,7 @@ SELECT
 	C.IndustryCode,
 	C.IndustryGroup
 INTO
-	[dbo].[TEMP_Trace-filtered]
+	[dbo].[TEMP_TraceFiltered]
 FROM 
 	Trace A
 INNER JOIN
@@ -50,9 +50,9 @@ SELECT
         ELSE C.RatingNum
     END AS RatingNum
 INTO
-	[dbo].[Trace-filteredWithRatings]
+	[dbo].[TraceFilteredWithRatings]
 FROM
-	[dbo].[TEMP_Trace-filtered] A
+	[dbo].[TEMP_TraceFiltered] A
 -- join with BondReturns-wrds
 INNER JOIN (
 	-- get minimum rating for current TradeExecutionDate and LatestRatingDate
@@ -80,15 +80,15 @@ INNER JOIN (
 			END AS LatestRatingDate,
 			MAX(B.PrincipalAmt) AS PrincipalAmt
 		FROM
-			[dbo].[TEMP_Trace-filtered] A
+			[dbo].[TEMP_TraceFiltered] A
 		LEFT JOIN
-			[dbo].[BondReturns-wrds] B ON A.CusipId = B.Cusip AND A.TrdExctnDt >= B.Date
+			[dbo].[BondReturnsWrds] B ON A.CusipId = B.Cusip AND A.TrdExctnDt >= B.Date
 		GROUP BY
 			A.CusipId,
 			A.TrdExctnDt
 	) B
 	LEFT JOIN 
-		[dbo].[BondReturns-wrds] A ON A.Cusip = B.CusipId AND A.Date = B.LatestRatingDate
+		[dbo].[BondReturnsWrds] A ON A.Cusip = B.CusipId AND A.Date = B.LatestRatingDate
 ) B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.TrdExctnDt
 -- join with BondRatings
 INNER JOIN (
@@ -117,7 +117,7 @@ INNER JOIN (
 				ELSE MAX(B.RatingDate)
 			END AS LatestRatingDate
 		FROM
-			[dbo].[TEMP_Trace-filtered] A
+			[dbo].[TEMP_TraceFiltered] A
 		LEFT JOIN
 			[dbo].[BondRatings] B ON A.CusipId = B.CompleteCusip AND A.TrdExctnDt >= B.RatingDate
 		GROUP BY
@@ -131,9 +131,9 @@ INNER JOIN (
 		B.TrdExctnDt
 ) C ON A.CusipId = C.CusipId AND A.TrdExctnDt = C.TrdExctnDt
 
-DROP TABLE IF EXISTS [dbo].[TEMP_Trace-filtered]
+DROP TABLE IF EXISTS [dbo].[TEMP_TraceFiltered]
 
-CREATE CLUSTERED INDEX [IX_Trace-filteredWithRatings] ON 
-	dbo.[Trace-filteredWithRatings] (
+CREATE CLUSTERED INDEX [IX_TraceFilteredWithRatings] ON 
+	dbo.[TraceFilteredWithRatings] (
 			[TrdExctnDt], [CusipId]
 	);
