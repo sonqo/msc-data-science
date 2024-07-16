@@ -164,20 +164,32 @@ FROM (
 				MIN(TrdExctnTm) AS MinTrdExctnTm
 			FROM (
 				SELECT
-					*,
-					EOMONTH(TrdExctnDt) AS TrdExctnDtEOM
+					A.*,
+					EOMONTH(A.TrdExctnDt) AS TrdExctnDtEOM
 				FROM
-					TraceFilteredWithRatings
+					TraceFilteredWithRatings A
+				INNER JOIN (
+					SELECT
+						CusipId
+					FROM
+						TraceFilteredWithRatings
+					WHERE
+						RptdPr >= 10 AND RptdPr <= 500
+					GROUP BY
+						CusipId
+					HAVING
+						COUNT(*) >= 50
+				) B ON A.CusipId = B.CusipId
+				WHERE
+					RatingNum <> 0
+					AND EntrdVolQt <> CASE WHEN RatingNum <= 10 THEN 5000000 WHEN RatingNum >= 11 THEN 1000000 END
 			) A
-			WHERE
-				CntraMpId = 'C'
-				AND EntrdVolQt <> CASE WHEN RatingNum <= 10 THEN 5000000 WHEN RatingNum >= 11 THEN 1000000 END
 			GROUP BY
 				CusipId,
 				TrdExctnDtEOM
 		) B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.MinTrdExctnDt AND A.TrdExctnTm = B.MinTrdExctnTm
 		WHERE
-			CntraMpId = 'C'
+			RatingNum <> 0
 			AND EntrdVolQt <> CASE WHEN RatingNum <= 10 THEN 5000000 WHEN RatingNum >= 11 THEN 1000000 END
 	) A
 ) B
@@ -187,8 +199,8 @@ WHERE
 	AND QtVt - LagQtVt IS NOT NULL
 	AND RptdPr - LagRptdPr IS NOT NULL
 ORDER BY
-	TrdExctnDt,
-	CusipId
+	CusipId,
+	TrdExctnDtEOM
 
 -- YEARLY
 SELECT
