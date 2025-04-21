@@ -1,12 +1,7 @@
-/data/source
-/data/processed
+# wrds and sql credentials
+/db-config/wrds-pipeline/.env
 
-/db-desc/source
+# wrds and sql credentials
+/db-config/wrds-pipeline/data
 
-/momentum/source
-
-/herding/source
-
-/robustness-measures/source
-
-.env
+/db-config/wrds-pipeline/functions/__pycache__

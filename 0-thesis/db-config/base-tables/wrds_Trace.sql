@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS [dbo].[Trace]
+DROP TABLE IF EXISTS [dbo].[wrds_Trace]
 
-CREATE TABLE [dbo].[Trace](
+CREATE TABLE [dbo].[wrds_Trace](
 	[CusipId] [nvarchar](10) NULL,
 	[BondSymId] [nvarchar](50) NULL,
 	[CompanySymbol] [nvarchar](10) NULL,
@@ -45,7 +45,7 @@ CREATE TABLE [dbo].[Trace](
 ) ON [PRIMARY]
 GO
 
-CREATE CLUSTERED INDEX [IX_Trace] ON 
-	dbo.[Trace] (
+CREATE CLUSTERED INDEX [IX_wrds_Trace] ON 
+	dbo.[wrds_Trace] (
 			[TrdExctnDt], [CusipId]
 	);

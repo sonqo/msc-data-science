@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS [dbo].[Date]
 
-CREATE TABLE Date(
+CREATE TABLE [dbo].[Date] (
     [MonthDate] Date NOT NULL,
 	[MonthDateEOM] Date NOT NULL
     CONSTRAINT [PK_Date] PRIMARY KEY CLUSTERED (
@@ -12,11 +12,11 @@ DECLARE @StartDate DATE
 DECLARE @EndDate DATE
 
 SET @StartDate = '2002-01-01'
-SET @EndDate = '2022-12-31'
+SET @EndDate = '2023-12-31'
 
 WHILE @StartDate <= @EndDate
     BEGIN
-        INSERT INTO Date VALUES (
+        INSERT INTO [dbo].[Date] VALUES (
             @StartDate,
 			EOMONTH(@StartDate)
         )

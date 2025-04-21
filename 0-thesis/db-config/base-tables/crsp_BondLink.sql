@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS [dbo].[CrspBondLink]
+DROP TABLE IF EXISTS [dbo].[crsp_BondLink]
 
-CREATE TABLE [dbo].[CrspBondLink](
+CREATE TABLE [dbo].[crsp_BondLink](
 	[Cusip] [nvarchar](10) NOT NULL,
 	[PermNo] [nvarchar](10) NOT NULL,
 	[PermCo] [nvarchar](10) NOT NULL,
@@ -11,4 +11,3 @@ CREATE TABLE [dbo].[CrspBondLink](
 	[LinkStartDate] [date] NOT NULL,
 	[LinkEndDate] [date] NOT NULL
 ) ON [PRIMARY]
-GO

@@ -1,10 +1,10 @@
 ALTER TABLE
-	[dbo].[BondIssuers]
+	[dbo].[BondIssuer]
 ADD
 	Private INT
 
 UPDATE
-	[dbo].[BondIssuers]
+	[dbo].[BondIssuer]
 SET
 	Private = A.Private
 FROM (
@@ -16,7 +16,7 @@ FROM (
 			CusipId,
 			IssuerId
 		FROM
-			[dbo].[TraceFilteredWithRatings]
+			[dbo].[wrds_Trace_FilteredWithRatings]
 		GROUP BY
 			CusipId,
 			IssuerId
@@ -25,4 +25,4 @@ FROM (
 		[dbo].[CrspBondLink] B ON A.CusipId = B.Cusip
 ) A
 INNER JOIN
-	[dbo].[BondIssuers] B ON A.IssuerId = B.IssuerId
+	[dbo].[BondIssuer] B ON A.IssuerId = B.IssuerId

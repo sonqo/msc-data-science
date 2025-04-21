@@ -1,7 +1,7 @@
-DROP TABLE IF EXISTS [dbo].[BondIssues]
+DROP TABLE IF EXISTS [dbo].[fisd_BondIssue]
 
-CREATE TABLE [dbo].[BondIssues](
-	[CompleteCusip] [nvarchar](10) NOT NULL,
+CREATE TABLE [dbo].[fisd_BondIssue](
+	[CusipId] [nvarchar](10) NOT NULL,
 	[OfferingAmt] [decimal] NULL,
 	[OfferingPrice] [float] NULL,
 	[OfferingYield] [float] NULL,
@@ -21,8 +21,7 @@ CREATE TABLE [dbo].[BondIssues](
 	[FirstInterestDate] [date] NULL,
 	[EffectiveDate] [date] NULL,
 	[Maturity] [date] NULL,
-	CONSTRAINT [PK_BondIssues] PRIMARY KEY CLUSTERED (
+	CONSTRAINT [PK_fisd_BondIssue] PRIMARY KEY CLUSTERED (
 		[CompleteCusip] ASC
 	) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
-GO

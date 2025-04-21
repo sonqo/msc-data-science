@@ -1,13 +1,12 @@
-DROP TABLE IF EXISTS [dbo].[TEMP_TraceFiltered];
-DROP TABLE IF EXISTS [dbo].[TraceFilteredWithRatings];
-
 -- create temp table of filtered trace for faster iterations
+DROP TABLE IF EXISTS TEMP_TraceFiltered
+
 SELECT
 	A.CusipId,
 	A.TrdExctnDt,
 	A.TrdExctnTm,
-	A.TrdExctnMn,
-	A.TrdExctnYr,
+	MONTH(A.TrdExctnDt) AS TrdExctnMn,
+	YEAR(A.TrdExctnDt) AS TrdExctnYr,
 	A.EntrdVolQt,
 	A.RptdPr,
 	A.RptSideCd,
@@ -16,6 +15,7 @@ SELECT
 	A.CntraMpId,
 	B.InterestFrequency,
 	B.Coupon,
+	B.PrincipalAmount,
 	B.OfferingDate,
 	B.DeliveryDate,
 	B.FirstInterestDate,
@@ -26,13 +26,13 @@ SELECT
 	C.IndustryCode,
 	C.IndustryGroup
 INTO
-	[dbo].[TEMP_TraceFiltered]
+	TEMP_TraceFiltered
 FROM 
-	Trace A
+	wrds_Trace A
 INNER JOIN
-	BondIssues B ON A.CusipId = B.CompleteCusip
+	fisd_BondIssue B ON A.CusipId = B.CusipId
 INNER JOIN 
-	BondIssuers C ON B.IssuerId = C.IssuerId
+	fisd_BondIssuer C ON B.IssuerId = C.IssuerId
 WHERE
 	C.IndustryGroup <> 4 -- government
 	AND C.CountryDomicile = 'USA' 
@@ -50,9 +50,9 @@ SELECT
         ELSE C.RatingNum
     END AS RatingNum
 INTO
-	[dbo].[TraceFilteredWithRatings]
+	[dbo].[wrds_Trace_FilteredWithRatings]
 FROM
-	[dbo].[TEMP_TraceFiltered] A
+	TEMP_TraceFiltered A
 -- join with BondReturns-wrds
 INNER JOIN (
 	-- get minimum rating for current TradeExecutionDate and LatestRatingDate
@@ -80,15 +80,15 @@ INNER JOIN (
 			END AS LatestRatingDate,
 			MAX(B.PrincipalAmt) AS PrincipalAmt
 		FROM
-			[dbo].[TEMP_TraceFiltered] A
+			TEMP_TraceFiltered A
 		LEFT JOIN
-			[dbo].[BondReturnsWrds] B ON A.CusipId = B.Cusip AND A.TrdExctnDt >= B.Date
+			[dbo].[wrds_BondReturn] B ON A.CusipId = B.CusipId AND A.TrdExctnDt >= B.Date
 		GROUP BY
 			A.CusipId,
 			A.TrdExctnDt
 	) B
 	LEFT JOIN 
-		[dbo].[BondReturnsWrds] A ON A.Cusip = B.CusipId AND A.Date = B.LatestRatingDate
+		[dbo].[wrds_BondReturn] A ON A.CusipId = B.CusipId AND A.Date = B.LatestRatingDate
 ) B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.TrdExctnDt
 -- join with BondRatings
 INNER JOIN (
@@ -98,8 +98,8 @@ INNER JOIN (
 		B.TrdExctnDt,
 		MIN(
 			CASE
-				WHEN A.RatingCategory IS NULL THEN 0
-				ELSE A.RatingCategory
+				WHEN A.RatingNum IS NULL THEN 0
+				ELSE A.RatingNum
 			END
 		) AS RatingNum
 	FROM (
@@ -117,23 +117,23 @@ INNER JOIN (
 				ELSE MAX(B.RatingDate)
 			END AS LatestRatingDate
 		FROM
-			[dbo].[TEMP_TraceFiltered] A
+			TEMP_TraceFiltered A
 		LEFT JOIN
-			[dbo].[BondRatings] B ON A.CusipId = B.CompleteCusip AND A.TrdExctnDt >= B.RatingDate
+			[dbo].[fisd_BondRating] B ON A.CusipId = B.CusipId AND A.TrdExctnDt >= B.RatingDate
 		GROUP BY
 			A.CusipId,
 			A.TrdExctnDt
 	) B 
 	LEFT JOIN 
-		[dbo].[BondRatings] A ON A.CompleteCusip = B.CusipId AND (A.RatingDate = B.LatestRatingDate OR B.LatestRatingDate IS NULL)
+		[dbo].[fisd_BondRating] A ON A.CusipId = B.CusipId AND (A.RatingDate = B.LatestRatingDate OR B.LatestRatingDate IS NULL)
 	GROUP BY
 		B.CusipId,
 		B.TrdExctnDt
 ) C ON A.CusipId = C.CusipId AND A.TrdExctnDt = C.TrdExctnDt
 
-DROP TABLE IF EXISTS [dbo].[TEMP_TraceFiltered]
+DROP TABLE IF EXISTS TEMP_TraceFiltered
 
-CREATE CLUSTERED INDEX [IX_TraceFilteredWithRatings] ON 
-	dbo.[TraceFilteredWithRatings] (
+CREATE CLUSTERED INDEX [IX_wrds_Trace_FilteredWithRatings] ON 
+	dbo.[wrds_Trace_FilteredWithRatings] (
 			[TrdExctnDt], [CusipId]
 	);

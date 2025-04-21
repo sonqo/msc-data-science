@@ -31,9 +31,9 @@ FROM (
 		SELECT
 			CusipId,
 			TrdExctnDt,
-			T_Price,
-			T_Volume,
-			TD_Volume,
+			TPrice,
+			TVolume,
+			TDVolume,
 			Coupon,
 			CouponMonth,
 			PrincipalAmt,

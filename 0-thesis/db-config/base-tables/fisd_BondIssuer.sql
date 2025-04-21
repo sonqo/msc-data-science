@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS [dbo].[BondIssuers]
+DROP TABLE IF EXISTS [dbo].[fisd_BondIssuer]
 
-CREATE TABLE [dbo].[BondIssuers](
+CREATE TABLE [dbo].[fisd_BondIssuer](
 	[IssuerId] [int] NOT NULL,
 	[AgentId] [int] NULL,
 	[CusipName] [nvarchar](100) NULL,
@@ -23,7 +23,7 @@ CREATE TABLE [dbo].[BondIssuers](
 	[MainFax] [nvarchar](100) NULL,
 	[Note] [nvarchar](500) NULL,
 	[SicCode] [int] NULL,
-	CONSTRAINT [PK_BondIssuers] PRIMARY KEY CLUSTERED (
+	CONSTRAINT [PK_fisd_BondIssuer] PRIMARY KEY CLUSTERED (
 		[IssuerId] ASC
 	) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
