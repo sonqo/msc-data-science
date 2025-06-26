@@ -1,7 +1,8 @@
 # wrds and sql credentials
 /db-config/wrds-pipeline/.env
 
-# wrds and sql credentials
+# data
 /db-config/wrds-pipeline/data
 
+# function cache
 /db-config/wrds-pipeline/functions/__pycache__
