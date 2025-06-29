@@ -1,6 +1,6 @@
 CREATE PROCEDURE
 
-	[dbo].[Momentum-WholeDataset] @CreditRisk NVARCHAR(10) = NULL
+	[dbo].[sp_mom_Top2Bonds_Inst] @CreditRisk NVARCHAR(10) = NULL, @Ownership NVARCHAR(10) = NULL
 
 AS
 
@@ -27,11 +27,11 @@ BEGIN
 				WHEN InterestFrequency = 0 THEN NULL
 				ELSE
 					CASE
-						WHEN NextInterestDate <= TrdExctnDt AND NextInterestDate >= DATEFROMPARTS(YEAR(TrdExctnDt), MONTH(TrdExctnDt), 1) THEN dbo.YearFrac(TrdExctnDt, NextInterestDate, 0)
+						WHEN NextInterestDate <= TrdExctnDt AND NextInterestDate >= DATEFROMPARTS(YEAR(TrdExctnDt), MONTH(TrdExctnDt), 1) THEN dbo.func_YearFrac(TrdExctnDt, NextInterestDate, 0)
 						ELSE 
 							CASE
-								WHEN LatestInterestDate IS NULL THEN dbo.YearFrac(OfferingDate, TrdExctnDt, 0)
-								ELSE dbo.YearFrac(LatestInterestDate, TrdExctnDt, 0)
+								WHEN LatestInterestDate IS NULL THEN dbo.func_YearFrac(OfferingDate, TrdExctnDt, 0)
+								ELSE dbo.func_YearFrac(LatestInterestDate, TrdExctnDt, 0)
 							END
 					END
 			END AS D
@@ -60,9 +60,10 @@ BEGIN
 				CASE
 					WHEN TempNextInterestDate > Maturity THEN Maturity
 					ELSE TempNextInterestDate
-				END AS NextInterestDate
+				END AS NextInterestDate,
+				ConsecutiveMonths
 			FROM (
-				 SELECT
+				SELECT
 					*,
 					DATEDIFF(MONTH, FirstInterestDate, TrdExctnDt) AS CouponMonth,
 					CASE 
@@ -76,7 +77,7 @@ BEGIN
 										360 / InterestFrequency / 30,
 										DATEADD( 
 											MONTH,
-											( ABS ( dbo.YearFrac(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 360 / InterestFrequency ) * ( 360 / InterestFrequency / 30 ),
+											( ABS ( dbo.func_YearFrac(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 360 / InterestFrequency ) * ( 360 / InterestFrequency / 30 ),
 											FirstInterestDate
 										)
 									)
@@ -90,13 +91,13 @@ BEGIN
 								ELSE
 									DATEADD( 
 										MONTH,
-										( ABS ( dbo.YearFrac(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 360 / InterestFrequency ) * ( 360 / InterestFrequency / 30 ),
+										( ABS ( dbo.func_YearFrac(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 360 / InterestFrequency ) * ( 360 / InterestFrequency / 30 ),
 										FirstInterestDate
 									) 
 							END 
 					END AS LatestInterestDate
 				FROM (
-					 SELECT
+					SELECT
 						CusipId,
 						MAX(IssuerId) AS IssuerId,
 						MAX(IssuerOwnership) AS IssuerOwnership,
@@ -107,7 +108,7 @@ BEGIN
 						1.0 * SUM(CASE WHEN EntrdVolQt >= 500000 THEN 1 ELSE 0 END) / SUM(1) AS InstitunionalTradeShare,
 						1.0 * SUM(CASE WHEN EntrdVolQt >= 500000 THEN EntrdVolQt ELSE 0 END) / SUM(EntrdVolQt) AS InstitunionalVolumeShare,
 						MAX(Coupon) AS Coupon,
-						MAX(PrincipalAmt) AS PrincipalAmt,
+						MAX(PrincipalAmount) AS PrincipalAmt,
 						CASE
 							WHEN MAX(InterestFrequency) = 14 THEN 6
 							WHEN MAX(InterestFrequency) = 13 THEN 12
@@ -132,7 +133,8 @@ BEGIN
 							WHEN MAX(FirstInterestDate) IS NOT NULL THEN MAX(FirstInterestDate)
 							ELSE MAX(OfferingDate)
 						END AS FirstInterestDate,
-						MAX(OfferingDate) AS OfferingDate
+						MAX(OfferingDate) AS OfferingDate,
+						MAX(ConsecutiveMonths) AS ConsecutiveMonths
 					FROM (
 						SELECT
 							A.CusipId,
@@ -146,31 +148,39 @@ BEGIN
 							END AS PriceVolumeProduct,
 							A.EntrdVolQt,
 							A.Coupon,
-							A.PrincipalAmt,
+							A.PrincipalAmount,
 							A.InterestFrequency,
 							A.RatingNum,
 							A.Maturity,
 							A.FirstInterestDate,
-							A.OfferingDate
+							A.OfferingDate,
+							B.ConsecutiveMonths
 						FROM
-							TraceFilteredWithRatings A
+							wrds_Trace_FilteredWithRatings A
 						INNER JOIN (
 							SELECT
-								CusipId,
-								MAX(TrdExctnDt) AS TrdExctnDt
+								A.CusipId,
+								MAX(A.TrdExctnDt) AS TrdExctnDt,
+								MAX(B.ConsecutiveMonths) AS ConsecutiveMonths
 							FROM
-								TraceFilteredWithRatings A
+								wrds_Trace_FilteredWithRatings A
+							INNER JOIN
+								aux_Top2Bonds_Inst B ON A.CusipId = B.CusipId AND EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
+							INNER JOIN
+								fisd_BondIssuer C ON A.IssuerId = C.IssuerId
 							WHERE
-								PrincipalAmt IN (10, 1000)
+								PrincipalAmount IN (10, 1000)
+								AND Private < CASE WHEN @Ownership = 'Public' THEN 1 ELSE 2 END
 								AND RatingNum > CASE WHEN @CreditRisk = 'HY' THEN 10 ELSE 0 END
 								AND RatingNum < CASE WHEN @CreditRisk = 'IG' THEN 11 ELSE 25 END
+								AND Private > CASE WHEN @Ownership = 'Private' THEN 0 ELSE -1 END
 								AND TrdExctnDt <= EOMONTH(TrdExctnDt) AND TrdExctnDt > DATEADD(DAY, -5, EOMONTH(TrdExctnDt))
 							GROUP BY
-								CusipId,
-								EOMONTH(TrdExctnDt)
+								A.CusipId,
+								EOMONTH(A.TrdExctnDt)
 						) B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.TrdExctnDt
 						INNER JOIN
-							BondIssuersOwnership C ON A.IssuerId = C.IssuerId
+							fisd_BondIssuer C ON A.IssuerId = C.IssuerId
 						WHERE
 							RatingNum > CASE WHEN @CreditRisk = 'HY' THEN 10 ELSE 0 END
 							AND RatingNum < CASE WHEN @CreditRisk = 'IG' THEN 11 ELSE 25 END
@@ -216,7 +226,8 @@ BEGIN
 			LatestInterestDate,
 			NextInterestDate,
 			Maturity,
-			MaturityBand
+			MaturityBand,
+			ConsecutiveMonths
 		FROM (
 			SELECT
 				B.CusipId,
@@ -241,9 +252,10 @@ BEGIN
 				C.NextInterestDate,
 				C.Maturity,
 				C.MaturityBand,
-				C.D
+				C.D,
+				C.ConsecutiveMonths
 			FROM
-				Date A
+				aux_Date A
 			CROSS JOIN (
 				SELECT
 					DISTINCT CusipId
@@ -288,9 +300,9 @@ BEGIN
 				COUNT(DISTINCT A.CusipId) AS TotalCusips,
 				COUNT(DISTINCT B.CusipId) AS TopCusips
 			FROM
-				TraceFilteredWithRatings A
+				wrds_Trace_FilteredWithRatings A
 			LEFT JOIN
-				BondReturnsTopBonds B ON A.IssuerId = B.IssuerId AND  EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
+				aux_Top2Bonds_Inst B ON A.IssuerId = B.IssuerId AND EOMONTH(A.TrdExctnDt) = B.TrdExctnDtEOM
 			GROUP BY
 				A.IssuerId,
 				EOMONTH(A.TrdExctnDt)

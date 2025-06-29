@@ -7,7 +7,7 @@ from pandas.tseries.offsets import *
 for com in [(i, j) for i in range(1, 13) for j in range(1, 13)]:
 
     # read
-    directory = 'source/topBonds.csv'
+    directory = 'data/momentum-topBonds.csv'
     df = pd.read_csv(directory, parse_dates=['TrdExctnDtEOM'])
     df = df[['CusipId', 'TrdExctnDtEOM', 'TD_Volume', 'Coupon', 'RatingClass', 'MaturityBand', 'R']]
     df.columns = ['Cusip', 'Date', 'Volume', 'Coupon', 'RatingClass', 'MaturityBand', 'R']
