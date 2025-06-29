@@ -1,6 +1,7 @@
 # .env
 /db-config/wrds-pipeline/.env
 /db-desc/.env
+/db-desc/CorporateBondTrading_FindingCustomersYachts/.env
 /momentum/.env
 /herding/.env
 
@@ -12,3 +13,6 @@
 
 # data momentum
 /momentum/data
+
+# data herding
+/herding/data
