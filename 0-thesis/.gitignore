@@ -11,6 +11,9 @@
 # function cache
 /db-config/wrds-pipeline/functions/__pycache__
 
+# descriptive data
+db-desc/BehavioralBiases_Wei/data
+
 # data momentum
 /momentum/data
 
