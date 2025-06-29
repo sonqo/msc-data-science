@@ -6,3 +6,6 @@
 
 # function cache
 /db-config/wrds-pipeline/functions/__pycache__
+
+# data momentum
+/momentum/data
