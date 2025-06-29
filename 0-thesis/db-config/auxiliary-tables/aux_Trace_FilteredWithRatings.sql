@@ -44,7 +44,6 @@ WHERE
 -- populate filtered/enhanced table
 SELECT
 	A.*,
-	B.PrincipalAmt,
 	CASE
         WHEN B.RatingNum <> 0 THEN B.RatingNum
         ELSE C.RatingNum

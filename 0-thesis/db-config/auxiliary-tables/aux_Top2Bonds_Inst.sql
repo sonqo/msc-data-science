@@ -1,10 +1,10 @@
-DROP TABLE IF EXISTS [dbo].[TopBondsInstitutional]
+DROP TABLE IF EXISTS [dbo].[aux_Top2Bonds_Inst]
 
 SELECT
 	*,
 	ROW_NUMBER() OVER (PARTITION BY CusipId, IssuerId, DateRanking ORDER BY TrdExctnDtEOM) as ConsecutiveMonths
 INTO
-	[dbo].[TopBondsInstitutional]
+	[dbo].[aux_Top2Bonds_Inst]
 FROM (
 	SELECT
 		*,
@@ -31,11 +31,11 @@ FROM (
 						ELSE NULL
 					END AS RatingClass
 				FROM
-					[dbo].[TraceFilteredWithRatings]
+					[dbo].[wrds_Trace_FilteredWithRatings]
 				WHERE
 					RatingNum <> 0
 					AND EntrdVolQt >= 500000 -- institunional
-					AND PrincipalAmt IS NOT NULL
+					AND PrincipalAmount IS NOT NULL
 					AND TrdExctnDt <= EOMONTH(TrdExctnDt) AND TrdExctnDt > DATEADD(DAY, -5, EOMONTH(TrdExctnDt))
 				GROUP BY
 					IssuerId,
@@ -44,11 +44,11 @@ FROM (
 			) A
 		) B
 		WHERE
-			VolumeRanking <= 3
+			VolumeRanking <= 2
 	) C
 ) D
 
-CREATE CLUSTERED INDEX [IX_TopBonds] ON 
-	[dbo].[TopBonds] (
-			[CusipId], [TrdExctnDtEOM]
-	);
+CREATE CLUSTERED INDEX [IX_aux_Top2Bonds_Inst] ON 
+	[dbo].[aux_Top2Bonds_Inst] (
+		[TrdExctnDtEOM], [CusipId]
+	)

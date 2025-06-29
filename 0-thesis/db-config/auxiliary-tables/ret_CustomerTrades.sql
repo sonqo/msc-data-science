@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS [dbo].[BondReturnsCustomerTrades]
+DROP TABLE IF EXISTS [dbo].[ret_CustomerTrades]
 
 SELECT
 	*,
@@ -19,11 +19,11 @@ FROM (
 			WHEN InterestFrequency = 0 THEN NULL
 			ELSE
 				CASE
-					WHEN NextInterestDate <= TrdExctnDt AND NextInterestDate >= DATEFROMPARTS(YEAR(TrdExctnDt), MONTH(TrdExctnDt), 1) THEN dbo.YearFrac(TrdExctnDt, NextInterestDate, 0)
+					WHEN NextInterestDate <= TrdExctnDt AND NextInterestDate >= DATEFROMPARTS(YEAR(TrdExctnDt), MONTH(TrdExctnDt), 1) THEN dbo.func_YearFrac(TrdExctnDt, NextInterestDate, 0)
 					ELSE 
 						CASE
-							WHEN LatestInterestDate IS NULL THEN dbo.YearFrac(OfferingDate, TrdExctnDt, 0)
-							ELSE dbo.YearFrac(LatestInterestDate, TrdExctnDt, 0)
+							WHEN LatestInterestDate IS NULL THEN dbo.func_YearFrac(OfferingDate, TrdExctnDt, 0)
+							ELSE dbo.func_YearFrac(LatestInterestDate, TrdExctnDt, 0)
 						END
 				END
 		END AS D
@@ -31,12 +31,12 @@ FROM (
 		SELECT
 			CusipId,
 			TrdExctnDt,
-			TPrice,
-			TVolume,
-			TDVolume,
+			T_Price,
+			T_Volume,
+			TD_Volume,
 			Coupon,
 			CouponMonth,
-			PrincipalAmt,
+			PrincipalAmount,
 			InterestFrequency,
 			RatingNum,
 			RatingClass,
@@ -64,7 +64,7 @@ FROM (
 									360 / InterestFrequency / 30,
 									DATEADD( 
 										MONTH,
-										( ABS ( dbo.YearFrac(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 360 / InterestFrequency ) * ( 360 / InterestFrequency / 30 ),
+										( ABS ( dbo.func_YearFrac(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 360 / InterestFrequency ) * ( 360 / InterestFrequency / 30 ),
 										FirstInterestDate
 									)
 								)
@@ -78,7 +78,7 @@ FROM (
 							ELSE
 								DATEADD( 
 									MONTH,
-									( ABS ( dbo.YearFrac(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 360 / InterestFrequency ) * ( 360 / InterestFrequency / 30 ),
+									( ABS ( dbo.func_YearFrac(TrdExctnDt, FirstInterestDate, 0) ) ) / ( 360 / InterestFrequency ) * ( 360 / InterestFrequency / 30 ),
 									FirstInterestDate
 								) 
 						END 
@@ -91,7 +91,7 @@ FROM (
 					SUM(EntrdVolQt) AS T_Volume,
 					SUM(PriceVolumeProduct) AS TD_Volume,
 					MAX(Coupon) AS Coupon,
-					MAX(PrincipalAmt) AS PrincipalAmt,
+					MAX(PrincipalAmount) AS PrincipalAmount,
 					CASE
 						WHEN MAX(InterestFrequency) = 14 THEN 6
 						WHEN MAX(InterestFrequency) = 13 THEN 12
@@ -128,23 +128,23 @@ FROM (
 						END AS PriceVolumeProduct,
 						A.EntrdVolQt,
 						A.Coupon,
-						A.PrincipalAmt,
+						A.PrincipalAmount,
 						A.InterestFrequency,
 						A.RatingNum,
 						A.Maturity,
 						A.FirstInterestDate,
 						A.OfferingDate
 					FROM
-						[dbo].[TraceFilteredWithRatings] A
+						[dbo].[wrds_Trace_FilteredWithRatings] A
 					INNER JOIN (
 						SELECT
 							CusipId,
 							MAX(TrdExctnDt) AS TrdExctnDt
 						FROM
-							[dbo].[TraceFilteredWithRatings] A
+							[dbo].[wrds_Trace_FilteredWithRatings] A
 						WHERE
 							CntraMpId = 'C'
-							AND PrincipalAmt IN (10, 1000)
+							AND PrincipalAmount IN (10, 1000)
 							AND TrdExctnDt <= EOMONTH(TrdExctnDt) AND TrdExctnDt > DATEADD(DAY, -5, EOMONTH(TrdExctnDt))
 						GROUP BY
 							CusipId,
@@ -152,6 +152,7 @@ FROM (
 					) B ON A.CusipId = B.CusipId AND A.TrdExctnDt = B.TrdExctnDt
 					WHERE
 						A.CntraMpId = 'C'
+						AND PrincipalAmount IN (10, 1000)
 				) C
 				GROUP BY
 					CusipId,
@@ -177,7 +178,7 @@ FROM (
 		LAG(T_Price) OVER (PARTITION BY CusipId ORDER BY TrdExctnDtEOM) AS LagT_Price,
 		T_Volume,
 		TD_Volume,
-		PrincipalAmt,
+		PrincipalAmount,
 		InterestFrequency,
 		Coupon,
 		CouponAmount,
@@ -198,7 +199,7 @@ FROM (
 			C.T_Price,
 			C.T_Volume,
 			C.TD_Volume,
-			C.PrincipalAmt,
+			C.PrincipalAmount,
 			C.InterestFrequency,
 			C.Coupon,
 			C.CouponAmount,
@@ -213,7 +214,7 @@ FROM (
 			C.MaturityBand,
 			C.D
 		FROM
-			Date A
+			aux_Date A
 		CROSS JOIN (
 			SELECT
 				DISTINCT CusipId
@@ -228,7 +229,7 @@ FROM (
 SELECT
     A.*
 INTO
-	[dbo].[BondReturnsCustomerTrades]
+	[dbo].[ret_CustomerTrades]
 FROM
     #TEMP_TABLE_V2 A
 INNER JOIN (
@@ -247,7 +248,7 @@ INNER JOIN (
 DROP TABLE #TEMP_TABLE_V1
 DROP TABLE #TEMP_TABLE_V2
 
-CREATE UNIQUE CLUSTERED INDEX [IX_BondReturnsCustomerTrades] ON 
-	[dbo].[BondReturnsCustomerTrades] (
+CREATE UNIQUE CLUSTERED INDEX [IX_ret_CustomerTrades] ON 
+	[dbo].[ret_CustomerTrades] (
 			[TrdExctnDtEOM], [CusipId]
 	);

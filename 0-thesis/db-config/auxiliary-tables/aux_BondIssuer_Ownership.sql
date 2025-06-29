@@ -1,10 +1,10 @@
 ALTER TABLE
-	[dbo].[BondIssuer]
+	[dbo].[fisd_BondIssuer]
 ADD
 	Private INT
 
 UPDATE
-	[dbo].[BondIssuer]
+	[dbo].[fisd_BondIssuer]
 SET
 	Private = A.Private
 FROM (
@@ -22,7 +22,14 @@ FROM (
 			IssuerId
 	) A
 	LEFT JOIN 
-		[dbo].[CrspBondLink] B ON A.CusipId = B.Cusip
+		[dbo].[crsp_BondLink] B ON A.CusipId = B.Cusip
 ) A
 INNER JOIN
-	[dbo].[BondIssuer] B ON A.IssuerId = B.IssuerId
+	[dbo].[fisd_BondIssuer] B ON A.IssuerId = B.IssuerId
+
+UPDATE
+	[dbo].[fisd_BondIssuer]
+SET
+	Private = 0
+WHERE
+	Private IS NULL

@@ -6,6 +6,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+from urllib.parse import quote_plus
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 
@@ -15,12 +16,15 @@ load_dotenv()
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 start_year = 2002
-end_year = 2024
+end_year = 2023
+
+password = os.getenv('WRDS_PASSWORD')
+encoded_password = quote_plus(password)
 
 # wrds connection
 connection_string = (
   'postgresql+psycopg2://'
-  f'{os.getenv('WRDS_USER')}:{os.getenv('WRDS_PASSWORD')}'
+  f'{os.getenv('WRDS_USER')}:{encoded_password}'
   '@wrds-pgdata.wharton.upenn.edu:9737/wrds'
 )
 wrds = create_engine(connection_string, pool_pre_ping=True)

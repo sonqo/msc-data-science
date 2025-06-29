@@ -2,6 +2,7 @@ import os
 import sqlite3
 import pandas as pd
 from tqdm import tqdm
+import tidyfinance as tf
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 
@@ -9,6 +10,9 @@ load_dotenv()
 
 start_year = 2002
 end_year = 2024
+
+# local sql-lite connection
+tidy_finance = sqlite3.connect(database='data/local_findb.sqlite')
 
 # wrds connection
 connection_string = (

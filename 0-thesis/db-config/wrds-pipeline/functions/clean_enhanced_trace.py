@@ -47,19 +47,19 @@ def clean_enhanced_trace(cusips, connection, start_date, end_date):
         ]
     )
 
-    # post 2012-06-02
+    # post 2012-02-06
     # trades (trc_st = T) and corrections (trc_st = R)
     trace_post_tr = (
         trace_all
             .query('trc_st in ["T", "R"]')
-            .query('trd_rpt_dt >= "2012-06-02"')
+            .query('trd_rpt_dt >= "2012-02-06"')
     )
 
     # cancellations (trc_st = X) and correction cancellations (trc_st = C)
     trace_post_xc = (
         trace_all
             .query('trc_st in ["X", "C"]')
-            .query('trd_rpt_dt >= "2012-06-02"')
+            .query('trd_rpt_dt >= "2012-02-06"')
             .get([
                 'cusip_id',
                 'msg_seq_nb',
@@ -85,7 +85,7 @@ def clean_enhanced_trace(cusips, connection, start_date, end_date):
     trace_post_y = (
         trace_all
             .query('trc_st == "Y"')
-            .query('trd_rpt_dt >= "2012-06-02"')
+            .query('trd_rpt_dt >= "2012-02-06"')
             .get([
                 'cusip_id',
                 'orig_msg_seq_nb',
@@ -115,14 +115,14 @@ def clean_enhanced_trace(cusips, connection, start_date, end_date):
     # trades (trc_st = T)
     trace_pre_t = (
         trace_all
-            .query('trd_rpt_dt < "2012-06-02"')
+            .query('trd_rpt_dt < "2012-02-06"')
    )
 
     # cancellations (trc_st = C)
     trace_pre_c = (
         trace_all
             .query('trc_st == "C"')
-            .query('trd_rpt_dt < "2012-06-02"')
+            .query('trd_rpt_dt < "2012-02-06"')
             .get([
                 'cusip_id',
                 'orig_msg_seq_nb',
@@ -152,7 +152,7 @@ def clean_enhanced_trace(cusips, connection, start_date, end_date):
     trace_pre_w = (
         trace_all
             .query('trc_st == "W"')
-            .query('trd_rpt_dt < "2012-06-02"')
+            .query('trd_rpt_dt < "2012-02-06"')
     )
 
     # implement corrections in a loop
