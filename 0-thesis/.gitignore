@@ -1,22 +1,16 @@
-# .env
+# .env files
 /db-config/wrds-pipeline/.env
 /db-desc/.env
 /db-desc/CorporateBondTrading_FindingCustomersYachts/.env
-/momentum/.env
 /herding/.env
-
-# data
-/db-config/wrds-pipeline/data
+/momentum/.env
 
 # function cache
 /db-config/wrds-pipeline/functions/__pycache__
 
-# descriptive data
-db-desc/BehavioralBiases_Wei/data
+# data
+/db-config/wrds-pipeline/data
+/db-desc/BehavioralBiases_Wei/data
 /db-desc/CorporateBondTrading_FindingCustomersYachts/data
-
-# data momentum
-/momentum/data
-
-# data herding
 /herding/data
+/momentum/data
