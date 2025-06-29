@@ -1,5 +1,8 @@
-# wrds and sql credentials
+# .env
 /db-config/wrds-pipeline/.env
+/db-desc/.env
+/momentum/.env
+/herding/.env
 
 # data
 /db-config/wrds-pipeline/data
